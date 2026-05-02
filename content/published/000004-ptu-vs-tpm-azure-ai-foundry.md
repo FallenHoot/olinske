@@ -1,13 +1,13 @@
 ---
 title: "Azure AI Foundry: The PTU Trap Behind TPM Scarcity"
 description: "When pay-as-you-go capacity is effectively unavailable, enterprises get pushed into PTU long before utilization justifies it. That turns AI capacity into stranded cost and breaks the cloud's elasticity promise."
-publishDate: 2026-05-06
+publishDate: 2026-05-02
 tags:
   - cloud-architecture
   - finops
   - ai-strategy
   - azure
-status: draft
+status: published
 ---
 
 The cloud was built on a promise: use what you need, give back the rest, pay for what you consumed.

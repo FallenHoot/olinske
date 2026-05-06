@@ -425,6 +425,46 @@ a:focus-visible {
   margin: 0 0 1.25rem;
 }
 
+.article-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface-2) 70%, transparent);
+}
+
+.article-panel thead tr {
+  background: color-mix(in srgb, var(--surface-2) 92%, transparent);
+}
+
+.article-panel th,
+.article-panel td {
+  padding: 0.62rem 0.75rem;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.article-panel th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+}
+
+.article-panel th:last-child,
+.article-panel td:last-child {
+  border-right: 0;
+}
+
+.article-panel tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.article-panel tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+}
+
 .article-panel pre {
   overflow-x: auto;
   border-radius: 12px;

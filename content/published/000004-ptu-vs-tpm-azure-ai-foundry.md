@@ -78,13 +78,11 @@ The economics depend on model version, deployment type, region, token mix, and p
 
 That is why the safer default for many new enterprise workloads is still Standard first, PTU later.
 
-One more lever is often underestimated: prompt and workflow structure. In many teams, excess token consumption is a symptom of uncertainty rather than pure verbosity. Unstructured prompts create ambiguous tasks, verbose model responses, and repeated retries when outputs are close but not usable.
-
-Structured prompting and deterministic workflow design usually reduce token waste per successful outcome. Clear sections reduce ambiguity. Stable templates prevent instruction repetition. Constrained output formats reduce unnecessary narrative. Step-by-step flows reduce the amount of context each call must carry.
-
-The practical implication is simple. Cost control starts with structure, not only with token price tables.
-
 ## The allocation trap
+
+This is not a minor inefficiency. It is a structural shift.
+
+When capacity becomes scarce enough to force early reservation, the consumption model starts to resemble infrastructure allocation more than elastic cloud.
 
 The hard question is not just which pricing model is cheaper on paper.
 
@@ -92,9 +90,23 @@ The harder question is whether Standard capacity is practically available in the
 
 When Standard capacity is constrained and PTU becomes the practical path, customers can end up committing before they have utilization maturity.
 
+The gap between quota in the control plane and actual capacity availability in the data plane is where most misunderstandings happen. Teams plan based on what they are allowed to deploy. They execute against what can actually be allocated at runtime.
+
+Consider a simple scenario. A team reserves 50 PTU to secure regional capacity. Real usage stabilizes around a 6 PTU equivalent during business hours, then drops close to zero nights and weekends. In that pattern, most reserved capacity is idle most of the time. The problem is not bad planning. The problem is that releasing excess capacity is risky when reacquisition is uncertain.
+
+There is another trap inside this trap. In many teams, excess token consumption is a symptom of uncertainty rather than pure verbosity. Unstructured prompts create ambiguous tasks, verbose model responses, and repeated retries when outputs are close but not usable.
+
+Structured prompting and deterministic workflow design reduce token waste per successful outcome. Clear sections reduce ambiguity. Stable templates prevent instruction repetition. Constrained output formats reduce unnecessary narrative. Step-by-step flows reduce the amount of context each call must carry.
+
+This matters more under PTU. When throughput is reserved, inefficient prompts translate directly into idle reserved capacity rather than marginal token cost. Cost control still starts with structure, not only with token price tables.
+
 Once they secure PTU, they stop thinking like elastic cloud consumers and start thinking like holders of scarce inventory. Releasing capacity becomes risky. Over-reserving becomes understandable. Utilization drops. New customers face longer waits. The ecosystem gets less efficient with every rational local decision.
 
+This creates a feedback loop. As more customers reserve capacity to hedge risk, the shared pool shrinks. That increases the probability that the next customer also has to reserve early. Over time, the system can drift toward reservation-first behavior even if that was not the intended model.
+
 The second-order effect matters more than the first. As more customers over-reserve, effective capacity for everyone else decreases, even if total infrastructure grows.
+
+This also changes region strategy. Multi-region deployment is no longer only about resilience or latency. It also becomes a hedge against localized capacity scarcity.
 
 That is my concern. A cloud platform should not train customers to hoard capacity because reacquisition risk is too high.
 
@@ -122,46 +134,23 @@ If releasing capacity is risky, hoarding is rational.
 
 If utilization is low, PTU becomes stranded cost.
 
-<<<<<<< HEAD
-If enough customers do that at once, the system gets worse for everyone else.
-=======
 If enough customers do that at once, the system gets less efficient for everyone else.
 
 If hoarding becomes rational, the elasticity model is no longer working the way customers expect.
 
 That is the real issue.
->>>>>>> cb7b0e3 (feat: automate scheduled publish and release post 000004)
 
 ## What I would change
 
 If I could influence the model, I would change four things:
 
-1. **Reserve a real floor for Standard capacity.** Every region should keep some meaningful percentage of AI capacity available for pay-as-you-go usage.
-2. **Make PTU easier to step down.** If utilization stays low, customers should have a cleaner path to reduce committed capacity without effectively exiting the market.
-3. **Publish better utilization signals.** Customers should be able to see enough aggregate data to judge whether commitment is justified.
-4. **Shorten commitment friction.** In a market where model pricing and capability move fast, long commitment windows create unnecessary lock-in risk.
+1. **Reserve a measurable floor for Standard capacity.** Each region and major model family should maintain a published minimum share for pay-as-you-go.
+2. **Create low-friction PTU step-down paths.** Customers with persistently low utilization should be able to reduce commitment without taking a full reacquisition risk.
+3. **Publish allocation and utilization signals.** Customers need enough regional transparency to decide whether reservation is justified or defensive.
+4. **Offer shorter and more flexible commitment constructs.** In a market where model economics move quickly, long commitment windows amplify lock-in and stranded-cost risk.
 
 ## What to do this week
 
-<<<<<<< HEAD
-If you are a CTO, platform lead, or procurement owner evaluating Azure AI capacity, do this now:
-
-1. **Do not buy PTU on forecast alone.** Use real token data wherever possible.
-2. **Calculate utilization honestly.** Measure active throughput against total reserved time, not against the business case slide.
-3. **Ask a capacity question before a pricing question.** Is Standard deployment actually usable in your target region and model family?
-4. **Separate baseline from burst.** Do not reserve peak demand if most of your traffic is intermittent.
-5. **Treat PTU as an architectural commitment.** This is not just billing. It affects routing, failover, monitoring, and release decisions.
-6. **Revisit the decision often.** Model prices, throughput ratios, and capacity conditions change faster than traditional infrastructure contracts.
-7. **Model your failure mode.** What happens when PTU saturates or TPM throttles? Design for it.
-
-The AI infrastructure shortage is real. Capacity constraints are real. None of that changes the core point.
-
-A cloud platform should not teach customers to hoard.
-
-If the safest behavior is to hold unused capacity because reacquiring it is too risky, the elasticity model is no longer working the way customers think it is.
-
-If your safest move is to hold unused capacity, is that still cloud?
-=======
 If you are evaluating Azure AI capacity this week, do a few things early.
 
 1. **Do not buy PTU on forecast alone.** Use real token data wherever possible.
@@ -170,16 +159,12 @@ If you are evaluating Azure AI capacity this week, do a few things early.
 4. **Separate baseline demand from burst demand.**
 5. **Treat PTU as an architecture choice, not just a procurement choice.** It affects routing, retries, failover, monitoring, and release strategy.
 6. **Revisit the decision often.** Model pricing, throughput ratios, and capacity conditions move faster than traditional infrastructure contracts.
+7. **Design region strategy explicitly.** Use multi-region plans as both a resilience pattern and a capacity-availability hedge.
 
 The real test is simple.
 
 If your safest move is to hold unused capacity because getting it back later is too risky, are you still operating with cloud elasticity?
->>>>>>> cb7b0e3 (feat: automate scheduled publish and release post 000004)
 
 ---
 
 **Disclaimer:** I work at Microsoft. The views expressed here are my own and based solely on publicly available information. This content is for educational purposes and does not represent official Microsoft guidance or commitments.
-<<<<<<< HEAD
-=======
-
->>>>>>> cb7b0e3 (feat: automate scheduled publish and release post 000004)

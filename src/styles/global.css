@@ -303,6 +303,49 @@ a:focus-visible {
   background: color-mix(in srgb, var(--surface) 92%, transparent);
 }
 
+.site-footer {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+.footer-shell {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.15rem 0 1.4rem;
+}
+
+.footer-copy,
+.footer-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.footer-note {
+  margin-top: 0.35rem;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}
+
 .article-shell {
   margin-top: 1rem;
   display: grid;
@@ -374,6 +417,12 @@ a:focus-visible {
 .article-panel ul,
 .article-panel ol {
   padding-left: 1.1rem;
+}
+
+.article-panel table,
+.article-panel figure,
+.article-panel .mermaid {
+  margin: 0 0 1.25rem;
 }
 
 .article-panel pre {
@@ -692,6 +741,14 @@ body.theme-wave-active .blueprint-card {
 @media (max-width: 700px) {
   .container {
     width: 96vw;
+  }
+
+  .footer-shell {
+    flex-direction: column;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
   }
 
   .site-nav {

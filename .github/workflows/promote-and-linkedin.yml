@@ -1,6 +1,6 @@
 name: Publish Blog and Post to LinkedIn
 
-# Schedule: Wed+Sat at noon CET. Manual dispatch anytime.
+# Schedule: Wed+Sat at 11:00 Europe/Oslo. Manual dispatch anytime.
 # Full chain: promote to public repo → wait for deploy → post to LinkedIn
 #
 # Logic:
@@ -11,6 +11,8 @@ name: Publish Blog and Post to LinkedIn
 
 on:
   schedule:
+    # Trigger at both possible UTC offsets, then guard on Europe/Oslo local time.
+    - cron: '0 9 * * 3,6'
     - cron: '0 10 * * 3,6'
   workflow_dispatch:
     inputs:
@@ -25,27 +27,47 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name != 'push' ||
-      !startsWith(github.event.head_commit.message, 'bot:')
 
     steps:
+      - name: Resolve publish window
+        id: schedule_guard
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          LOCAL_HOUR=$(TZ="Europe/Oslo" date +%H)
+          LOCAL_WEEKDAY=$(TZ="Europe/Oslo" date +%u)
+
+          if [ "$LOCAL_HOUR" = "11" ] && { [ "$LOCAL_WEEKDAY" = "3" ] || [ "$LOCAL_WEEKDAY" = "6" ]; }; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Scheduled publish window matched Europe/Oslo 11:00."
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping duplicate cron run outside Europe/Oslo 11:00 window."
+          fi
+
       - name: Checkout editorial repo
+        if: steps.schedule_guard.outputs.should_run == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node
+        if: steps.schedule_guard.outputs.should_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Install deps
+        if: steps.schedule_guard.outputs.should_run == 'true'
         run: npm ci
 
       # ── Step 1: Find the post to publish ────────────────────
       - name: Detect post
         id: detect
+        if: steps.schedule_guard.outputs.should_run == 'true'
         run: |
           if [ -n "${{ inputs.slug }}" ]; then
             SLUG="${{ inputs.slug }}"
@@ -98,7 +120,7 @@ jobs:
       # ── Step 2: Promote to public repo (if needed) ──────────
       - name: Promote blog post
         id: promote
-        if: steps.detect.outputs.needs_promote == 'true'
+        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_promote == 'true'
         env:
           PUBLIC_REPO_PAT: ${{ secrets.PUBLIC_REPO_PAT }}
         run: |
@@ -141,7 +163,7 @@ jobs:
 
       # ── Step 3: Wait for blog to deploy (only if we just promoted) ──
       - name: Wait for blog to deploy
-        if: steps.promote.outputs.promoted == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.schedule_guard.outputs.should_run == 'true' && steps.promote.outputs.promoted == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
           echo "Waiting 60 minutes for Azure to deploy the blog..."
           echo "Started at: $(date -u)"
@@ -149,7 +171,7 @@ jobs:
           echo "Wait complete at: $(date -u)"
 
       - name: Validate LinkedIn post guardrails
-        if: steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
           SLUG="${{ steps.detect.outputs.slug }}"
           POST_FILE=$(ls content/published/ | grep "^${SLUG}" | head -1)
@@ -159,7 +181,7 @@ jobs:
 
       # ── Step 4: Post to LinkedIn (if needed) ────────────────
       - name: Post to LinkedIn
-        if: steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
@@ -172,7 +194,7 @@ jobs:
 
       # ── Step 5: Move LinkedIn post to published ─────────────
       - name: Move LinkedIn post to published
-        if: steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
           SLUG="${{ steps.detect.outputs.slug }}"
           LINKEDIN_POST=$(ls content/linkedin/posts/ 2>/dev/null | grep "^${SLUG}" | head -1)

@@ -1,5 +1,5 @@
 ---
-title: "Azure AI Foundry: The PTU Trap Behind TPM Scarcity"
+title: "Azure AI Foundry: When Capacity Scarcity Pushes Customers into PTU Too Early"
 publishDate: 2026-05-06
 tags:
   - cloud-architecture
@@ -16,18 +16,18 @@ hashtags:
   - CloudArchitecture
 ---
 
-A customer asked me to help them get GPU capacity on Azure.
+A customer asked me to help them get AI capacity on Azure.
 
-We checked the region. Pay-as-you-go throughput was effectively unavailable. The realistic path was PTU.
+We checked the region. Standard capacity was constrained enough that PTU became the practical path.
 
-Customers who do get PTU can end up using only a small fraction of it. They still will not release it, because they know they may never get it back.
+That is where the economics start to bend. Teams can end up reserving capacity before demand is proven, then hold it because releasing it means taking reacquisition risk.
 
 That is the problem.
 
-PTU creates certainty, but it also creates hoarding when supply is tight. The cloud promise breaks when the allocation model rewards holding capacity more than using it.
+PTU creates certainty, but it can also create hoarding when supply is tight. The cloud promise weakens when the allocation model rewards holding capacity more than using it.
 
-In low-utilization cases, PTU can look wildly inefficient versus TPM, so the waste becomes a FinOps issue too.
+This is not anti-PTU. It is an argument for sequencing. Standard first when demand is uncertain. PTU later when utilization is real.
 
-I wrote about what is happening and how to think about it before you commit too early.
+I wrote about where the public documentation is clear, where field observation starts, and how to think about the trade-off before you commit too early.
 
-Has your team tried to get AI capacity recently? Did you go TPM, PTU, or multi-region?
+Has your team hit this capacity-versus-commitment decision yet?

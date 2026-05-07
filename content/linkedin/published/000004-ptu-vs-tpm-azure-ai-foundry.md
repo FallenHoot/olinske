@@ -6,7 +6,7 @@ tags:
   - finops
   - ai-strategy
 type: blog-linkedin-share
-linkedinPostId: "pending"
+linkedinPostId: "urn:li:share:7458043143481913344"
 variant: medium
 sourcePost: "content/published/000004-ptu-vs-tpm-azure-ai-foundry.md"
 canonicalUrl: "https://zach.olinske.com/posts/000004-ptu-vs-tpm-azure-ai-foundry"

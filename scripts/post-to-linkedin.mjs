@@ -131,16 +131,21 @@ if (!linkedinMeta.sourcePost) {
 }
 
 const sourcePostPath = join(ROOT, linkedinMeta.sourcePost);
-if (!existsSync(sourcePostPath)) {
-  console.error(`LinkedIn sourcePost does not exist: ${linkedinMeta.sourcePost}`);
-  process.exit(1);
-}
-
 const sourceFileName = basename(sourcePostPath);
 const fallbackPublishedSourcePath = join(ROOT, 'content', 'published', sourceFileName);
 
 let effectiveSourcePostPath = sourcePostPath;
 const normalizedSourcePostPath = sourcePostPath.replace(/\\/g, '/');
+
+if (!existsSync(sourcePostPath)) {
+  if (existsSync(fallbackPublishedSourcePath)) {
+    effectiveSourcePostPath = fallbackPublishedSourcePath;
+  } else {
+    console.error(`LinkedIn sourcePost does not exist: ${linkedinMeta.sourcePost}`);
+    process.exit(1);
+  }
+}
+
 if (!normalizedSourcePostPath.includes('/content/published/')) {
   if (!existsSync(fallbackPublishedSourcePath)) {
     console.error(`LinkedIn sourcePost must point to content/published/, got: ${linkedinMeta.sourcePost}`);

@@ -8,7 +8,7 @@ tags:
 type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
-sourcePost: "content/posts/000004-ptu-vs-tpm-azure-ai-foundry.md"
+sourcePost: "content/published/000004-ptu-vs-tpm-azure-ai-foundry.md"
 canonicalUrl: "https://zach.olinske.com/posts/000004-ptu-vs-tpm-azure-ai-foundry"
 hashtags:
   - AzureAI

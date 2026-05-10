@@ -22,6 +22,7 @@ on:
         type: string
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -211,6 +212,13 @@ jobs:
           fi
 
           echo "promoted=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger deploy workflow
+        if: steps.detect.outputs.should_publish == 'true' && steps.promote.outputs.promoted == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run "Deploy to Azure Web App" --ref main
 
       # ── Step 3: Wait for blog to deploy (only if we just promoted) ──
       - name: Wait for blog to deploy

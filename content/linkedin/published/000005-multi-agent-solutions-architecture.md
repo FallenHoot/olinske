@@ -6,7 +6,7 @@ tags:
   - agents
   - architecture
 type: blog-linkedin-share
-linkedinPostId: "pending"
+linkedinPostId: "urn:li:share:7459275619294560256"
 variant: medium
 sourcePost: "content/posts/000005-multi-agent-solutions-architecture.md"
 canonicalUrl: "https://zach.olinske.com/posts/000005-multi-agent-solutions-architecture"

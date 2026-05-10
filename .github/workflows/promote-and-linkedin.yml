@@ -50,7 +50,7 @@ jobs:
       - name: Detect post
         id: detect
         run: |
-          DETECTION=$(MANUAL_SLUG="${{ inputs.slug }}" node <<'NODE'
+          DETECTION=$(MANUAL_SLUG="${{ inputs.slug }}" node -e "
             const fs = require('fs');
             const path = require('path');
 
@@ -75,7 +75,7 @@ jobs:
                 day: '2-digit'
               }).formatToParts(new Date());
               const byType = Object.fromEntries(parts.filter(p => p.type !== 'literal').map(p => [p.type, p.value]));
-              return `${byType.year}-${byType.month}-${byType.day}`;
+              return byType.year + '-' + byType.month + '-' + byType.day;
             }
 
             function isDue(dueDate, today) {
@@ -145,13 +145,12 @@ jobs:
             }
 
             console.log('should_publish=true');
-            console.log(`slug=${selected.slug}`);
-            console.log(`due_date=${selected.dueDate || ''}`);
-            console.log(`needs_promote=${selected.needsPromote ? 'true' : 'false'}`);
-            console.log(`needs_linkedin=${selected.needsLinkedIn ? 'true' : 'false'}`);
-            console.log(`reason=selected ${selected.slug}`);
-NODE
-          )
+            console.log('slug=' + selected.slug);
+            console.log('due_date=' + (selected.dueDate || ''));
+            console.log('needs_promote=' + (selected.needsPromote ? 'true' : 'false'));
+            console.log('needs_linkedin=' + (selected.needsLinkedIn ? 'true' : 'false'));
+            console.log('reason=selected ' + selected.slug);
+          ")
 
           while IFS= read -r line; do
             [ -n "$line" ] && echo "$line" >> "$GITHUB_OUTPUT"

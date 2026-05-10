@@ -24,106 +24,170 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: publish-and-linkedin
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Resolve publish window
-        id: schedule_guard
-        run: |
-          if [ "${{ github.event_name }}" != "schedule" ]; then
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          LOCAL_HOUR=$(TZ="Europe/Oslo" date +%H)
-          LOCAL_WEEKDAY=$(TZ="Europe/Oslo" date +%u)
-
-          if [ "$LOCAL_HOUR" = "11" ] && { [ "$LOCAL_WEEKDAY" = "3" ] || [ "$LOCAL_WEEKDAY" = "6" ]; }; then
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "Scheduled publish window matched Europe/Oslo 11:00."
-          else
-            echo "should_run=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping duplicate cron run outside Europe/Oslo 11:00 window."
-          fi
-
       - name: Checkout editorial repo
-        if: steps.schedule_guard.outputs.should_run == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node
-        if: steps.schedule_guard.outputs.should_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Install deps
-        if: steps.schedule_guard.outputs.should_run == 'true'
         run: npm ci
 
       # ── Step 1: Find the post to publish ────────────────────
       - name: Detect post
         id: detect
-        if: steps.schedule_guard.outputs.should_run == 'true'
         run: |
-          if [ -n "${{ inputs.slug }}" ]; then
-            SLUG="${{ inputs.slug }}"
+          DETECTION=$(MANUAL_SLUG="${{ inputs.slug }}" node -e "
+            const fs = require('fs');
+            const path = require('path');
+
+            function findFileBySlug(dir, slug) {
+              if (!fs.existsSync(dir)) return '';
+              const file = fs.readdirSync(dir).find(name => name.startsWith(slug));
+              return file ? path.join(dir, file) : '';
+            }
+
+            function readPublishDate(filePath) {
+              if (!filePath || !fs.existsSync(filePath)) return '';
+              const raw = fs.readFileSync(filePath, 'utf8');
+              const match = raw.match(/^publishDate:\\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/m);
+              return match ? match[1] : '';
+            }
+
+            function osloDateISO() {
+              const parts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Europe/Oslo',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+              }).formatToParts(new Date());
+              const byType = Object.fromEntries(parts.filter(p => p.type !== 'literal').map(p => [p.type, p.value]));
+              return `${byType.year}-${byType.month}-${byType.day}`;
+            }
+
+            function isDue(dueDate, today) {
+              if (!dueDate) return true;
+              return dueDate <= today;
+            }
+
+            const queuePath = 'data/publish-queue.json';
+            if (!fs.existsSync(queuePath)) {
+              console.log('should_publish=false');
+              console.log('reason=publish-queue.json missing');
+              process.exit(0);
+            }
+
+            const queueData = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+            const queue = Array.isArray(queueData.queue) ? queueData.queue : [];
+            const today = osloDateISO();
+            const manualSlug = (process.env.MANUAL_SLUG || '').trim();
+
+            const published = fs.existsSync('content/published') ? fs.readdirSync('content/published') : [];
+            const linkedinPublished = fs.existsSync('content/linkedin/published') ? fs.readdirSync('content/linkedin/published') : [];
+            const linkedinPending = fs.existsSync('content/linkedin/posts') ? fs.readdirSync('content/linkedin/posts') : [];
+
+            const candidates = manualSlug
+              ? [{ slug: manualSlug, approved: true, scheduledDate: '' }]
+              : queue;
+
+            let selected = null;
+
+            for (const item of candidates) {
+              if (!item || !item.slug) continue;
+              if (!manualSlug && !item.approved) continue;
+
+              const slug = item.slug;
+              const postInPosts = findFileBySlug('content/posts', slug);
+              const postInPublished = findFileBySlug('content/published', slug);
+
+              const blogDone = published.some(name => name.startsWith(slug));
+              const linkedinDone = linkedinPublished.some(name => name.startsWith(slug));
+              const needsPromote = !blogDone && !!postInPosts;
+              const needsLinkedIn = linkedinPending.some(name => name.startsWith(slug));
+
+              if (!needsPromote && !needsLinkedIn) {
+                continue;
+              }
+
+              const postDate = readPublishDate(postInPosts || postInPublished);
+              const dueDate = item.scheduledDate || postDate;
+
+              if (!manualSlug && !isDue(dueDate, today)) {
+                continue;
+              }
+
+              selected = {
+                slug,
+                dueDate,
+                needsPromote,
+                needsLinkedIn
+              };
+              break;
+            }
+
+            if (!selected) {
+              console.log('should_publish=false');
+              console.log('reason=no due approved post requires action');
+              process.exit(0);
+            }
+
+            console.log('should_publish=true');
+            console.log(`slug=${selected.slug}`);
+            console.log(`due_date=${selected.dueDate || ''}`);
+            console.log(`needs_promote=${selected.needsPromote ? 'true' : 'false'}`);
+            console.log(`needs_linkedin=${selected.needsLinkedIn ? 'true' : 'false'}`);
+            console.log(`reason=selected ${selected.slug}`);
+          ")
+
+          while IFS= read -r line; do
+            [ -n "$line" ] && echo "$line" >> "$GITHUB_OUTPUT"
+          done <<< "$DETECTION"
+
+          SHOULD_PUBLISH=$(printf '%s\n' "$DETECTION" | sed -n 's/^should_publish=//p' | tail -1)
+          SLUG=$(printf '%s\n' "$DETECTION" | sed -n 's/^slug=//p' | tail -1)
+          DUE_DATE=$(printf '%s\n' "$DETECTION" | sed -n 's/^due_date=//p' | tail -1)
+          NEEDS_PROMOTE=$(printf '%s\n' "$DETECTION" | sed -n 's/^needs_promote=//p' | tail -1)
+          NEEDS_LINKEDIN=$(printf '%s\n' "$DETECTION" | sed -n 's/^needs_linkedin=//p' | tail -1)
+
+          if [ "$SHOULD_PUBLISH" = "false" ]; then
+            echo "No due approved post requires action."
           else
-            SLUG=$(node -e "
-              const fs = require('fs');
-              const q = JSON.parse(fs.readFileSync('data/publish-queue.json','utf-8'));
-              if (!Array.isArray(q.queue)) process.exit(0);
-              const published = fs.existsSync('content/published') ? fs.readdirSync('content/published') : [];
-              const linkedinPublished = fs.existsSync('content/linkedin/published') ? fs.readdirSync('content/linkedin/published') : [];
-              const next = q.queue.find(item => {
-                if (!item.approved || !item.slug) return false;
-                const blogDone = published.some(f => f.startsWith(item.slug));
-                const linkedinDone = linkedinPublished.some(f => f.startsWith(item.slug));
-                return !blogDone || !linkedinDone;
-              });
-              if (next) console.log(next.slug);
-            ")
+            echo "Slug: ${SLUG} | Due: ${DUE_DATE} | Promote: ${NEEDS_PROMOTE} | LinkedIn: ${NEEDS_LINKEDIN}"
           fi
 
-          if [ -z "$SLUG" ]; then
-            echo "No post needs publishing. Done."
-            exit 0
-          fi
-
-          # Check what needs to happen
-          NEEDS_PROMOTE="false"
-          NEEDS_LINKEDIN="false"
-
-          if ! ls content/published/ 2>/dev/null | grep -q "^${SLUG}"; then
-            if ls content/posts/ 2>/dev/null | grep -q "^${SLUG}"; then
-              NEEDS_PROMOTE="true"
-            fi
-          fi
-
-          if ls content/linkedin/posts/ 2>/dev/null | grep -q "^${SLUG}"; then
-            NEEDS_LINKEDIN="true"
-          fi
-
-          if [ "$NEEDS_PROMOTE" = "false" ] && [ "$NEEDS_LINKEDIN" = "false" ]; then
-            echo "Post ${SLUG} is fully published (blog + LinkedIn). Nothing to do."
-            exit 0
-          fi
-
-          echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
-          echo "needs_promote=${NEEDS_PROMOTE}" >> "$GITHUB_OUTPUT"
-          echo "needs_linkedin=${NEEDS_LINKEDIN}" >> "$GITHUB_OUTPUT"
-          echo "Slug: ${SLUG} | Promote: ${NEEDS_PROMOTE} | LinkedIn: ${NEEDS_LINKEDIN}"
+      - name: Publish decision summary
+        run: |
+          echo "Decision: ${{ steps.detect.outputs.reason }}"
+          echo "Slug: ${{ steps.detect.outputs.slug }}"
+          echo "Due date: ${{ steps.detect.outputs.due_date }}"
+          echo "Promote: ${{ steps.detect.outputs.needs_promote }}"
+          echo "LinkedIn: ${{ steps.detect.outputs.needs_linkedin }}"
 
       # ── Step 2: Promote to public repo (if needed) ──────────
       - name: Promote blog post
         id: promote
-        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_promote == 'true'
+        if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_promote == 'true'
         env:
           PUBLIC_REPO_PAT: ${{ secrets.PUBLIC_REPO_PAT }}
         run: |
+          if [ -z "$PUBLIC_REPO_PAT" ]; then
+            echo "Missing PUBLIC_REPO_PAT secret. Cannot publish to public repo."
+            exit 1
+          fi
+
           SLUG="${{ steps.detect.outputs.slug }}"
           POST_FILE=$(ls content/posts/ | grep "^${SLUG}" | head -1)
 
@@ -163,7 +227,7 @@ jobs:
 
       # ── Step 3: Wait for blog to deploy (only if we just promoted) ──
       - name: Wait for blog to deploy
-        if: steps.schedule_guard.outputs.should_run == 'true' && steps.promote.outputs.promoted == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.detect.outputs.should_publish == 'true' && steps.promote.outputs.promoted == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
           echo "Waiting 60 minutes for Azure to deploy the blog..."
           echo "Started at: $(date -u)"
@@ -171,7 +235,7 @@ jobs:
           echo "Wait complete at: $(date -u)"
 
       - name: Validate LinkedIn post guardrails
-        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
           SLUG="${{ steps.detect.outputs.slug }}"
           POST_FILE=$(ls content/published/ | grep "^${SLUG}" | head -1)
@@ -181,7 +245,7 @@ jobs:
 
       # ── Step 4: Post to LinkedIn (if needed) ────────────────
       - name: Post to LinkedIn
-        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
@@ -194,7 +258,7 @@ jobs:
 
       # ── Step 5: Move LinkedIn post to published ─────────────
       - name: Move LinkedIn post to published
-        if: steps.schedule_guard.outputs.should_run == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
           SLUG="${{ steps.detect.outputs.slug }}"
           LINKEDIN_POST=$(ls content/linkedin/posts/ 2>/dev/null | grep "^${SLUG}" | head -1)

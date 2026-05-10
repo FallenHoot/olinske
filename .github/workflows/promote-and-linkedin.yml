@@ -180,16 +180,14 @@ jobs:
       - name: Promote blog post
         id: promote
         if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_promote == 'true'
-        env:
-          PUBLIC_REPO_PAT: ${{ secrets.PUBLIC_REPO_PAT }}
         run: |
-          if [ -z "$PUBLIC_REPO_PAT" ]; then
-            echo "Missing PUBLIC_REPO_PAT secret. Cannot publish to public repo."
-            exit 1
-          fi
-
           SLUG="${{ steps.detect.outputs.slug }}"
           POST_FILE=$(ls content/posts/ | grep "^${SLUG}" | head -1)
+
+          if [ -z "$POST_FILE" ]; then
+            echo "No staged post found for slug ${SLUG}."
+            exit 1
+          fi
 
           # Update status and date
           sed -i "s/^status: .*/status: published/" "content/posts/${POST_FILE}"
@@ -204,23 +202,12 @@ jobs:
           git config user.name "publish-bot[bot]"
           git config user.email "publish-bot[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "bot: publish ${SLUG}"
-          git push
-
-          # Push to public repo
-          PUBLIC_REPO="FallenHoot/olinske"
-          git clone "https://x-access-token:${PUBLIC_REPO_PAT}@github.com/${PUBLIC_REPO}.git" public-target
-          cp "content/published/${POST_FILE}" "public-target/content/published/${POST_FILE}"
-          cd public-target
-          git config user.name "publish-bot[bot]"
-          git config user.email "publish-bot[bot]@users.noreply.github.com"
-          git add -A
           if git diff --cached --quiet; then
-            echo "No changes to push to public repo."
+            echo "No publish changes detected."
           else
-            git commit -m "Promote ${SLUG}"
+            git commit -m "bot: publish ${SLUG}"
             git push
-            echo "Public repo updated. Azure deploy will trigger."
+            echo "Repository updated. Azure deploy will trigger."
           fi
 
           echo "promoted=true" >> "$GITHUB_OUTPUT"

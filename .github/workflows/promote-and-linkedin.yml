@@ -50,7 +50,7 @@ jobs:
       - name: Detect post
         id: detect
         run: |
-          DETECTION=$(MANUAL_SLUG="${{ inputs.slug }}" node -e "
+          DETECTION=$(MANUAL_SLUG="${{ inputs.slug }}" node <<'NODE'
             const fs = require('fs');
             const path = require('path');
 
@@ -150,7 +150,8 @@ jobs:
             console.log(`needs_promote=${selected.needsPromote ? 'true' : 'false'}`);
             console.log(`needs_linkedin=${selected.needsLinkedIn ? 'true' : 'false'}`);
             console.log(`reason=selected ${selected.slug}`);
-          ")
+NODE
+          )
 
           while IFS= read -r line; do
             [ -n "$line" ] && echo "$line" >> "$GITHUB_OUTPUT"

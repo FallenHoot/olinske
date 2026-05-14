@@ -6,7 +6,7 @@ tags:
   - bcdr
   - reliability
 type: blog-linkedin-share
-linkedinPostId: "pending"
+linkedinPostId: "urn:li:share:7460718490342166528"
 variant: medium
 sourcePost: "content/posts/000006-bcdr-azure-storage-patterns.md"
 canonicalUrl: "https://zach.olinske.com/posts/000006-bcdr-azure-storage-patterns"

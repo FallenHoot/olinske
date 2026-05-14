@@ -1,0 +1,202 @@
+---
+// src/components/VoteButtons.astro
+// Thumbs up/down voting widget for blog posts
+// Uses Azure Table Storage via /api/vote
+// Stores user vote state in localStorage to prevent double-voting
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<div class="vote-widget" data-slug={slug}>
+  <div class="vote-container">
+    <button class="vote-btn vote-up" aria-label="Helpful" title="This was helpful">
+      👍 <span class="vote-count" data-direction="up">—</span>
+    </button>
+    <button class="vote-btn vote-down" aria-label="Not helpful" title="This was not helpful">
+      👎 <span class="vote-count" data-direction="down">—</span>
+    </button>
+  </div>
+  <div class="vote-status" role="status" aria-live="polite"></div>
+</div>
+
+<style>
+  .vote-widget {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .vote-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .vote-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: #f5f5f5;
+    border: 1px solid #d0d0d0;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.2s ease;
+  }
+
+  .vote-btn:hover:not(:disabled) {
+    background: #fff;
+    border-color: #999;
+    transform: translateY(-1px);
+  }
+
+  .vote-btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .vote-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .vote-btn.voted {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+  }
+
+  .vote-count {
+    font-variant-numeric: tabular-nums;
+    min-width: 2ch;
+    text-align: center;
+  }
+
+  .vote-status {
+    font-size: 0.85rem;
+    color: #666;
+    min-height: 1.2rem;
+  }
+
+  .vote-status.error {
+    color: #d32f2f;
+  }
+
+  .vote-status.success {
+    color: #388e3c;
+  }
+</style>
+
+<script define:vars={{ slug }}>
+  const VOTED_KEY = `voted_${slug}`;
+  const STATUS_TIMEOUT = 3000; // ms
+
+  async function initVotes() {
+    const widget = document.querySelector(`[data-slug="${slug}"]`);
+    if (!widget) return;
+
+    const upBtn = widget.querySelector('.vote-up');
+    const downBtn = widget.querySelector('.vote-down');
+    const status = widget.querySelector('.vote-status');
+
+    // Load vote counts
+    await refreshCounts();
+
+    // Check if user already voted
+    const votedDirection = localStorage.getItem(VOTED_KEY);
+    if (votedDirection === 'up') {
+      upBtn.classList.add('voted');
+      upBtn.disabled = true;
+    } else if (votedDirection === 'down') {
+      downBtn.classList.add('voted');
+      downBtn.disabled = true;
+    }
+
+    // Attach handlers
+    upBtn.addEventListener('click', () => submitVote('up'));
+    downBtn.addEventListener('click', () => submitVote('down'));
+
+    async function refreshCounts() {
+      try {
+        const resp = await fetch(`/api/vote?slug=${encodeURIComponent(slug)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+        const { up, down } = await resp.json();
+        widget.querySelector('[data-direction="up"]').textContent = up;
+        widget.querySelector('[data-direction="down"]').textContent = down;
+      } catch (err) {
+        console.error('Failed to load vote counts:', err);
+        widget.querySelector('[data-direction="up"]').textContent = '?';
+        widget.querySelector('[data-direction="down"]').textContent = '?';
+      }
+    }
+
+    async function submitVote(direction) {
+      // Prevent double-click
+      upBtn.disabled = true;
+      downBtn.disabled = true;
+      status.textContent = '';
+      status.className = 'vote-status';
+
+      try {
+        const resp = await fetch('/api/vote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, direction })
+        });
+
+        if (!resp.ok) {
+          const errData = await resp.json();
+          throw new Error(errData.error || `HTTP ${resp.status}`);
+        }
+
+        const { up, down } = await resp.json();
+
+        // Update UI
+        widget.querySelector('[data-direction="up"]').textContent = up;
+        widget.querySelector('[data-direction="down"]').textContent = down;
+
+        // Mark as voted
+        localStorage.setItem(VOTED_KEY, direction);
+        const votedBtn = direction === 'up' ? upBtn : downBtn;
+        votedBtn.classList.add('voted');
+        votedBtn.disabled = true;
+
+        // Show success message
+        status.className = 'vote-status success';
+        status.textContent = 'Thank you for your feedback!';
+        setTimeout(() => {
+          status.textContent = '';
+          status.className = 'vote-status';
+        }, STATUS_TIMEOUT);
+      } catch (err) {
+        status.className = 'vote-status error';
+        status.textContent = err.message;
+
+        // Allow retry on error
+        upBtn.disabled = false;
+        downBtn.disabled = false;
+
+        setTimeout(() => {
+          status.textContent = '';
+          status.className = 'vote-status';
+        }, STATUS_TIMEOUT);
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVotes);
+  } else {
+    initVotes();
+  }
+</script>

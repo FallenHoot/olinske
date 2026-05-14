@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Reliability Economics Decision Map</title>
+  <desc id="desc">Planning decisions flow into architecture and operating posture, then into outage exposure and customer outcome.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f5f8fc; }
+      .box { fill: #ffffff; stroke: #244662; stroke-width: 2; rx: 12; }
+      .hdr { fill: #244662; }
+      .txtW { fill: #ffffff; font-family: Segoe UI, Arial, sans-serif; font-size: 22px; font-weight: 700; }
+      .txtD { fill: #16324a; font-family: Segoe UI, Arial, sans-serif; font-size: 20px; font-weight: 700; }
+      .sub { fill: #38556e; font-family: Segoe UI, Arial, sans-serif; font-size: 18px; }
+      .arrow { stroke: #2f6d9f; stroke-width: 4; marker-end: url(#m); fill: none; }
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f6d9f"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="58" text-anchor="middle" class="txtD">Reliability Is an Economic Decision</text>
+  <text x="600" y="88" text-anchor="middle" class="sub">Early planning choices shape downstream outage exposure.</text>
+
+  <rect class="box hdr" x="90" y="170" width="250" height="82"/>
+  <text x="215" y="220" text-anchor="middle" class="txtW">Budget Decisions</text>
+
+  <rect class="box" x="420" y="170" width="300" height="82"/>
+  <text x="570" y="220" text-anchor="middle" class="txtD">Architecture Posture</text>
+
+  <rect class="box" x="800" y="170" width="300" height="82"/>
+  <text x="950" y="220" text-anchor="middle" class="txtD">Operating Capacity</text>
+
+  <rect class="box" x="250" y="380" width="320" height="82"/>
+  <text x="410" y="430" text-anchor="middle" class="txtD">Recovery Readiness</text>
+
+  <rect class="box" x="640" y="380" width="320" height="82"/>
+  <text x="800" y="430" text-anchor="middle" class="txtD">Outage Exposure</text>
+
+  <rect class="box hdr" x="360" y="580" width="480" height="92"/>
+  <text x="600" y="635" text-anchor="middle" class="txtW">Customer Outcome and Revenue Risk</text>
+
+  <path class="arrow" d="M340 211 L420 211"/>
+  <path class="arrow" d="M720 211 L800 211"/>
+  <path class="arrow" d="M570 252 L410 380"/>
+  <path class="arrow" d="M950 252 L800 380"/>
+  <path class="arrow" d="M410 462 L530 580"/>
+  <path class="arrow" d="M800 462 L670 580"/>
+</svg>

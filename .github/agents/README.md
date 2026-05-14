@@ -32,6 +32,13 @@ This folder contains the multi-agent blogging system used by the blog pipeline.
 6. Human approval gate
 7. Publish packaging and deployment
 
+## Repository Execution Model
+
+- Run publish orchestration and LinkedIn workflows from `FallenHoot/olinske-editorial`.
+- Use `FallenHoot/olinske` as the public mirror/deploy repo.
+- Cross-repo promotion is intentional and uses `PUBLIC_REPO_PAT` from editorial secrets.
+- LinkedIn secrets (`LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_PERSON_URN`) are maintained in editorial repo secrets.
+
 ## Artifact Contract
 
 For each post slug, the publish workflow expects required artifacts in `.artifacts/blog/<slug>/`.

@@ -8,6 +8,9 @@ Use this checklist before running the promotion workflow from private repo to pu
 - [ ] publishDate is correct
 - [ ] Draft has passed human review
 - [ ] Confidentiality review completed
+- [ ] Voice editor review completed (AI filler removed, cadence reads human)
+- [ ] Repetition gate passed (no unresolved repetitive opener warnings)
+- [ ] Published output does not contain a `## References` section
 - [ ] Required agent artifacts exist and are non-empty
 
 ## 2) Private repo secrets

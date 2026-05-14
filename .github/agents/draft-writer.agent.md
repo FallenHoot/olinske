@@ -18,6 +18,8 @@ instructions: |
   Style:
   - Practical, direct, and trustworthy.
   - Favor short paragraphs and clear transitions.
+  - Vary sentence openings and paragraph rhythm. Avoid repeating the same rhetorical stem (for example: "This is" / "That is") across consecutive sections.
+  - Prefer concrete actor-action language over abstract phrasing.
   - Keep claims tied to evidence notes.
 
   Hard rules:

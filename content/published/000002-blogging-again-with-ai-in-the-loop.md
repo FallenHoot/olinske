@@ -82,7 +82,7 @@ Whether that is solving the problem or just building a better system around it, 
 
 The internet has a slop problem. AI-generated content published without a human edit, content that takes more effort to read than it took to produce. I do not want to add to that pile.
 
-My agents once produced a paragraph about "leveraging cross-functional synergies." I had to read it twice to confirm that yes, an AI had just written LinkedIn filler in my blog post. I deleted the whole paragraph.
+My agents once produced a paragraph about "improving handoffs between engineering, security, and operations." I had to read it twice to confirm that yes, an AI had just written vague filler in my blog post. I deleted the whole paragraph.
 
 That is one risk: AI that sounds confident and means nothing. If you are not reading closely, it ships. So I treat every agent output as a suggestion, not an answer. If it does not sound like me, it does not stay.
 

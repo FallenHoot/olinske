@@ -1,0 +1,121 @@
+{
+  "topic": "Azure Capacity Reservation economics for GPU VM SKUs such as NVads A10 v5",
+  "as_of": "2026-05-07",
+  "public_info_only": true,
+  "claims": [
+    {
+      "id": "billing_used_or_unused",
+      "claim": "Azure Capacity Reservation is billed at the same rate as the underlying VM size whether the reserved capacity is used or unused.",
+      "confidence": "high",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#pricing-and-billing",
+          "support_quote_or_paraphrase": "Capacity reservations are priced at the same rate as the underlying VM size, and billing starts even if the reservation is not being used."
+        },
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#frequently-asked-questions",
+          "support_quote_or_paraphrase": "Azure charges for the selected VM size at pay-as-you-go rates whether the VM was provisioned or not."
+        }
+      ]
+    },
+    {
+      "id": "no_term_commitment_create_delete_any_time",
+      "claim": "Capacity reservations can be created and deleted without a fixed term commitment.",
+      "confidence": "high",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview",
+          "support_quote_or_paraphrase": "You do not have to sign up for a one-year or three-year term commitment, and you can create and delete reservations at any time."
+        }
+      ]
+    },
+    {
+      "id": "capacity_defined_by_size_location_quantity",
+      "claim": "A capacity reservation is defined by VM size, location, and quantity.",
+      "confidence": "high",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview",
+          "support_quote_or_paraphrase": "The overview lists VM size, location or zone, and quantity of instances reserved as the basic properties defined at creation time."
+        }
+      ]
+    },
+    {
+      "id": "discounts_apply_to_used_and_unused",
+      "claim": "Reserved Instances and Savings Plan discounts can apply to both used and unused capacity reservation usage.",
+      "confidence": "high",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#pricing-and-billing",
+          "support_quote_or_paraphrase": "Both used and unused capacity reservations are eligible for Savings Plan and Reserved Instances term commitment discounts."
+        },
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#usage-and-billing",
+          "support_quote_or_paraphrase": "Reserved VM instances can cover some or all capacity reservation usage even when VMs are not deployed."
+        }
+      ]
+    },
+    {
+      "id": "released_capacity_not_guaranteed_after_deletion",
+      "claim": "Capacity is guaranteed only while the reservation exists. Once the reservation is deleted, Azure no longer documents that capacity as reserved for you, and a future reservation request may fail if capacity is unavailable.",
+      "confidence": "medium",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview",
+          "support_quote_or_paraphrase": "The overview says capacity is reserved for your use until the reservation is deleted."
+        },
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#capacity-reservation-lifecycle",
+          "support_quote_or_paraphrase": "After the reservation is deleted, you do not pay for it anymore, and any later reservation creation requires a new successful capacity request."
+        }
+      ]
+    },
+    {
+      "id": "different_from_reserved_instances",
+      "claim": "Capacity Reservation is different from Reserved Instances. Capacity Reservation secures capacity availability, while Reserved Instances provide a billing discount and do not guarantee capacity.",
+      "confidence": "high",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#differences-between-on-demand-capacity-reservations-and-reserved-instances",
+          "support_quote_or_paraphrase": "The comparison table says Capacity Reservation provides a capacity guarantee, while Reserved Instances provide significant cost savings but do not provide a capacity guarantee."
+        },
+        {
+          "source_title": "Save costs with Azure Reserved VM Instances",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/prepay-reserved-vm-instances",
+          "support_quote_or_paraphrase": "Reserved VM instances provide a billing discount only and do not reserve or guarantee compute capacity."
+        }
+      ]
+    },
+    {
+      "id": "nvads_a10_v5_supported_series",
+      "claim": "The NVads A10 v5 series is listed in Microsoft Learn among the GPU-accelerated compute series that support Capacity Reservation.",
+      "confidence": "high",
+      "support": [
+        {
+          "source_title": "On-demand capacity reservation",
+          "source_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-overview#limitations-and-restrictions",
+          "support_quote_or_paraphrase": "The GPU-accelerated compute list includes NVadsA10_v5 series among the VM series that support creation of capacity reservations."
+        }
+      ]
+    }
+  ],
+  "open_questions": [
+    {
+      "item": "Exact public list prices used for the illustrative EUR 123k to EUR 204k range",
+      "note": "The article marks this range as assumption-based and not an official quote."
+    },
+    {
+      "item": "Region-specific reacquisition difficulty",
+      "note": "The article avoids region-specific scarcity claims and frames reacquisition risk as the practical implication of documented capacity checks."
+    }
+  ]
+}

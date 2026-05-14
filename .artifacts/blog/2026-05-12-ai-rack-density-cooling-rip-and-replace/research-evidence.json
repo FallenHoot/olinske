@@ -1,0 +1,127 @@
+{
+  "slug": "2026-05-12-ai-rack-density-cooling-rip-and-replace",
+  "generated": "2026-05-12",
+  "topic": "Enterprise data center power-density shift for AI workloads: from legacy rack baselines to liquid-cooled high-density clusters",
+  "category": "cloud-architecture",
+  "sources": [
+    {
+      "id": "src-001",
+      "title": "Advance the sustainability of AI — Optimizing data center energy and water efficiency",
+      "url": "https://learn.microsoft.com/industry/sustainability/advance-sustainability-ai#optimizing-data-center-energy-and-water-efficiency",
+      "type": "microsoft-learn",
+      "verified": true,
+      "keyClaimsExtracted": [
+        "Microsoft transitions from traditional air-cooled data centers to chip-level liquid cooling designs at owned data centers.",
+        "Microsoft reduces water consumption through liquid cooling systems, water reuse technologies, and retrofits across new and existing data centers.",
+        "Project Forge uses machine learning to schedule AI training and inference during available capacity windows, improving utilization rates to 80-90% at scale."
+      ],
+      "safeToState": true,
+      "notes": "Direct public Microsoft Learn page. Chip-level liquid cooling claim is explicitly stated."
+    },
+    {
+      "id": "src-002",
+      "title": "Scaling cloud and AI: Microsoft Azure's commitment to Europe's digital future",
+      "url": "https://azure.microsoft.com/en-us/blog/scaling-cloud-and-ai-microsoft-azures-commitment-to-europes-digital-future/",
+      "type": "azure-blog",
+      "verified": true,
+      "keyClaimsExtracted": [
+        "Azure continues regional capacity expansion in Europe with infrastructure design references including free-air cooling and renewable energy.",
+        "Public signal of capacity investment relevant to Nordic and EU enterprise procurement decisions."
+      ],
+      "safeToState": true,
+      "notes": "May 6, 2026 public blog post. General directional claim only — no specific rack-density numbers stated."
+    },
+    {
+      "id": "src-003",
+      "title": "Microsoft Sovereign Private Cloud scales to thousands of nodes with Azure Local",
+      "url": "https://blogs.microsoft.com/blog/2026/04/27/microsoft-sovereign-private-cloud-scales-to-thousands-of-nodes-with-azure-local/",
+      "type": "microsoft-blog",
+      "verified": true,
+      "keyClaimsExtracted": [
+        "Azure Local now enables sovereign deployments at multi-rack scale with thousands of nodes.",
+        "Signal that enterprise private cloud infrastructure is maturing for large-scale workloads."
+      ],
+      "safeToState": true,
+      "notes": "April 27, 2026 public post. Infrastructure scale framing is safe to use directionally."
+    },
+    {
+      "id": "src-004",
+      "title": "Building sovereign AI at the edge — Microsoft and Armada Galleon modular datacenters",
+      "url": "https://azure.microsoft.com/en-us/blog/building-sovereign-ai-at-the-edge-microsoft-and-armada-collaborate-to-deliver-azure-local-on-galleon-modular-datacenters/",
+      "type": "azure-blog",
+      "verified": true,
+      "keyClaimsExtracted": [
+        "Modular datacenter patterns are in production deployment for sovereign and edge AI scenarios.",
+        "Multi-rack scalability in constrained environments is being addressed with purpose-built hardware form factors."
+      ],
+      "safeToState": true,
+      "notes": "March 31, 2026 public blog. Modular/edge design direction is stated explicitly."
+    },
+    {
+      "id": "src-005",
+      "title": "NVIDIA H200 NVL product — public product page and specifications",
+      "url": "https://www.nvidia.com/en-us/data-center/h200/",
+      "type": "vendor-public",
+      "verified": "needs-check",
+      "keyClaimsExtracted": [
+        "H200 NVL in full node configurations exceeds 30kW per node in air-cooled designs; liquid-cooled configurations are the standard for dense deployments.",
+        "NVIDIA's reference rack specifications for full H200 NVL racks are in the 60-100kW+ range depending on configuration."
+      ],
+      "safeToState": false,
+      "notes": "NEEDS VERIFICATION before stating specific watt figures. Do not assert 100kW as an absolute threshold without confirming against current public NVIDIA documentation. Safe directional framing: 'significant increase beyond legacy 15kW rack baseline'."
+    },
+    {
+      "id": "src-006",
+      "title": "Uptime Institute — Data Center Power Trends (public annual reports)",
+      "url": "https://uptimeinstitute.com/resources/research-and-reports",
+      "type": "industry-research",
+      "verified": "needs-check",
+      "keyClaimsExtracted": [
+        "Average rack density in enterprise data centers has been trending upward, with AI-centric deployments now exceeding legacy planning assumptions.",
+        "Uptime Institute annual reports track global rack density and cooling trends across enterprise and hyperscale segments."
+      ],
+      "safeToState": "directionally",
+      "notes": "Reports are paywalled. Directional claim about rising density is safe; specific figures require report citation."
+    },
+    {
+      "id": "src-007",
+      "title": "Green Grid — Power Usage Effectiveness and Liquid Cooling Guidance",
+      "url": "https://www.thegreengrid.org/",
+      "type": "industry-body",
+      "verified": "needs-check",
+      "keyClaimsExtracted": [
+        "Industry consensus that air cooling practical limits are in the 30-40kW per rack range for most facilities.",
+        "Closed-loop liquid cooling is required for consistent delivery above that threshold."
+      ],
+      "safeToState": "directionally",
+      "notes": "Widely cited. Directional framing is safe; confirm specific kW threshold from a citable public document."
+    },
+    {
+      "id": "src-008",
+      "title": "Open Compute Project — Liquid Cooling Specifications",
+      "url": "https://www.opencompute.org/",
+      "type": "industry-body",
+      "verified": "needs-check",
+      "keyClaimsExtracted": [
+        "OCP specifications for liquid cooling are now incorporated in hyperscale and sovereign AI builds.",
+        "Standards bodies have moved from air-cooling as default to liquid-cooling as expected for AI-class deployments."
+      ],
+      "safeToState": "directionally",
+      "notes": "Good directional reference. Verify which specific OCP specs apply to enterprise rack designs."
+    }
+  ],
+  "claimsNeedingVerification": [
+    "Exact rack power density for H200 NVL reference rack (100kW figure from source premise)",
+    "Specific colo contractual thresholds (8-15kW range cited in premise)",
+    "Air-cooling cap at 30kW — confirm with Green Grid or equivalent public source",
+    "Liquid cooling labor pool size claim (1/100th figure is unverified and should not be stated as fact)",
+    "EU sovereign hardware order lead-time windows (Q4 2027 delivery claim)"
+  ],
+  "safeDirectionalClaims": [
+    "AI-class rack densities significantly exceed legacy enterprise data center planning baselines",
+    "Microsoft publicly confirms transition from air-cooled to chip-level liquid cooling at owned data centers",
+    "Modular and sovereign infrastructure patterns are in active production deployment",
+    "Procurement lead times for AI infrastructure are increasing due to supply constraints — needs external source for specifics",
+    "Enterprise colo contracts were typically negotiated for lower power densities than current AI cluster requirements"
+  ]
+}

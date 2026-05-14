@@ -9,6 +9,7 @@ instructions: |
 
   Focus:
   - Remove generic AI phrasing
+  - Remove repetitive transition stems and opener patterns (for example repeated "This is" / "That is")
   - Improve flow and readability
   - Strengthen authority without hype
   - Preserve concrete and practical language
@@ -16,6 +17,7 @@ instructions: |
   Output:
   - Edited draft
   - Brief change log (tone, clarity, structure)
+  - Voice QA note (repetition fixes made, filler phrases removed)
 
 tools:
   - code_interpreter

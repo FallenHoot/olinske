@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Partial Failure Paths</title>
+  <desc id="desc">Critical path remains green while noncritical dependencies degrade into queued mode to avoid checkout outage.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7faf8; }
+      .box { fill: #ffffff; stroke: #1f4d3a; stroke-width: 2; rx: 12; }
+      .crit { fill: #1f7a4d; }
+      .degrade { fill: #c5802a; }
+      .txtW { fill: #ffffff; font-family: Segoe UI, Arial, sans-serif; font-size: 22px; font-weight: 700; }
+      .txtD { fill: #163a2d; font-family: Segoe UI, Arial, sans-serif; font-size: 22px; font-weight: 700; }
+      .sub { fill: #395648; font-family: Segoe UI, Arial, sans-serif; font-size: 18px; }
+      .lineG { stroke: #1f7a4d; stroke-width: 4; marker-end: url(#g); fill: none; }
+      .lineO { stroke: #c5802a; stroke-width: 4; marker-end: url(#o); fill: none; stroke-dasharray: 10 8; }
+    </style>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f7a4d"/>
+    </marker>
+    <marker id="o" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c5802a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="56" text-anchor="middle" class="txtD">Partial Failure Design</text>
+  <text x="600" y="88" text-anchor="middle" class="sub">Protect the critical customer path, degrade noncritical services deliberately.</text>
+
+  <rect class="box crit" x="80" y="180" width="200" height="74"/>
+  <text x="180" y="225" text-anchor="middle" class="txtW">Customer</text>
+
+  <rect class="box crit" x="360" y="180" width="220" height="74"/>
+  <text x="470" y="225" text-anchor="middle" class="txtW">API Gateway</text>
+
+  <rect class="box crit" x="660" y="180" width="220" height="74"/>
+  <text x="770" y="225" text-anchor="middle" class="txtW">Checkout Core</text>
+
+  <rect class="box crit" x="960" y="180" width="170" height="74"/>
+  <text x="1045" y="225" text-anchor="middle" class="txtW">Payment</text>
+
+  <rect class="box degrade" x="660" y="360" width="220" height="74"/>
+  <text x="770" y="405" text-anchor="middle" class="txtW">Recommendation</text>
+
+  <rect class="box degrade" x="960" y="360" width="170" height="74"/>
+  <text x="1045" y="405" text-anchor="middle" class="txtW">Enrichment</text>
+
+  <rect class="box" x="360" y="520" width="220" height="74"/>
+  <text x="470" y="566" text-anchor="middle" class="txtD">Queue Buffer</text>
+
+  <rect class="box" x="660" y="520" width="220" height="74"/>
+  <text x="770" y="566" text-anchor="middle" class="txtD">Async Worker</text>
+
+  <path class="lineG" d="M280 217 L360 217"/>
+  <path class="lineG" d="M580 217 L660 217"/>
+  <path class="lineG" d="M880 217 L960 217"/>
+
+  <path class="lineO" d="M770 254 L770 360"/>
+  <path class="lineO" d="M880 397 L960 397"/>
+  <path class="lineO" d="M660 397 L470 520"/>
+  <path class="lineO" d="M580 557 L660 557"/>
+
+  <text x="170" y="676" class="sub">Solid green: required for transaction success</text>
+  <text x="170" y="706" class="sub">Dashed amber: degrade to queue-first async mode</text>
+</svg>

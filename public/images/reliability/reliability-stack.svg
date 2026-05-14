@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Reliability Stack</title>
+  <desc id="desc">Layered model showing market constraints, business risk appetite, incentives, architecture, operations, and observability feeding customer outcome.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f6f8fb; }
+      .layer { fill: #ffffff; stroke: #1f3b57; stroke-width: 2; rx: 12; }
+      .top { fill: #1f3b57; }
+      .mid { fill: #2f628f; }
+      .low { fill: #4f86b5; }
+      .txtW { fill: #ffffff; font-family: Segoe UI, Arial, sans-serif; font-size: 28px; font-weight: 700; }
+      .txtD { fill: #10253b; font-family: Segoe UI, Arial, sans-serif; font-size: 26px; font-weight: 700; }
+      .sub { fill: #29435c; font-family: Segoe UI, Arial, sans-serif; font-size: 22px; }
+      .arrow { stroke: #2f628f; stroke-width: 5; marker-end: url(#m); fill: none; }
+      .outcome { fill: #d7ecff; stroke: #1f3b57; stroke-width: 2; rx: 14; }
+    </style>
+    <marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#2f628f"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="60" text-anchor="middle" class="txtD">Reliability Stack</text>
+  <text x="600" y="96" text-anchor="middle" class="sub">Reliability outcome is a layered system, not a single control.</text>
+
+  <rect class="layer top" x="180" y="140" width="840" height="70"/>
+  <text x="600" y="185" text-anchor="middle" class="txtW">Market Constraints</text>
+
+  <rect class="layer top" x="200" y="220" width="800" height="70"/>
+  <text x="600" y="265" text-anchor="middle" class="txtW">Business Risk Appetite</text>
+
+  <rect class="layer mid" x="220" y="300" width="760" height="70"/>
+  <text x="600" y="345" text-anchor="middle" class="txtW">Organizational Incentives</text>
+
+  <rect class="layer mid" x="240" y="380" width="720" height="70"/>
+  <text x="600" y="425" text-anchor="middle" class="txtW">Architecture and Dependency Design</text>
+
+  <rect class="layer low" x="260" y="460" width="680" height="70"/>
+  <text x="600" y="505" text-anchor="middle" class="txtW">Operations and Incident Command</text>
+
+  <rect class="layer low" x="280" y="540" width="640" height="70"/>
+  <text x="600" y="585" text-anchor="middle" class="txtW">Observability and Recovery Evidence</text>
+
+  <path class="arrow" d="M600 610 L600 670"/>
+  <rect class="outcome" x="380" y="670" width="440" height="64"/>
+  <text x="600" y="710" text-anchor="middle" class="txtD">Customer Outcome</text>
+</svg>

@@ -17,7 +17,7 @@ That separation is the problem.
 
 In my [last post](/posts/000012-spring-cleaning-cloud-finops), I wrote about the four hard questions mature customers need to ask about cloud cost. The questions that go past orphaned resources and into architecture, product, data, and organizational choices. Those questions surface real problems. They do not solve them. Someone still needs to act.
 
-That is where most FinOps programs stall.
+Most FinOps programs stall at that point.
 
 ## You are not alone, but you might as well be
 
@@ -29,7 +29,7 @@ I think of FinOps as Finance and Operations, not just cost control. The operatio
 
 The question is: what if you do not have an SRE team? What if the person doing FinOps 20% of the time is also the person expected to act on what they find?
 
-That is where agentic AI changes the equation.
+Agentic AI changes the equation at that point.
 
 ## How the idea started
 
@@ -37,7 +37,7 @@ A few weeks ago I was at a FinOps workshop at IBM Norway. Someone showed me [Clo
 
 That workshop is where the idea clicked. The FinOps Toolkit already lets you talk to your FOCUS data using GitHub Copilot in Visual Studio. The optimization data is there. The intelligence is there. What is missing is the operations bridge: the agent that can take those insights and actually act on them without requiring a dedicated SRE team.
 
-That is when I pitched the Azure SRE Agent platform as the bridge. Use the agent to combine FinOps intelligence with SRE operational authority. Give lean teams a force multiplier. Give mature teams a way to automate the repetitive analysis that burns out their best people.
+At that point, I pitched the Azure SRE Agent platform as the bridge. Use the agent to combine FinOps intelligence with SRE operational authority. Give lean teams a force multiplier. Give mature teams a way to automate the repetitive analysis that burns out their best people.
 
 ## What agentic AI changes for FinOps teams
 
@@ -138,7 +138,7 @@ To be fair, the idea is not new. The roots go back to 2019 when J.R. Storment an
 
 The Azure SRE Agent platform gives SRE teams a way to automate both operational and cost optimization work in the same pipeline. The same agent that investigates an incident can also scan for oversized VMs, question backup retention policies, and catch orphaned resources.
 
-That is FinSRE. Not a new dashboard. Not another ticket. An agent that has both the reliability context and the cost context, and can act on what it finds.
+FinSRE is exactly that. Not a new dashboard. Not another ticket. An agent that has both the reliability context and the cost context, and can act on what it finds.
 
 ## This week
 

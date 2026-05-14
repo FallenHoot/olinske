@@ -19,7 +19,7 @@ Fair concern. Legitimate risk. Justified fear at the time.
 
 In practice, the execution has often been expensive, technically fragmented, politically unstable, and difficult to sustain for enterprises that need global cloud capability.
 
-This is the story of why a good idea in 2013 became economically indefensible by 2026.
+The story here is why a good idea in 2013 became economically indefensible by 2026.
 
 ## Part 1: The problem sovereign cloud tried to solve
 
@@ -128,6 +128,8 @@ T-Systems (the IT arm of Deutsche Telekom) began building the German cloud. The 
 Result: By 2020, T-Systems shifted strategy from "sovereign cloud" to "managed services provider" for existing cloud platforms. The separate cloud vision was narrowed and largely replaced by managed sovereign controls on global platforms.
 
 Today, T-Systems sells managed services, not a competing cloud.
+
+The deeper failure is architectural. Even the later Azure Germany model — where T-Systems operated a fully separate Azure instance rather than their own cloud — still depended on Microsoft's global technology stack, update pipelines, and code base. The physical isolation addressed where data sat. It did not address who governed the underlying technology or controlled what went into it. That distinction is the reason infrastructure isolation never fully delivers the sovereignty it promises.
 
 #### France: Orange Cloud
 
@@ -351,7 +353,7 @@ Instead of separate cloud providers, major cloud vendors began offering "regiona
 
 Key difference from sovereign clouds: The underlying infrastructure and APIs are the same globally. You get the same features, the same services, the same performance. However, the data physically stays in the region you specify, and local authorities can audit.
 
-This is not sovereignty, However, it provides 80% of the original benefit at 20% of the cost.
+This model is not sovereignty. However, it provides 80% of the original benefit at 20% of the cost.
 
 ### Encryption and key management
 
@@ -478,7 +480,7 @@ Sovereign cloud providers consistently report recruitment challenges. They eithe
 2. Hire less experienced talent (reducing quality).
 3. Lose people to global cloud providers (high attrition).
 
-This is a vicious cycle: Poor talent → Poor product → Fewer customers → Lower funding → Even worse talent.
+It becomes a vicious cycle: Poor talent → Poor product → Fewer customers → Lower funding → Even worse talent.
 
 ### Regulation: The moving target problem
 
@@ -496,6 +498,8 @@ Conversely, new regulatory problems emerged:
 - Real-time analytics and AI became more important; data locality became less important.
 
 Sovereign clouds designed for one regulatory moment became irrelevant in the next.
+
+By 2026, the requirement space had expanded far beyond what any 2013-era sovereign cloud was designed to address. KPMG's 2026 Digital Sovereignty Maturity Model identifies a fourth track entirely absent from the original discussion: emerging and disruptive technology sovereignty, covering AI lifecycle governance, post-quantum cryptography readiness, and model ethics controls. A sovereign cloud built to solve the Snowden-era problem has no architecture for any of those requirements. The gap is not a product deficiency. It is a structural one.
 
 ### Interoperability: The ecosystem problem
 
@@ -605,7 +609,7 @@ An encryption certificate or audit right is less visible. Politicians struggle t
 
 Some governments pursue sovereign clouds as industrial policy. They want to develop a domestic cloud industry, create jobs, and reduce dependence on foreign companies.
 
-This is legitimate as a goal. However, it is expensive, and the benefits are limited because:
+The goal is legitimate. However, it is expensive, and the benefits are limited because:
 
 - Domestic cloud providers often cannot achieve the scale or feature velocity of global competitors.
 - Enterprises still use global clouds when domestic options are inadequate.
@@ -623,7 +627,7 @@ A sovereign cloud operated by the same government doing the surveilling provides
 
 Tensions between the U.S. and other countries (China, Russia, Iran) have made some governments reluctant to depend on U.S. cloud infrastructure.
 
-This is understandable as geopolitical policy. However, it does not make a sovereign cloud economically viable. It just means the government has chosen a higher-cost option for security/political reasons.
+The policy is understandable from a geopolitical perspective. However, it does not make a sovereign cloud economically viable. It just means the government has chosen a higher-cost option for security and political reasons.
 
 ## Part 10: The future of sovereign cloud (2026–2035)
 
@@ -708,7 +712,7 @@ What actually worked was a cooperation model: "Work with vendors, establish cont
 
 The cooperation model requires trust, However, it is much more cost-effective and scalable.
 
-This is a broader lesson: Sometimes, the best way to protect your interests is not to control everything, However, to establish clear rules and verify compliance.
+A broader lesson emerges: sometimes, the best way to protect your interests is not to control everything, but to establish clear rules and verify compliance.
 
 ## Conclusion: Why this matters in 2026
 

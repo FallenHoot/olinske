@@ -220,6 +220,18 @@ jobs:
         run: |
           gh workflow run "Deploy to Azure Web App" --ref main
 
+      - name: Verify LinkedIn credentials configured
+        if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+        run: |
+          if [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_PERSON_URN" ]; then
+            echo "Missing required LinkedIn secrets for automation."
+            echo "Configure LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN in repository secrets."
+            exit 1
+          fi
+
       # ── Step 3: Wait for blog to deploy (only if we just promoted) ──
       - name: Wait for blog to deploy
         if: steps.detect.outputs.should_publish == 'true' && steps.promote.outputs.promoted == 'true' && steps.detect.outputs.needs_linkedin == 'true'

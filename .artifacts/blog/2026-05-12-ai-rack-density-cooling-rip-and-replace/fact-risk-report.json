@@ -1,0 +1,79 @@
+{
+  "slug": "2026-05-12-ai-rack-density-cooling-rip-and-replace",
+  "generated": "2026-05-12",
+  "overallRisk": "medium",
+  "publishBlockers": [],
+  "risks": [
+    {
+      "id": "FR-001",
+      "severity": "high",
+      "claim": "NVIDIA's next reference architecture needs 100kW per rack",
+      "assessment": "The 100kW figure is widely cited in industry press but requires a primary public source (NVIDIA product page or published spec sheet). The H200 NVL in full node configuration is in the 60-80kW range per publicly available information. 100kW may apply to Vera Rubin or GB300 NVL configurations. Do not state a single number as definitive without citation.",
+      "resolution": "Change to a range framing: 'significantly exceeds legacy baselines, with current generation configurations requiring 60kW or more per rack depending on configuration'. Verify Vera Rubin and GB300 NVL specs when announced publicly.",
+      "status": "unresolved-needs-author-check"
+    },
+    {
+      "id": "FR-002",
+      "severity": "high",
+      "claim": "Liquid cooling labor pool is approximately 1/100th the size of the air-cooling labor pool",
+      "assessment": "No public source supports this specific ratio. It is a rhetorical device in the source material, not a verifiable fact. If published as stated it would constitute a fabricated claim.",
+      "resolution": "Remove the ratio entirely. Replace with: 'Skilled liquid cooling commissioning and maintenance staff is a constrained workforce category. Workforce supply for liquid-cooled infrastructure has not scaled with deployment demand.' Cite a workforce or industry report if available.",
+      "status": "resolved-in-draft"
+    },
+    {
+      "id": "FR-003",
+      "severity": "high",
+      "claim": "$50/kWh power pricing race claim",
+      "assessment": "The $50/kWh figure appears to be a typo or unit error in the source notes (power is priced per kWh at a few cents to tens of cents typically; $50 would be extreme). If this refers to colocation power pricing in $/kW/month, the range is plausible for premium AI-ready sites but needs a public market source.",
+      "resolution": "Remove this figure entirely. Replace with a directional statement: 'AI-ready colo sites command significant premiums over legacy power contracts.' Verify against a public commercial real estate or colo pricing report before restating a number.",
+      "status": "resolved-in-draft"
+    },
+    {
+      "id": "FR-004",
+      "severity": "medium",
+      "claim": "Most enterprise colo leases were signed at 8-15kW per rack",
+      "assessment": "Directionally consistent with industry baseline data. Uptime Institute and Omdia (formerly IHS Markit) have published data in this range. Not verifiable from a single freely accessible source in this pass.",
+      "resolution": "Frame as a directional claim with 'Needs verification' tag. Acceptable to state with 'historically' qualifier and note that recent AI-ready builds target significantly higher densities.",
+      "status": "resolved-in-draft"
+    },
+    {
+      "id": "FR-005",
+      "severity": "medium",
+      "claim": "Air cooling caps out around 30kW per rack",
+      "assessment": "Industry consensus supports this directional claim. The specific threshold varies by facility and cooling design. Green Grid and ASHRAE have published guidance in this range but exact figures vary.",
+      "resolution": "State as 'practical ceiling in many facilities in the 25-40kW range' rather than a hard 30kW cutoff. Link to Green Grid or ASHRAE public guidance when finalizing.",
+      "status": "resolved-in-draft"
+    },
+    {
+      "id": "FR-006",
+      "severity": "medium",
+      "claim": "EU enterprises placing orders in February already have their 2027 capacity; October orders get Q4 2027",
+      "assessment": "Reflects real supply chain dynamics but the specific month-to-delivery mapping is not verifiable from a public source. This reads like insider market knowledge rather than a public claim.",
+      "resolution": "Reframe as: 'Hardware lead times for AI-ready liquid-cooled infrastructure are extending. Enterprises evaluating 2027 capacity need to be making facility and hardware decisions now, not at year-end.' Remove the month-specific framing.",
+      "status": "resolved-in-draft"
+    },
+    {
+      "id": "FR-007",
+      "severity": "low",
+      "claim": "The 14kW-per-rack era ran from roughly 2010 to 2023",
+      "assessment": "Directionally accurate as a planning baseline. Safe to state as a general framing rather than a precise historical claim.",
+      "resolution": "Acceptable. State as 'legacy data center design standards common through the early 2020s'.",
+      "status": "resolved-in-draft"
+    },
+    {
+      "id": "FR-008",
+      "severity": "low",
+      "claim": "Microsoft transitions from air-cooled to chip-level liquid cooling",
+      "assessment": "Directly stated on Microsoft Learn public sustainability page. Verified.",
+      "resolution": "Safe to state with citation.",
+      "status": "cleared"
+    }
+  ],
+  "confidentialityCheck": {
+    "customerReferences": "none",
+    "internalDetails": "none",
+    "roadmapSpeculation": "FR-001 touches on future NVIDIA product specs — resolve before publish",
+    "insiderFraming": "none after FR-002 and FR-003 resolutions"
+  },
+  "publishGate": "HOLD — FR-001 requires author verification of NVIDIA rack density public spec before publish. All other high-severity risks are resolved in the draft as written."
+}

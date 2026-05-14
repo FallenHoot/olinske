@@ -1,0 +1,715 @@
+{
+  "metadata": {
+    "created": "2026-05-10",
+    "purpose": "Approved research sources for blog agents - research strategy prioritizes these URLs for content discovery",
+    "usage": "Agents should randomly sample from these lists first before expanding to broader web searches",
+    "categories": ["top-100-tech-blogs", "cto-voices", "azure-specific"]
+  },
+  "top-100-tech-blogs": [
+    {
+      "rank": 1,
+      "name": "Martin Fowler",
+      "url": "https://martinfowler.com/",
+      "focus": "architecture, design patterns"
+    },
+    {
+      "rank": 2,
+      "name": "InfoQ",
+      "url": "https://www.infoq.com/",
+      "focus": "architecture, interviews, news"
+    },
+    {
+      "rank": 3,
+      "name": "Thoughtworks Insights",
+      "url": "https://www.thoughtworks.com/insights",
+      "focus": "architecture, technology radar, practices"
+    },
+    {
+      "rank": 4,
+      "name": "High Scalability",
+      "url": "http://highscalability.com/",
+      "focus": "infrastructure at scale, reliability"
+    },
+    {
+      "rank": 5,
+      "name": "ACM Queue",
+      "url": "https://queue.acm.org/",
+      "focus": "computer systems research, peer-reviewed"
+    },
+    {
+      "rank": 6,
+      "name": "The Pragmatic Engineer",
+      "url": "https://newsletter.pragmaticengineer.com/",
+      "focus": "engineering culture, teams, careers"
+    },
+    {
+      "rank": 7,
+      "name": "Meta Engineering",
+      "url": "https://engineering.fb.com/",
+      "focus": "infrastructure, systems, AI/ML"
+    },
+    {
+      "rank": 8,
+      "name": "Netflix TechBlog",
+      "url": "https://netflixtechblog.com/",
+      "focus": "infrastructure, resilience, distributed systems"
+    },
+    {
+      "rank": 9,
+      "name": "Uber Engineering",
+      "url": "https://www.uber.com/blog/engineering/",
+      "focus": "infrastructure, scale, reliability"
+    },
+    {
+      "rank": 10,
+      "name": "Airbnb Engineering & Data Science",
+      "url": "https://airbnb.tech/",
+      "focus": "infrastructure, data systems"
+    },
+    {
+      "rank": 11,
+      "name": "Dropbox Tech Blog",
+      "url": "https://dropbox.tech/",
+      "focus": "infrastructure, storage, scale"
+    },
+    {
+      "rank": 12,
+      "name": "Spotify Engineering",
+      "url": "https://engineering.atspotify.com/",
+      "focus": "infrastructure, agents, developer tools"
+    },
+    {
+      "rank": 13,
+      "name": "Slack Engineering",
+      "url": "https://slack.engineering/",
+      "focus": "distributed systems, reliability"
+    },
+    {
+      "rank": 14,
+      "name": "LinkedIn Engineering",
+      "url": "https://engineering.linkedin.com/",
+      "focus": "scale, data systems, infrastructure"
+    },
+    {
+      "rank": 15,
+      "name": "Pinterest Engineering",
+      "url": "https://medium.com/pinterest-engineering",
+      "focus": "infrastructure, ML, scale"
+    },
+    {
+      "rank": 16,
+      "name": "Reddit Engineering",
+      "url": "https://www.reddit.com/r/RedditEng/",
+      "focus": "infrastructure, systems, scale"
+    },
+    {
+      "rank": 17,
+      "name": "Cloudflare Blog",
+      "url": "https://blog.cloudflare.com/",
+      "focus": "infrastructure, security, reliability, incident response"
+    },
+    {
+      "rank": 18,
+      "name": "GitHub Blog",
+      "url": "https://github.blog/",
+      "focus": "platform, security, AI/ML"
+    },
+    {
+      "rank": 19,
+      "name": "GitLab Blog",
+      "url": "https://about.gitlab.com/blog/",
+      "focus": "platform, DevOps, security"
+    },
+    {
+      "rank": 20,
+      "name": "Atlassian Engineering",
+      "url": "https://www.atlassian.com/blog/engineering",
+      "focus": "platform, DevOps, teams"
+    },
+    {
+      "rank": 21,
+      "name": "Stripe Engineering",
+      "url": "https://stripe.com/blog/engineering",
+      "focus": "infrastructure, payments, reliability"
+    },
+    {
+      "rank": 22,
+      "name": "PayPal Engineering",
+      "url": "https://medium.com/paypal-tech",
+      "focus": "scale, infrastructure, payments"
+    },
+    {
+      "rank": 23,
+      "name": "Shopify Engineering",
+      "url": "https://shopify.engineering/",
+      "focus": "infrastructure, scale, DevOps"
+    },
+    {
+      "rank": 24,
+      "name": "Canva Engineering",
+      "url": "https://www.canva.dev/blog/engineering/",
+      "focus": "infrastructure, platform"
+    },
+    {
+      "rank": 25,
+      "name": "Figma Blog",
+      "url": "https://www.figma.com/blog/",
+      "focus": "platform, infrastructure"
+    },
+    {
+      "rank": 26,
+      "name": "Notion Engineering",
+      "url": "https://www.notion.so/blog/topic/engineering",
+      "focus": "infrastructure, platform"
+    },
+    {
+      "rank": 27,
+      "name": "Datadog Engineering",
+      "url": "https://www.datadoghq.com/blog/engineering/",
+      "focus": "observability, infrastructure, monitoring"
+    },
+    {
+      "rank": 28,
+      "name": "Sentry Blog",
+      "url": "https://blog.sentry.io/",
+      "focus": "observability, error tracking, DevOps"
+    },
+    {
+      "rank": 29,
+      "name": "Vercel Blog",
+      "url": "https://vercel.com/blog",
+      "focus": "platform, deployment, frontend"
+    },
+    {
+      "rank": 30,
+      "name": "Netlify Blog",
+      "url": "https://www.netlify.com/blog/",
+      "focus": "platform, deployment"
+    },
+    {
+      "rank": 31,
+      "name": "Fastly Blog",
+      "url": "https://www.fastly.com/blog",
+      "focus": "CDN, infrastructure, edge"
+    },
+    {
+      "rank": 32,
+      "name": "Twilio Engineering",
+      "url": "https://www.twilio.com/en-us/blog/developers",
+      "focus": "APIs, platform, communications"
+    },
+    {
+      "rank": 33,
+      "name": "Azure Blog",
+      "url": "https://azure.microsoft.com/blog/",
+      "focus": "cloud platform, announcements, thought leadership"
+    },
+    {
+      "rank": 34,
+      "name": "Microsoft DevBlogs",
+      "url": "https://devblogs.microsoft.com/",
+      "focus": "development tools, platform, SDKs"
+    },
+    {
+      "rank": 35,
+      "name": "AWS Architecture Blog",
+      "url": "https://aws.amazon.com/blogs/architecture/",
+      "focus": "cloud architecture, best practices, case studies"
+    },
+    {
+      "rank": 36,
+      "name": "AWS News Blog",
+      "url": "https://aws.amazon.com/blogs/aws/",
+      "focus": "AWS announcements, features, news"
+    },
+    {
+      "rank": 37,
+      "name": "Google Cloud Blog",
+      "url": "https://cloud.google.com/blog",
+      "focus": "cloud platform, announcements, thought leadership"
+    },
+    {
+      "rank": 38,
+      "name": "Google Developers Blog",
+      "url": "https://developers.googleblog.com/",
+      "focus": "development, APIs, tools"
+    },
+    {
+      "rank": 39,
+      "name": "Google Research Blog",
+      "url": "https://research.google/blog/",
+      "focus": "AI/ML research, machine learning"
+    },
+    {
+      "rank": 40,
+      "name": "OpenAI Blog",
+      "url": "https://openai.com/blog",
+      "focus": "AI/LLM research, announcements"
+    },
+    {
+      "rank": 41,
+      "name": "Anthropic News",
+      "url": "https://www.anthropic.com/news",
+      "focus": "AI safety, LLM research"
+    },
+    {
+      "rank": 42,
+      "name": "Hugging Face Blog",
+      "url": "https://huggingface.co/blog",
+      "focus": "ML/AI models, open source"
+    },
+    {
+      "rank": 43,
+      "name": "NVIDIA Developer Blog",
+      "url": "https://developer.nvidia.com/blog/",
+      "focus": "GPU computing, AI/ML, CUDA"
+    },
+    {
+      "rank": 44,
+      "name": "Intel Software Blog",
+      "url": "https://community.intel.com/t5/Blogs/tech-innovation/bg-p/Blogs",
+      "focus": "performance, optimization, hardware"
+    },
+    {
+      "rank": 45,
+      "name": "Apple Machine Learning Research",
+      "url": "https://machinelearning.apple.com/",
+      "focus": "ML research, AI"
+    },
+    {
+      "rank": 46,
+      "name": "Apple Developer News",
+      "url": "https://developer.apple.com/news/",
+      "focus": "platform, development, announcements"
+    },
+    {
+      "rank": 47,
+      "name": "Android Developers Blog",
+      "url": "https://android-developers.googleblog.com/",
+      "focus": "mobile platform, development"
+    },
+    {
+      "rank": 48,
+      "name": "Chrome Developers Blog",
+      "url": "https://developer.chrome.com/blog",
+      "focus": "web platform, browser, standards"
+    },
+    {
+      "rank": 49,
+      "name": "web.dev Blog",
+      "url": "https://web.dev/blog/",
+      "focus": "web standards, performance, best practices"
+    },
+    {
+      "rank": 50,
+      "name": "Mozilla Hacks",
+      "url": "https://hacks.mozilla.org/",
+      "focus": "web standards, browser, development"
+    },
+    {
+      "rank": 51,
+      "name": "JetBrains Blog",
+      "url": "https://blog.jetbrains.com/",
+      "focus": "development tools, IDEs, languages"
+    },
+    {
+      "rank": 52,
+      "name": "Docker Blog",
+      "url": "https://www.docker.com/blog/",
+      "focus": "containerization, infrastructure, DevOps"
+    },
+    {
+      "rank": 53,
+      "name": "Kubernetes Blog",
+      "url": "https://kubernetes.io/blog/",
+      "focus": "container orchestration, infrastructure"
+    },
+    {
+      "rank": 54,
+      "name": "CNCF Blog",
+      "url": "https://www.cncf.io/blog/",
+      "focus": "cloud native, infrastructure, open source"
+    },
+    {
+      "rank": 55,
+      "name": "HashiCorp Blog",
+      "url": "https://www.hashicorp.com/blog",
+      "focus": "infrastructure, IaC, DevOps, automation"
+    },
+    {
+      "rank": 56,
+      "name": "Red Hat Developer Blog",
+      "url": "https://developers.redhat.com/blog",
+      "focus": "Linux, open source, infrastructure"
+    },
+    {
+      "rank": 57,
+      "name": "IBM Research Blog",
+      "url": "https://research.ibm.com/blog",
+      "focus": "AI/ML research, enterprise technology"
+    },
+    {
+      "rank": 58,
+      "name": "Oracle Developers Blog",
+      "url": "https://blogs.oracle.com/developers/",
+      "focus": "database, cloud, development"
+    },
+    {
+      "rank": 59,
+      "name": "DigitalOcean Blog",
+      "url": "https://www.digitalocean.com/blog",
+      "focus": "cloud infrastructure, DevOps, tutorials"
+    },
+    {
+      "rank": 60,
+      "name": "Snowflake Blog",
+      "url": "https://www.snowflake.com/blog/",
+      "focus": "data warehouse, analytics, cloud data"
+    },
+    {
+      "rank": 61,
+      "name": "Databricks Blog",
+      "url": "https://www.databricks.com/blog",
+      "focus": "data, AI/ML, analytics"
+    },
+    {
+      "rank": 62,
+      "name": "Confluent Blog",
+      "url": "https://www.confluent.io/blog/",
+      "focus": "streaming, event processing, data infrastructure"
+    },
+    {
+      "rank": 63,
+      "name": "MongoDB Blog",
+      "url": "https://www.mongodb.com/blog",
+      "focus": "database, NoSQL, data"
+    },
+    {
+      "rank": 64,
+      "name": "Elastic Blog",
+      "url": "https://www.elastic.co/blog/",
+      "focus": "search, analytics, observability"
+    },
+    {
+      "rank": 65,
+      "name": "Redis Blog",
+      "url": "https://redis.io/blog/",
+      "focus": "caching, data structures, performance"
+    },
+    {
+      "rank": 66,
+      "name": "Cockroach Labs Blog",
+      "url": "https://www.cockroachlabs.com/blog/",
+      "focus": "database, distributed SQL"
+    },
+    {
+      "rank": 67,
+      "name": "PlanetScale Blog",
+      "url": "https://planetscale.com/blog",
+      "focus": "MySQL, database, scale"
+    },
+    {
+      "rank": 68,
+      "name": "Supabase Blog",
+      "url": "https://supabase.com/blog",
+      "focus": "database, backend, PostgreSQL"
+    },
+    {
+      "rank": 69,
+      "name": "Neon Blog",
+      "url": "https://neon.tech/blog",
+      "focus": "PostgreSQL, serverless, database"
+    },
+    {
+      "rank": 70,
+      "name": "Timescale Blog",
+      "url": "https://www.timescale.com/blog",
+      "focus": "time series, PostgreSQL, data"
+    },
+    {
+      "rank": 71,
+      "name": "ClickHouse Blog",
+      "url": "https://clickhouse.com/blog",
+      "focus": "data warehouse, analytics, performance"
+    },
+    {
+      "rank": 72,
+      "name": "SingleStore Blog",
+      "url": "https://www.singlestore.com/blog/",
+      "focus": "database, analytics, performance"
+    },
+    {
+      "rank": 73,
+      "name": "Grafana Labs Blog",
+      "url": "https://grafana.com/blog/",
+      "focus": "observability, monitoring, visualization"
+    },
+    {
+      "rank": 74,
+      "name": "New Relic Blog",
+      "url": "https://newrelic.com/blog",
+      "focus": "observability, monitoring, APM"
+    },
+    {
+      "rank": 75,
+      "name": "Honeycomb Blog",
+      "url": "https://www.honeycomb.io/blog",
+      "focus": "observability, debugging, infrastructure"
+    },
+    {
+      "rank": 76,
+      "name": "LaunchDarkly Blog",
+      "url": "https://launchdarkly.com/blog/",
+      "focus": "feature flags, deployment, DevOps"
+    },
+    {
+      "rank": 77,
+      "name": "CircleCI Blog",
+      "url": "https://circleci.com/blog/",
+      "focus": "CI/CD, automation, DevOps"
+    },
+    {
+      "rank": 78,
+      "name": "Buildkite Blog",
+      "url": "https://buildkite.com/resources/blog/",
+      "focus": "CI/CD, infrastructure, DevOps"
+    },
+    {
+      "rank": 79,
+      "name": "Semgrep Blog",
+      "url": "https://semgrep.dev/blog/",
+      "focus": "security, SAST, code analysis"
+    },
+    {
+      "rank": 80,
+      "name": "Trail of Bits Blog",
+      "url": "https://blog.trailofbits.com/",
+      "focus": "security research, cryptography, audits"
+    },
+    {
+      "rank": 81,
+      "name": "Wiz Research Blog",
+      "url": "https://www.wiz.io/blog",
+      "focus": "cloud security, threat research"
+    },
+    {
+      "rank": 82,
+      "name": "Palo Alto Unit 42",
+      "url": "https://unit42.paloaltonetworks.com/",
+      "focus": "threat research, security, incident response"
+    },
+    {
+      "rank": 83,
+      "name": "Mandiant Blog",
+      "url": "https://www.mandiant.com/resources/blog",
+      "focus": "threat research, incident response, security"
+    },
+    {
+      "rank": 84,
+      "name": "Okta Developer Blog",
+      "url": "https://developer.okta.com/blog/",
+      "focus": "identity, security, authentication"
+    },
+    {
+      "rank": 85,
+      "name": "Auth0 Blog",
+      "url": "https://auth0.com/blog/",
+      "focus": "identity, security, authentication"
+    },
+    {
+      "rank": 86,
+      "name": "Tailscale Blog",
+      "url": "https://tailscale.com/blog/",
+      "focus": "networking, VPN, infrastructure security"
+    },
+    {
+      "rank": 87,
+      "name": "Fly.io Blog",
+      "url": "https://fly.io/blog/",
+      "focus": "edge computing, infrastructure, platform"
+    },
+    {
+      "rank": 88,
+      "name": "Render Blog",
+      "url": "https://render.com/blog",
+      "focus": "platform, deployment, infrastructure"
+    },
+    {
+      "rank": 89,
+      "name": "Railway Blog",
+      "url": "https://blog.railway.app/",
+      "focus": "platform, deployment, infrastructure"
+    },
+    {
+      "rank": 90,
+      "name": "ByteByteGo",
+      "url": "https://blog.bytebytego.com/",
+      "focus": "systems design, architecture, scale"
+    },
+    {
+      "rank": 91,
+      "name": "Simon Willison's Weblog",
+      "url": "https://simonwillison.net/",
+      "focus": "technology, development, web"
+    },
+    {
+      "rank": 92,
+      "name": "Julia Evans",
+      "url": "https://jvns.ca/",
+      "focus": "systems, debugging, learning"
+    },
+    {
+      "rank": 93,
+      "name": "Dan Luu",
+      "url": "https://danluu.com/",
+      "focus": "systems, performance, history"
+    },
+    {
+      "rank": 94,
+      "name": "Brendan Gregg Blog",
+      "url": "https://www.brendangregg.com/blog/",
+      "focus": "performance, systems, observability"
+    },
+    {
+      "rank": 95,
+      "name": "Charity.wtf",
+      "url": "https://charity.wtf/",
+      "focus": "observability, culture, operations"
+    },
+    {
+      "rank": 96,
+      "name": "Kent C. Dodds Blog",
+      "url": "https://kentcdodds.com/blog",
+      "focus": "web development, testing, JavaScript"
+    },
+    {
+      "rank": 97,
+      "name": "CSS-Tricks",
+      "url": "https://css-tricks.com/",
+      "focus": "web development, CSS, frontend"
+    },
+    {
+      "rank": 98,
+      "name": "Smashing Magazine",
+      "url": "https://www.smashingmagazine.com/",
+      "focus": "web design, development, UX"
+    },
+    {
+      "rank": 99,
+      "name": "HackerNoon",
+      "url": "https://hackernoon.com/",
+      "focus": "technology news, tutorials, culture"
+    },
+    {
+      "rank": 100,
+      "name": "The New Stack",
+      "url": "https://thenewstack.io/",
+      "focus": "cloud native, infrastructure, DevOps"
+    }
+  ],
+  "cto-voices": [
+    {
+      "name": "Sam Altman",
+      "title": "CEO, OpenAI",
+      "url": "https://blog.samaltman.com/",
+      "focus": "AI strategy, leadership"
+    },
+    {
+      "name": "Patrick Collison",
+      "title": "CEO, Stripe",
+      "url": "https://patrickcollison.com/",
+      "focus": "strategy, learning, fintech"
+    },
+    {
+      "name": "Gergely Orosz",
+      "title": "The Pragmatic Engineer",
+      "url": "https://newsletter.pragmaticengineer.com/",
+      "focus": "engineering culture, careers, scale"
+    },
+    {
+      "name": "Will Larson",
+      "title": "CTO Leadership Writing",
+      "url": "https://lethain.com/",
+      "focus": "leadership, scaling, organizations"
+    },
+    {
+      "name": "Charity Majors",
+      "title": "CTO, Honeycomb",
+      "url": "https://charity.wtf/",
+      "focus": "observability, culture, operations"
+    },
+    {
+      "name": "Camille Fournier",
+      "title": "former CTO, Rent the Runway",
+      "url": "https://skamille.medium.com/",
+      "focus": "leadership, systems, scale"
+    },
+    {
+      "name": "John Cutler",
+      "title": "Product & Leadership Writing",
+      "url": "https://cutlefish.substack.com/",
+      "focus": "product, leadership, strategy"
+    },
+    {
+      "name": "Martin Fowler",
+      "title": "Chief Scientist, Thoughtworks",
+      "url": "https://martinfowler.com/",
+      "focus": "architecture, patterns, practice"
+    },
+    {
+      "name": "Simon Wardley",
+      "title": "Strategy & Wardley Maps",
+      "url": "https://blog.gardeviance.org/",
+      "focus": "strategy, mapping, evolution"
+    },
+    {
+      "name": "Ben Horowitz",
+      "title": "co-founder, a16z",
+      "url": "https://a16z.com/author/ben-horowitz/",
+      "focus": "strategy, business, scaling"
+    },
+    {
+      "name": "Marc Andreessen",
+      "title": "co-founder, a16z",
+      "url": "https://a16z.com/author/marc-andreessen/",
+      "focus": "technology, investing, strategy"
+    },
+    {
+      "name": "Satya Nadella",
+      "title": "CEO, Microsoft",
+      "url": "https://news.microsoft.com/",
+      "focus": "cloud, AI, digital transformation"
+    },
+    {
+      "name": "Sundar Pichai",
+      "title": "CEO, Google/Alphabet",
+      "url": "https://blog.google/",
+      "focus": "AI, products, strategy"
+    },
+    {
+      "name": "Jensen Huang",
+      "title": "CEO, NVIDIA",
+      "url": "https://blogs.nvidia.com/",
+      "focus": "AI, GPU computing, strategy"
+    },
+    {
+      "name": "Arvind Krishna",
+      "title": "CEO, IBM",
+      "url": "https://www.ibm.com/thought-leadership/",
+      "focus": "enterprise, AI, hybrid cloud"
+    }
+  ],
+  "azure-specific": [
+    {
+      "name": "Microsoft Azure Blogs (Feedspot directory)",
+      "url": "https://bloggers.feedspot.com/microsoft_azure_blogs/",
+      "focus": "Azure ecosystem, community blogs"
+    }
+  ],
+  "usage-notes": {
+    "search-strategy": "When researching content, randomly select 5-10 URLs from the top-100-tech-blogs list relevant to the post topic. Search these first before expanding to broader web searches.",
+    "sampling": "Random selection prevents algorithmic bias toward high-traffic blogs and ensures discovery across domains.",
+    "focus-areas": "For Azure-specific content, also include items from the 'azure-specific' section. For CTO/leadership writing, use the 'cto-voices' section.",
+    "fallback": "Only expand beyond this approved list if evidence cannot be found after reasonable sampling from these curated sources."
+  }
+}

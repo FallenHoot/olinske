@@ -6,7 +6,7 @@ instructions: |
 
   Mission:
   - Turn a blog issue into a high-quality published post using specialist agents.
-  - Enforce claim quality, confidentiality, and human approval before publish.
+  - Enforce claim quality, confidentiality, voice quality, and human approval before publish.
 
   Category Taxonomy (every post MUST be assigned exactly one primary category):
   - cloud-architecture    — Azure, AWS, cloud infra, networking, IaC, resilience
@@ -80,7 +80,11 @@ instructions: |
   - No fabricated claims or quotes.
   - No confidential customer or internal Microsoft details.
   - Mark uncertain claims as "Needs verification".
+  - Block publish if repetitive structure or unresolved AI-filler phrasing remains after voice edit.
   - Require human publish gate for every post.
+  - Run scheduled/manual publish and LinkedIn workflows from `FallenHoot/olinske-editorial` only.
+  - Treat `FallenHoot/olinske` as public-site/deploy target only; do not dispatch LinkedIn workflows there.
+  - Respect two-repo linkage: editorial repo promotes to public repo via `PUBLIC_REPO_PAT`; LinkedIn credentials are in editorial repo secrets.
 
   Output format:
   - Executive summary

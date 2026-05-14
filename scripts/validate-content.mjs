@@ -17,6 +17,22 @@ const gate = argValue('--gate', 'draft');
 const errors = [];
 const warnings = [];
 const SITE_BASE_URL = (process.env.BLOG_BASE_URL || 'https://zach.olinske.com').replace(/\/$/, '');
+const STRICT_VOICE_GATE = process.env.STRICT_VOICE_GATE === '1';
+const REPETITIVE_OPENERS = [
+  'this is',
+  'that is',
+  'the real',
+  'the key',
+  'for many',
+  'in practice',
+  'the problem'
+];
+const AI_FILLER_PHRASES = [
+  'leveraging cross-functional synergies',
+  "in today's fast-paced",
+  'paradigm shift',
+  'robust and scalable'
+];
 
 function walkMarkdownFiles(dirPath) {
   if (!fs.existsSync(dirPath)) return [];
@@ -48,6 +64,7 @@ function addWarning(filePath, message) {
 function validateArticle(filePath) {
   const { parsed } = readMatter(filePath);
   const data = parsed.data || {};
+  const body = parsed.content || '';
 
   if (!data.title) addError(filePath, 'missing required frontmatter field "title"');
   if (!data.publishDate) addError(filePath, 'missing required frontmatter field "publishDate"');
@@ -62,6 +79,85 @@ function validateArticle(filePath) {
   if (filePath.includes(`${path.sep}content${path.sep}published${path.sep}`) && data.status !== 'published') {
     addWarning(filePath, 'published content is expected to use status: published');
   }
+
+  const isPublished = data.status === 'published' || filePath.includes(`${path.sep}content${path.sep}published${path.sep}`);
+  if (gate === 'publish' && isPublished && hasReferencesSection(body)) {
+    addError(filePath, 'published posts must not include a "## References" section');
+  }
+
+  validateVoiceQuality(filePath, body, isPublished);
+}
+
+function extractNarrativeParagraphs(text) {
+  return text
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter((block) => block.length > 0)
+    .filter((block) => !block.startsWith('#'))
+    .filter((block) => !block.startsWith('|'))
+    .filter((block) => !block.startsWith('```'))
+    .filter((block) => !block.startsWith('>'))
+    .filter((block) => !/^\d+\.\s+/.test(block))
+    .filter((block) => !block.startsWith('- '));
+}
+
+function normalizeForDuplicateCheck(text) {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function validateVoiceQuality(filePath, body, isPublished) {
+  const paragraphs = extractNarrativeParagraphs(body);
+  if (paragraphs.length === 0) return;
+
+  const duplicateMap = new Map();
+  for (const paragraph of paragraphs) {
+    if (paragraph.length < 80) continue;
+    const normalized = normalizeForDuplicateCheck(paragraph);
+    duplicateMap.set(normalized, (duplicateMap.get(normalized) || 0) + 1);
+  }
+
+  const duplicateParagraphs = [...duplicateMap.values()].filter((count) => count > 1).length;
+  if (duplicateParagraphs > 0) {
+    const message = `contains ${duplicateParagraphs} near-duplicate narrative paragraph(s); tighten repetition`;
+    if (gate === 'publish' && isPublished && STRICT_VOICE_GATE) addError(filePath, message);
+    else addWarning(filePath, message);
+  }
+
+  const openerCounts = new Map();
+  for (const paragraph of paragraphs) {
+    const sentenceStart = paragraph
+      .replace(/[\r\n]+/g, ' ')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    for (const opener of REPETITIVE_OPENERS) {
+      if (sentenceStart.startsWith(opener)) {
+        openerCounts.set(opener, (openerCounts.get(opener) || 0) + 1);
+      }
+    }
+  }
+
+  for (const [opener, count] of openerCounts.entries()) {
+    if (count >= 3) {
+      const message = `repetitive paragraph opener "${opener}" appears ${count} times`;
+      if (gate === 'publish' && isPublished && STRICT_VOICE_GATE && count >= 4) addError(filePath, message);
+      else addWarning(filePath, message);
+    }
+  }
+
+  const lowerBody = body.toLowerCase();
+  for (const phrase of AI_FILLER_PHRASES) {
+    if (lowerBody.includes(phrase)) {
+      const message = `contains AI-filler phrase "${phrase}"; rewrite with concrete language`;
+      if (gate === 'publish' && isPublished && STRICT_VOICE_GATE) addError(filePath, message);
+      else addWarning(filePath, message);
+    }
+  }
+}
+
+function hasReferencesSection(text) {
+  return /(^|\n)##\s+References\s*(\n|$)/i.test(text);
 }
 
 function extractNumericClaims(text) {

@@ -1,0 +1,38 @@
+{
+  "pass_fail": "Pass with caveats",
+  "high_risks": [
+    {
+      "issue": "The EUR 123k to EUR 204k monthly figure depends on assumptions outside the Azure product semantics.",
+      "mitigation": "The saved draft labels the range as illustrative only and states the assumptions inline."
+    },
+    {
+      "issue": "Reacquisition risk should not be framed as a Microsoft promise that capacity will be unavailable later.",
+      "mitigation": "The saved draft frames this as the practical implication of two documented facts: capacity is reserved until deletion, and later reservation creation can fail if capacity is unavailable."
+    }
+  ],
+  "medium_risks": [
+    {
+      "issue": "Use precise Azure wording for billing semantics.",
+      "mitigation": "The draft uses 'same rate as the underlying VM size, at pay-as-you-go rates, whether the VM is provisioned or not'."
+    },
+    {
+      "issue": "Avoid implying that discounts solve efficiency problems.",
+      "mitigation": "The draft explicitly states that discounts help rate optimization but do not fix utilization inefficiency."
+    }
+  ],
+  "approved_claims": [
+    "On-demand capacity reservations do not require a one-year or three-year term commitment and can be created or deleted as needed.",
+    "Capacity reservations are billed at the same rate as the underlying VM size, whether the VM is provisioned or not.",
+    "Azure does not charge twice for the reservation and the VM.",
+    "Both used and unused capacity reservation usage can receive Savings Plan and Reserved Instance discounts.",
+    "Capacity is reserved for your use until the reservation is deleted.",
+    "Quota does not guarantee capacity.",
+    "The NVads A10 v5 series is publicly listed among the GPU-accelerated VM series that support Capacity Reservation."
+  ],
+  "needs_verification": [
+    "Exact list prices and currency conversion basis for the illustrative EUR range if the post is later hardened into a publish-ready pricing analysis.",
+    "Region-specific scarcity commentary, if any is added later.",
+    "Any exact workload utilization ratios beyond the generic business-hours example."
+  ],
+  "recommended_disclaimer": "I work at Microsoft. The views expressed here are my own and based solely on publicly available information. This content is for educational purposes and does not represent official Microsoft guidance or commitments. Any pricing figures in this post are illustrative estimates based on public pricing inputs and stated assumptions, not official quotes, guarantees, or capacity commitments."
+}

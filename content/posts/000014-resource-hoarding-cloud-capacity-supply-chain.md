@@ -17,7 +17,7 @@ That is where resource hoarding starts.
 
 Teams reserve capacity early, overprovision longer than needed, and hold allocations they are afraid to release. The behavior looks wasteful from the outside. In many cases, it is a rational response to uncertainty.
 
-This is not a single-vendor story. Public statements from cloud and semiconductor leaders across Microsoft, AWS, GCP, Nvidia, AMD, Intel, and major memory suppliers all point to the same pressure pattern: demand for compute is growing faster than near-term supply can be brought online.
+The pattern is not a single-vendor story. Public statements from cloud and semiconductor leaders across Microsoft, AWS, GCP, Nvidia, AMD, Intel, and major memory suppliers all point to the same pressure pattern: demand for compute is growing faster than near-term supply can be brought online.
 
 ## How to read this post
 
@@ -148,7 +148,7 @@ This model makes one fact obvious: your future elasticity is mostly determined b
 
 ## Capacity constraints are cross-vendor
 
-This is bigger than one platform.
+The issue extends beyond one platform.
 
 Public earnings calls, investor letters, and technical briefings across major hyperscalers repeatedly reference capacity pacing, infrastructure bottlenecks, and ramp timing. GPU, CPU, and memory vendors describe similar pressure from the hardware side.
 
@@ -194,7 +194,7 @@ In practical terms, expected failure cost includes:
 - Incident response cost
 - Executive escalation cost
 
-This is why generic utilization targets can backfire. A hard utilization target can improve monthly spend and increase annual business risk.
+Generic utilization targets can backfire for this reason. A hard utilization target can improve monthly spend and increase annual business risk.
 
 ### Quota does not guarantee capacity
 
@@ -216,7 +216,7 @@ The important mechanism is allocation plus retention. Capacity is allocated at d
 
 The operational conclusion is direct: reacquiring capacity is not primarily a timing problem. It is a placement and allocation problem.
 
-This is why teams that have already secured capacity often choose to retain it rather than rely on reacquisition.
+Teams that have already secured capacity often choose to retain it rather than rely on reacquisition.
 
 ### Concrete scenario (anonymized)
 
@@ -243,7 +243,7 @@ That asymmetry produces a stack of option-preserving behaviors:
 3. **Region hoarding:** staying anchored to constrained regions because relocation and revalidation are expensive.
 4. **Governance hoarding:** retaining allocations because release approvals are harder than overspend approvals.
 
-This is not irrational behavior. It is rational behavior under uncertainty.
+This behavior is not irrational. It is rational behavior under uncertainty.
 
 ## From dust to product: the compute supply chain
 

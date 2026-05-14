@@ -23,11 +23,13 @@ The moment you deploy more than one agent, you hit real architecture challenges:
 Most teams are not ready for this. Yet agentic systems are already multi-agent by design.
 
 The root cause is consistent: teams treat multi-agent systems like chained prompts.
-They are not. They are distributed systems, and they fail like distributed systems.
+They are distributed systems. They fail with the same stale state, retry, ordering, and ownership problems that break other distributed systems.
 
 ## Why this matters
 
 Single-agent systems hit limits when tasks require genuine parallelism, domain specialization, or fault isolation across components.
+
+That does not mean you should start with multiple agents. In many cases, a single agent with strong tools, clear instructions, and tight evaluation is the better system until specialization or parallelism delivers a measurable gain.
 
 Real-world problems require agents to:
 
@@ -37,7 +39,7 @@ Real-world problems require agents to:
 - Chain decisions (agent feedback updates agent behavior).
 
 Without a coordination layer, multi-agent systems do not just slow down.
-They produce wrong outputs quietly. Each agent is fast, but the system as a whole is unreliable.
+They produce wrong outputs without failing. Each agent can look fast and healthy while the system as a whole is unreliable.
 
 ## What changed
 
@@ -46,6 +48,8 @@ Frameworks like Semantic Kernel and AutoGen now make multi-agent composition eas
 They did not make multi-agent systems reliable.
 
 The gap most teams fall into: they deploy orchestration code without designing state management, failure modes, or decision ownership. The framework compiles. Production breaks them.
+
+That is the real shift teams miss. Multi-agent systems require the same engineering maturity as microservices: orchestration, state management, observability, and failure design. Treating them as an application feature leads to fragile systems.
 
 There is also a split in the system that most teams never name explicitly.
 
@@ -64,19 +68,19 @@ Use this as your starting framework:
 Define what each agent does, what state it owns, and what it must not touch. If two agents can both write to the same state, you have already introduced a conflict.
 
 **Layer 2: State Management**
-If your state is not durable, your system is not multi-agent. It is just multiple prompts chained together. Use a persistent store (database, event log). Never pass state only through memory or prompt context.
+If your state is not durable, your system is not multi-agent. It is just multiple prompts chained together. Choose your model deliberately: a state store gives you the latest snapshot, while an append-only event log gives you replay and history for debugging. Never pass state only through memory or prompt context.
 
 **Layer 3: Coordination Protocol**
-Define how agents signal each other (queues, pub/sub, event streams). The protocol must be explicit and inspectable. An agent that silently assumes another finished is a failure waiting to happen.
+Define how agents signal each other (queues, pub/sub, event streams). Pick the coordination pattern deliberately: manager-worker for centralized control, handoffs for routing between specialists, or event-driven and blackboard-style designs for looser coupling. The protocol must be explicit and inspectable, and it must define delivery guarantees, ordering rules, idempotency requirements, and a shared workflow or correlation ID. Without that, retries and parallel execution introduce duplicate or conflicting actions.
 
 **Layer 4: Failure Boundaries**
-For each agent, decide: if this agent fails, what should happen? Contained failure (retry, fallback) or cascade (pause dependent agents, escalate to human)? Design this before you need it.
+For each agent, decide: if this agent fails, what should happen? Contained failure (retry, fallback) or cascade (pause dependent agents, escalate to human)? Set autonomy limits just as explicitly: max retries, max step count, tool restrictions, and human approval for expensive, destructive, or high-risk actions. Design this before you need it.
 
 **Layer 5: Observability**
-Logging decisions per agent is necessary but not sufficient. You need to reconstruct the full decision path across agents: what state each agent received, what it produced, and in what order. Per-agent logs alone will not let you debug cross-agent failures.
+Logging decisions per agent is necessary but not sufficient. You need to reconstruct the full decision path across agents: what state each agent received, what it produced, which state version it read, and what triggered the next step. End-to-end tracing with a shared correlation ID is what lets you reconstruct causality. Per-agent logs alone will not let you debug cross-agent failures.
 
 **Layer 6: Testing**
-Test each agent in isolation first. Then test coordination failure modes explicitly: what happens when agent B reads stale state from agent A? What happens when agent C partially completes before failing? These are not edge cases. They are the normal failure modes of distributed systems.
+Test each agent in isolation first. Then inject coordination failure modes deliberately: delay messages, duplicate deliveries, drop events, force partial writes, and let agents read inconsistent state. If you only test happy paths, the system will fail in production. These are not edge cases. They are the normal failure modes of distributed systems.
 
 ## Common failure modes
 
@@ -103,15 +107,15 @@ Example: Agent A gathers requirements; Agent B generates a recommendation.
 1. Define Agent A scope: owns input, produces JSON requirements.
 2. Define Agent B scope: reads requirements, owns recommendation, must not modify requirements.
 3. Use a database table for requirements state, not prompt memory.
-4. Write the requirements to the database when A finishes; B reads from the database (not from A directly).
+4. Write the requirements to the database when A finishes; B reads from the database with a workflow ID and state version, not from A directly.
 5. Log every state transition: what was written, when, and by which agent.
-6. Test: what happens if B reads requirements before A commits? If B fails mid-recommendation?
+6. Test: what happens if B is triggered before A commits, or if the handoff message is retried and B runs twice? If B fails mid-recommendation?
 7. Deploy with circuit breaker: if B fails three times, pause and escalate to a human.
 
 After one month running in production, extend to three agents.
 Repeat the charter-state-protocol definition for each new agent before writing code.
 
-One thing that does not appear in architecture diagrams: cost. Three agents means three inference calls. If each agent calls a frontier model, the cost per workflow is three times the per-call cost, not counting retries. Budget for this before you deploy.
+One thing that does not appear in architecture diagrams: cost. Three agents means three inference calls. If each agent calls a frontier model, the cost per workflow is at least three times the per-call cost, and retries plus growing context across agents push it higher. Budget for this before you deploy.
 
 ## Risks and trade-offs
 
@@ -137,7 +141,7 @@ That is enough to start.
 
 Multi-agent systems are not complex because of AI.
 
-They are complex because they are distributed systems.
+They are complex because coordination across independent components is hard.
 
 The failure modes, stale state, split ownership, cascade failure, and partial writes, predate LLMs by decades. What is new is that the failures are harder to reproduce (non-deterministic execution), harder to observe (reasoning is not logged by default), and harder to test (you cannot replay an LLM call and get the same output).
 

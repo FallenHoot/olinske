@@ -12,6 +12,7 @@ const QUEUE_PATH = path.join(ROOT, 'data', 'publish-queue.json');
 const dryRun = process.argv.includes('--dry-run');
 const slugIndex = process.argv.findIndex(arg => arg === '--slug');
 const slugArg = slugIndex > -1 ? process.argv[slugIndex + 1] || '' : '';
+const minInternalLinks = Number.parseInt(process.env.MIN_INTERNAL_POST_LINKS || '2', 10);
 
 function todayInOsloISO() {
   const parts = new Intl.DateTimeFormat('en-CA', {
@@ -103,6 +104,17 @@ function main() {
   const targetPath = path.join(PUBLISHED_DIR, fileName);
 
   const raw = fs.readFileSync(selected.postPath, 'utf8');
+
+  // Gate: require a minimum number of internal /posts links before publishing.
+  const internalPostLinks = raw.match(/\]\(\/posts\/[A-Za-z0-9\-_/]+\)/g) || [];
+  if (internalPostLinks.length < minInternalLinks) {
+    console.error(
+      `Publish blocked for ${slug}: found ${internalPostLinks.length} internal /posts links, minimum required is ${minInternalLinks}.`
+    );
+    console.error('Add more related-post links to improve on-site discoverability before publishing.');
+    process.exit(1);
+  }
+
   const parsed = matter(raw);
   parsed.data.status = 'published';
   parsed.data.publishDate = today;

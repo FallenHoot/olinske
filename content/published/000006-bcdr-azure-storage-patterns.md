@@ -1,14 +1,14 @@
 ---
 title: "BCDR for Azure Storage: Patterns That Actually Hold"
 description: "Enterprise backup, continuity, and disaster recovery for Azure Storage requires multi-region strategy, validation testing, and clear automation boundaries. Here is what works."
-publishDate: 2026-05-13
+publishDate: 2026-05-14
 tags:
   - cloud-architecture
   - bcdr
   - reliability
   - azure
   - storage
-status: draft
+status: published
 ---
 
 Every enterprise thinks they have a BCDR strategy for cloud storage.

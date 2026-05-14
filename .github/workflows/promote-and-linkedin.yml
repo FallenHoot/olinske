@@ -232,11 +232,11 @@ jobs:
             exit 1
           fi
 
-      # ── Step 3: Wait for blog to deploy (only if we just promoted) ──
+      # ── Step 3: Wait before LinkedIn posting (always enforce buffer) ──
       - name: Wait for blog to deploy
-        if: steps.detect.outputs.should_publish == 'true' && steps.promote.outputs.promoted == 'true' && steps.detect.outputs.needs_linkedin == 'true'
+        if: steps.detect.outputs.should_publish == 'true' && steps.detect.outputs.needs_linkedin == 'true'
         run: |
-          echo "Waiting 60 minutes for Azure to deploy the blog..."
+          echo "Waiting 60 minutes before LinkedIn posting to enforce blog-first buffer..."
           echo "Started at: $(date -u)"
           sleep 3600
           echo "Wait complete at: $(date -u)"

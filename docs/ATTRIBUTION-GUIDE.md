@@ -161,7 +161,7 @@ If you believe we have:
 - **Misrepresented** prior work
 - **Failed to cite** a source we built on
 
-Please file an issue or contact: hello@olinski.com
+Please file an issue or contact: hello@olinske.com
 
 ---
 

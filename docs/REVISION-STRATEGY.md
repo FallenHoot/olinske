@@ -172,7 +172,7 @@ If these become invalid, the entire book is wrong. In that case:
 ### Where Feedback Comes From
 1. **Comments on blog posts** (if enabled)
 2. **GitHub issues** (if repo is public)
-3. **Email feedback** (hello@olinski.com)
+3. **Email feedback** (hello@olinske.com)
 4. **SRE community discussions** (Reddit, SRECon, etc.)
 5. **Pull requests** (suggested improvements)
 

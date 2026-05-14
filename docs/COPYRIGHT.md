@@ -76,7 +76,7 @@ If you want to:
 - Adapt frameworks for commercial sale
 - License content for third-party use
 
-**Contact:** hello@olinski.com
+**Contact:** hello@olinske.com
 
 ---
 
@@ -92,7 +92,7 @@ See [DISCLAIMER.md](DISCLAIMER.md) for complete terms, including:
 
 ## Questions?
 
-📧 hello@olinski.com
+📧 hello@olinske.com
 
 **See also:**
 - [Disclaimer & Legal](DISCLAIMER.md)

@@ -8,7 +8,7 @@
 
 © 2026 Zach Olinski. All rights reserved.
 
-This work is licensed for non-commercial, personal use with attribution. For commercial licensing inquiries, contact: hello@olinski.com
+This work is licensed for non-commercial, personal use with attribution. For commercial licensing inquiries, contact: hello@olinske.com
 
 ---
 
@@ -147,7 +147,7 @@ We welcome corrections. Please report:
 2. **Why it's wrong:** What should it say instead?
 3. **Source:** Do you have evidence of the correction?
 
-Contact: hello@olinski.com  
+Contact: hello@olinske.com  
 Or: File an issue if the repo is public
 
 ### Our Commitment
@@ -183,10 +183,10 @@ The author reserves the right to update this disclaimer. Changes will be noted i
 ## Questions?
 
 For questions about licensing, usage rights, or disclaimer scope:  
-📧 hello@olinski.com
+📧 hello@olinske.com
 
 For technical corrections or content errors:  
-📧 hello@olinski.com  
+📧 hello@olinske.com  
 🔗 [GitHub Issues](https://github.com/FallenHoot/olinske) (if public)
 
 ---

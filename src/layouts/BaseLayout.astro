@@ -7,15 +7,32 @@ import CategoryMenu from '../components/CategoryMenu.astro';
 interface Props {
   title: string;
   description?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  ogType?: string;
 }
 
 const {
   title,
   description = 'Olinske by Zach Olinske. Signal Over Hype for enterprise AI, cloud resilience, and CTO operating models.',
+  canonicalUrl,
+  ogImage,
+  ogType = 'website',
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 const showThemeToggle = currentPath !== '/';
 const currentYear = new Date().getFullYear();
+const resolvedCanonical = canonicalUrl
+  ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined);
+const resolvedOgImage = (() => {
+  if (ogImage) {
+    if (Astro.site) return new URL(ogImage, Astro.site).toString();
+    return ogImage;
+  }
+
+  if (Astro.site) return new URL('/images/og-default.svg', Astro.site).toString();
+  return '/images/og-default.svg';
+})();
 ---
 
 <!doctype html>
@@ -24,6 +41,18 @@ const currentYear = new Date().getFullYear();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    {resolvedCanonical && <link rel="canonical" href={resolvedCanonical} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    {resolvedCanonical && <meta property="og:url" content={resolvedCanonical} />}
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:site_name" content="Olinske" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    <link rel="alternate" type="application/rss+xml" title="Olinske RSS" href="/rss.xml" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -38,6 +67,7 @@ const currentYear = new Date().getFullYear();
       rel="stylesheet"
     />
     <title>{title}</title>
+    <slot name="head" />
 
     <!-- Microsoft Clarity — heatmaps + session recordings (free, no cookie banner) -->
     <!-- Replace CLARITY_PROJECT_ID with your project ID from clarity.microsoft.com -->
@@ -82,7 +112,7 @@ const currentYear = new Date().getFullYear();
         </a>
         <nav class="site-nav" aria-label="Primary">
           <a class={currentPath === '/' ? 'nav-link is-active' : 'nav-link'} href="/">Home</a>
-          <a class="nav-link" href="/posts/000001-welcome/">About</a>
+          <a class="nav-link" href="/about/">About</a>
           <button class="nav-link menu-btn" data-menu-btn type="button">Topics</button>
           {showThemeToggle && <ThemeToggle />}
         </nav>

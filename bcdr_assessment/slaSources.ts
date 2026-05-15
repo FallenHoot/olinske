@@ -20,7 +20,7 @@ export const SLA_SOURCE_REGISTRY: Record<SlaProviderKey, SlaSourceRecord> = {
     sourceVersionLabel: 'Microsoft Online Services SLA (WW), May 2026',
     lastVerifiedAt: '2026-05-15',
     localSnapshotPath: 'src/data/sla-snapshots/azure-sla-guide.html',
-    notes: 'Use the five-pass model from Microsoft Learn to interpret definitions, measurement, exclusions, and claim process.',
+    notes: 'Use this guide to read the SLA the right way: definition, measurement window, exclusions, and claim process.',
   },
   aws: {
     provider: 'aws',

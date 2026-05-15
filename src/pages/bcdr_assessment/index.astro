@@ -42,12 +42,12 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       </p>
       <p id="source-baseline-note" class="bcdr-source-note">{SLA_BASELINES.azure.note}</p>
       <p class="bcdr-source-note">
-        Coverage status: all SLA-indexed services are listed in the selector. Composite calculations include selected modeled options.
+        Service picker includes every SLA-tracked service. Composite availability is calculated from the modeled options you select.
       </p>
       <p class="bcdr-source-note">
-        Quick Azure cross-check:
+        Quick Azure sanity check:
         <a href="https://azurecharts.com/sla" target="_blank" rel="noopener noreferrer">AzureCharts SLA board</a>
-        (community mirror). Official commitment source remains Microsoft published SLA terms.
+        (community mirror). Final commitments should always use Microsoft published SLA terms.
       </p>
       <p id="provider-connect-note" class="bcdr-source-note"></p>
       <details class="collapsible-section">
@@ -613,7 +613,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         sourceBaselineLinks.innerHTML = `<a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${baseline.sourceName} (${baseline.sourceVersion})</a>`;
         sourceBaselineNote.textContent = baseline.note;
         providerConnectNote.textContent = currentProviderMode === 'azure'
-          ? 'For Azure, also apply the Microsoft SLA five-pass interpretation model before finalizing commitments.'
+          ? 'For Azure, validate definitions, exclusions, and claim terms before you lock any commitment.'
           : 'Use provider-specific SLA definitions, exclusions, and claim windows as design inputs for this workload.';
       }
 

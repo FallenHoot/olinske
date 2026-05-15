@@ -41,22 +41,14 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         </span>
       </p>
       <p id="source-baseline-note" class="bcdr-source-note">{SLA_BASELINES.azure.note}</p>
-      <p class="bcdr-source-note">
-        Azure interpretation guide:
-        <a href="https://learn.microsoft.com/en-us/azure/reliability/concept-service-level-agreements" target="_blank" rel="noopener noreferrer">Microsoft Learn SLA model</a>
-      </p>
-      <p class="bcdr-source-note">
-        Service picker includes every SLA-tracked service. Composite availability is calculated from the modeled options you select.
-      </p>
+      <p id="provider-interpretation-note" class="bcdr-source-note"></p>
+      <p class="bcdr-source-note">Service picker includes every SLA-tracked service. Composite availability is calculated from the modeled options you select.</p>
       <p class="bcdr-source-note">
         Important: provider SLA is not your product SLA. Set a lower customer commitment, define an internal SLO above that target, and document how planned maintenance, excluded events, and outage criteria are handled.
       </p>
-      <p class="bcdr-source-note">
-        Quick Azure sanity check:
-        <a href="https://azurecharts.com/sla" target="_blank" rel="noopener noreferrer">AzureCharts SLA board</a>
-        (community mirror). Final commitments should always use Microsoft published SLA terms.
-      </p>
+      <p id="provider-reference-note" class="bcdr-source-note"></p>
       <p id="provider-connect-note" class="bcdr-source-note"></p>
+      <p class="bcdr-source-note">The first interview is provider-neutral. It captures the shared reliability decisions that matter across AWS, GCP, and Azure before cloud-specific implementation detail appears.</p>
       <details class="collapsible-section">
         <summary class="section-header">Verified Multi-Cloud SLA Sources</summary>
         <div class="section-content">
@@ -153,6 +145,67 @@ const baselineEntries = Object.entries(SLA_BASELINES);
                     <option value="no">Missing</option>
                   </select>
                 </label>
+
+                <label>
+                  Primary recovery posture
+                  <select id="q-recovery-posture">
+                    <option value="backup-only">Backup and restore only</option>
+                    <option value="cold-standby">Cold standby</option>
+                    <option value="warm-standby">Warm standby</option>
+                    <option value="multi-zone">Multi-zone active-passive</option>
+                    <option value="active-active">Active-active</option>
+                  </select>
+                </label>
+
+                <label>
+                  Graceful degradation allowed?
+                  <select id="q-degradation">
+                    <option value="no">No, full function is required</option>
+                    <option value="partial">Partial function is acceptable</option>
+                    <option value="yes">Yes, reduced function is acceptable</option>
+                  </select>
+                </label>
+
+                <label>
+                  Failover and failback plan
+                  <select id="q-failback">
+                    <option value="tested">Documented and tested</option>
+                    <option value="drafted">Drafted but not tested</option>
+                    <option value="none">Not defined</option>
+                  </select>
+                </label>
+
+                <label>
+                  Restore and drill cadence
+                  <select id="q-drill-cadence">
+                    <option value="monthly">Monthly or more often</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="semiannual">Every six months</option>
+                    <option value="annual">Annually</option>
+                    <option value="none">Not tested</option>
+                  </select>
+                </label>
+
+                <label>
+                  Monitoring tied to critical flows
+                  <select id="q-monitoring">
+                    <option value="flow">Critical-flow dashboards and alerts</option>
+                    <option value="component">Component-level monitoring only</option>
+                    <option value="basic">Basic uptime checks only</option>
+                    <option value="none">Not in place</option>
+                  </select>
+                </label>
+
+                <label>
+                  Recovery constraints
+                  <select id="q-constraints">
+                    <option value="none">No special constraints</option>
+                    <option value="latency">Latency-sensitive</option>
+                    <option value="compliance">Compliance or data residency bound</option>
+                    <option value="cost">Cost-constrained</option>
+                    <option value="shared">Shared centralized dependency or platform policy</option>
+                  </select>
+                </label>
               </div>
 
               <div class="metric-card-row interview-metrics">
@@ -161,6 +214,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
                 <div class="metric-card"><p class="metric-label">Medium gaps</p><p id="gap-medium" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">RTO vs MTD</p><p id="recreate-rto" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">Reputation exposure</p><p id="reputation-risk" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Reliability posture</p><p id="reliability-posture" class="metric-value">-</p></div>
               </div>
 
               <ul id="interview-gaps" class="upgrade-list"></ul>
@@ -309,6 +363,8 @@ const baselineEntries = Object.entries(SLA_BASELINES);
     const aprlRecommendations = JSON.parse(document.getElementById('bcdr-aprl-recommendations')?.textContent ?? '{}');
     const sourceBaselineLinks = document.getElementById('source-baseline-links');
     const sourceBaselineNote = document.getElementById('source-baseline-note');
+    const providerInterpretationNote = document.getElementById('provider-interpretation-note');
+    const providerReferenceNote = document.getElementById('provider-reference-note');
     const providerConnectNote = document.getElementById('provider-connect-note');
     const providerScope = document.getElementById('provider-scope');
     const serviceConfig = document.getElementById('service-config');
@@ -339,6 +395,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
     const gapMedium = document.getElementById('gap-medium');
     const recreateRto = document.getElementById('recreate-rto');
     const reputationRisk = document.getElementById('reputation-risk');
+    const reliabilityPosture = document.getElementById('reliability-posture');
     const interviewGaps = document.getElementById('interview-gaps');
     const executiveSummary = document.getElementById('executive-summary');
     const generateExecutiveSummaryButton = document.getElementById('generate-executive-summary');
@@ -364,12 +421,33 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       rpo: document.getElementById('q-rpo'),
       interconnect: document.getElementById('q-interconnect'),
       runbook: document.getElementById('q-runbook'),
+      recoveryPosture: document.getElementById('q-recovery-posture'),
+      degradation: document.getElementById('q-degradation'),
+      failback: document.getElementById('q-failback'),
+      drillCadence: document.getElementById('q-drill-cadence'),
+      monitoring: document.getElementById('q-monitoring'),
+      constraints: document.getElementById('q-constraints'),
     };
 
     const providerLabels = { azure: 'Azure', aws: 'AWS', gcp: 'GCP', oci: 'OCI', multi: 'Multi-cloud' };
     let currentProviderMode = providerScope.value;
     let nextRowId = 1;
     const selectedRows = [{ rowId: 1, serviceId: '', optionId: '' }];
+
+    const setProviderGuidance = (provider) => {
+      if (provider === 'azure') {
+        providerInterpretationNote.innerHTML = 'Azure interpretation guide: <a href="https://learn.microsoft.com/en-us/azure/reliability/concept-service-level-agreements" target="_blank" rel="noopener noreferrer">Microsoft Learn SLA model</a>';
+        providerReferenceNote.innerHTML = 'Quick Azure sanity check: <a href="https://azurecharts.com/sla" target="_blank" rel="noopener noreferrer">AzureCharts SLA board</a> (community mirror). Final commitments should always use Microsoft published SLA terms.';
+        providerConnectNote.textContent = 'Do not mirror Microsoft SLA as your customer SLA. Define your own customer commitment and internal SLO, then align maintenance, exclusions, and outage criteria with legal and operations teams.';
+        return;
+      }
+
+      const providerLabel = providerLabels[provider] ?? provider.toUpperCase();
+      const baseline = baselines[provider] ?? baselines.azure;
+      providerInterpretationNote.innerHTML = `${providerLabel} interpretation guide: <a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${baseline.sourceName} SLA page</a>`;
+      providerReferenceNote.innerHTML = `Quick ${providerLabel} reference: <a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${baseline.sourceName} SLA page</a>. Use the provider's own terms as the reference point, then map them to your internal SLO and customer commitment.`;
+      providerConnectNote.textContent = 'Use provider-specific SLA definitions, exclusions, and claim windows as design inputs for this workload.';
+    };
 
     const getVisibleCatalog = () => currentProviderMode === 'multi' ? catalog : catalog.filter((s) => s.provider === currentProviderMode);
     const getServiceById = (id) => catalog.find((s) => s.id === id);
@@ -425,12 +503,28 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       const rpo = Number(interviewInputs.rpo.value);
       const interconnect = interviewInputs.interconnect.value;
       const runbook = interviewInputs.runbook.value;
+      const recoveryPosture = interviewInputs.recoveryPosture.value;
+      const degradation = interviewInputs.degradation.value;
+      const failback = interviewInputs.failback.value;
+      const drillCadence = interviewInputs.drillCadence.value;
+      const monitoring = interviewInputs.monitoring.value;
+      const constraints = interviewInputs.constraints.value;
 
       if (rto > mtd) findings.push({ severity: 'high', text: 'Restore target exceeds maximum tolerated downtime.' });
       if (runbook === 'no') findings.push({ severity: 'high', text: 'No documented recovery runbook.' });
       if (runbook === 'partial') findings.push({ severity: 'medium', text: 'Recovery runbook is incomplete or untested.' });
       if (rpo > 30) findings.push({ severity: 'medium', text: 'RPO target exceeds 30 minutes.' });
       if (activeSelections.length < 2) findings.push({ severity: 'medium', text: 'Critical-path service model appears incomplete.' });
+
+      if (recoveryPosture === 'backup-only' && criticality === 'high') findings.push({ severity: 'high', text: 'High-criticality workload is limited to backup-and-restore recovery.' });
+      if (recoveryPosture === 'cold-standby' && rto < 60) findings.push({ severity: 'medium', text: 'Cold standby is unlikely to support the stated recovery target.' });
+      if (recoveryPosture === 'active-active' && runbook === 'no') findings.push({ severity: 'high', text: 'Active-active posture has no tested recovery runbook.' });
+      if (degradation === 'no' && recoveryPosture === 'backup-only') findings.push({ severity: 'medium', text: 'Full-function requirement conflicts with backup-only recovery posture.' });
+      if (failback === 'none') findings.push({ severity: 'medium', text: 'Failback strategy is not defined.' });
+      if (drillCadence === 'none') findings.push({ severity: 'high', text: 'Recovery plan has not been tested with drills.' });
+      if (drillCadence === 'annual' && criticality === 'high') findings.push({ severity: 'medium', text: 'Annual drills are thin coverage for a high-criticality workload.' });
+      if (monitoring === 'basic' || monitoring === 'none') findings.push({ severity: monitoring === 'none' ? 'high' : 'medium', text: 'Monitoring is not tied closely enough to critical flows.' });
+      if (constraints === 'compliance' || constraints === 'shared') findings.push({ severity: 'medium', text: 'Recovery options are constrained by policy, residency, or shared dependencies.' });
 
       if (currentProviderMode === 'multi') {
         if (interconnect === 'single') findings.push({ severity: 'high', text: 'Multi-cloud workload has only one interconnect path.' });
@@ -446,8 +540,16 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         high += 1;
       }
 
+      const postureLabel = {
+        'backup-only': 'Backup-only',
+        'cold-standby': 'Cold standby',
+        'warm-standby': 'Warm standby',
+        'multi-zone': 'Multi-zone',
+        'active-active': 'Active-active',
+      }[recoveryPosture] ?? 'Unclear';
+
       const score = Math.max(0, 100 - (high * 20 + medium * 10));
-      return { findings, high, medium, score, rto, mtd, reputationImpact, churnRisk };
+      return { findings, high, medium, score, rto, mtd, reputationImpact, churnRisk, postureLabel, degradation, failback, drillCadence, monitoring, constraints };
     };
 
     const renderInterview = (activeSelections) => {
@@ -472,6 +574,15 @@ const baselineEntries = Object.entries(SLA_BASELINES);
 
       reputationRisk.textContent = reputationLevel;
       reputationRisk.className = reputationClass;
+
+      const postureSummary = [result.postureLabel ?? 'Unclear posture'];
+      if (result.degradation === 'yes') postureSummary.push('reduced function okay');
+      if (result.failback === 'tested') postureSummary.push('failback tested');
+      if (result.drillCadence === 'monthly' || result.drillCadence === 'quarterly') postureSummary.push('regular drills');
+      if (result.monitoring === 'flow') postureSummary.push('flow-based monitoring');
+      if (result.constraints && result.constraints !== 'none') postureSummary.push(result.constraints);
+      reliabilityPosture.textContent = postureSummary.join(' | ');
+      reliabilityPosture.className = `metric-value ${result.score >= 80 ? 'ok' : result.score >= 60 ? '' : 'warn'}`;
 
       interviewGaps.innerHTML = '';
       if (result.findings.length === 0) {
@@ -517,6 +628,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       if (interviewResult.high > 0) notes.push(`${interviewResult.high} high interview gap(s).`);
       if (!plan.feasible) notes.push('Commitment is currently not feasible.');
       if (selections.length < 2) notes.push('Critical path likely incomplete.');
+      if (interviewResult.drillCadence === 'none') notes.push('No recovery drills recorded.');
       workflowConfidenceNote.textContent = notes.length > 0 ? notes.join(' ') : 'No confidence risks flagged yet.';
     };
 
@@ -616,13 +728,13 @@ const baselineEntries = Object.entries(SLA_BASELINES);
           .join(' | ');
         sourceBaselineNote.textContent = 'Multi-cloud mode requires provider-specific SLA review for each selected service, including prerequisites and exclusions.';
         providerConnectNote.textContent = 'Connectivity commitments vary by provider and topology. Validate interconnect SLA terms separately from service SLAs.';
+        providerInterpretationNote.textContent = 'Select a single provider to see its interpretation guidance and reference links.';
+        providerReferenceNote.textContent = "Multi-cloud mode uses each provider's official SLA page as the source of truth for its own services.";
       } else {
         const baseline = baselines[currentProviderMode] ?? baselines.azure;
         sourceBaselineLinks.innerHTML = `<a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${baseline.sourceName} (${baseline.sourceVersion})</a>`;
         sourceBaselineNote.textContent = baseline.note;
-        providerConnectNote.textContent = currentProviderMode === 'azure'
-          ? 'Do not mirror Microsoft SLA as your customer SLA. Define your own customer commitment and internal SLO, then align maintenance, exclusions, and outage criteria with legal and operations teams.'
-          : 'Use provider-specific SLA definitions, exclusions, and claim windows as design inputs for this workload.';
+        setProviderGuidance(currentProviderMode);
       }
 
       renderConfig();
@@ -800,7 +912,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         executiveSummary: executiveSummary.value,
       };
 
-      localStorage.setItem('bcdr-assessment-session-v2', JSON.stringify({
+      localStorage.setItem('bcdr-assessment-session-v3', JSON.stringify({
         currentProviderMode,
         nextRowId,
         selectedRows,
@@ -1050,11 +1162,12 @@ const baselineEntries = Object.entries(SLA_BASELINES);
 
     document.getElementById('clear-local-session').addEventListener('click', () => {
       if (!window.confirm('Clear all locally saved assessment data in this browser and reload defaults?')) return;
+      localStorage.removeItem('bcdr-assessment-session-v3');
       localStorage.removeItem('bcdr-assessment-session-v2');
       window.location.reload();
     });
 
-    const saved = localStorage.getItem('bcdr-assessment-session-v2');
+    const saved = localStorage.getItem('bcdr-assessment-session-v3') ?? localStorage.getItem('bcdr-assessment-session-v2');
     if (saved) {
       try {
         const state = JSON.parse(saved);

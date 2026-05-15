@@ -1053,6 +1053,14 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       } catch {}
     }
 
+    if (!selectedRows.some((row) => row.serviceId && row.optionId)) {
+      const firstService = getVisibleCatalog()[0];
+      if (firstService) {
+        selectedRows[0].serviceId = firstService.id;
+        selectedRows[0].optionId = firstService.defaultOptionId ?? firstService.options.find((option) => option.modeled !== false)?.id ?? firstService.options[0]?.id ?? '';
+      }
+    }
+
     render();
   </script>
 </BaseLayout>

@@ -36,9 +36,10 @@ This folder contains the multi-agent blogging system used by the blog pipeline.
 
 - Run publish orchestration and LinkedIn workflows from `FallenHoot/olinske-editorial`.
 - Use `FallenHoot/olinske` as the public mirror/deploy repo.
+- Agents may operate on both repositories when needed.
 - Cross-repo promotion is intentional and uses `PUBLIC_REPO_PAT` from editorial secrets.
 - LinkedIn secrets (`LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_PERSON_URN`) are maintained in editorial repo secrets.
-- Default working context is always private editorial (`FallenHoot/olinske-editorial`).
+- Default and primary working context is private editorial (`FallenHoot/olinske-editorial`).
 - Drafts, queued posts, research, internal docs, agent artifacts, workflows, and infra files must stay in editorial only.
 - Public repo must contain only public-safe website assets and published content.
 - Do not push directly to public from local day-to-day work; use the editorial promotion/export flow.

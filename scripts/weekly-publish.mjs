@@ -25,6 +25,13 @@ function todayInOsloISO() {
   return `${byType.year}-${byType.month}-${byType.day}`;
 }
 
+function weekdayInOsloShort() {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Oslo',
+    weekday: 'short'
+  }).format(new Date());
+}
+
 function readJson(filePath, fallback) {
   if (!fs.existsSync(filePath)) return fallback;
   try {
@@ -66,21 +73,27 @@ function isDue(dueDate, today) {
   return dueDate <= today;
 }
 
-function selectNext(queue, today) {
+function selectNext(queue, today, isCadenceDay) {
   if (slugArg) {
     const fromQueue = queue.find(item => item.slug === slugArg) || { slug: slugArg, approved: true };
     return { item: fromQueue, postPath: findFileBySlug(POSTS_DIR, slugArg) };
   }
 
   for (const item of queue) {
-    if (!item?.approved || !item?.slug) continue;
+    if (!item?.slug) continue;
 
     const postPath = findFileBySlug(POSTS_DIR, item.slug);
     if (!postPath) continue;
 
     const postDate = readPublishDate(postPath);
     const dueDate = item.scheduledDate || postDate;
+    if (!item.approved && !dueDate) continue;
     if (!isDue(dueDate, today)) continue;
+
+    // Default cadence is Wed/Sat. Off-cadence publishes require exact date match.
+    if (!isCadenceDay) {
+      if (!dueDate || dueDate !== today) continue;
+    }
 
     return { item, postPath };
   }
@@ -90,10 +103,12 @@ function selectNext(queue, today) {
 
 function main() {
   const today = todayInOsloISO();
+  const weekday = weekdayInOsloShort();
+  const isCadenceDay = weekday === 'Wed' || weekday === 'Sat';
   const queueData = readJson(QUEUE_PATH, { queue: [] });
   const queue = Array.isArray(queueData.queue) ? queueData.queue : [];
 
-  const selected = selectNext(queue, today);
+  const selected = selectNext(queue, today, isCadenceDay);
   if (!selected || !selected.item || !selected.postPath) {
     console.log('No approved due post found in content/posts.');
     process.exit(0);
@@ -121,6 +136,7 @@ function main() {
   const updated = matter.stringify(parsed.content, parsed.data);
 
   console.log(`Selected slug: ${slug}`);
+  console.log(`Oslo weekday: ${weekday} (cadence day: ${isCadenceDay ? 'yes' : 'no'})`);
   console.log(`Source: ${path.relative(ROOT, selected.postPath).replace(/\\/g, '/')}`);
   console.log(`Target: ${path.relative(ROOT, targetPath).replace(/\\/g, '/')}`);
   console.log(`Publish date: ${today}`);

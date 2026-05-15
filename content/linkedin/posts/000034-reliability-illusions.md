@@ -9,7 +9,7 @@ type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
 sourcePost: "content/posts/000034-reliability-illusions.md"
-canonicalUrl: "https://zach.olinski.com/posts/000034-reliability-illusions"
+canonicalUrl: 'https://zach.olinske.com/posts/000034-reliability-illusions'
 hashtags:
   - Reliability
   - FalseConfidence

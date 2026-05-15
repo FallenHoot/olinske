@@ -10,6 +10,16 @@ This repository is promoted from a private editorial repository after human appr
 2. CI validates Astro build health.
 3. Azure Web App workflow deploys production.
 
+## Publishing automation
+
+Publishing schedule is controlled by GitHub Actions.
+
+- Workflow: .github/workflows/promote-and-linkedin.yml
+- Trigger: scheduled daily at 11:00 Europe/Oslo (DST-safe dual UTC cron entries)
+- Manual trigger: workflow_dispatch with optional slug input
+
+Local scripts are for local validation and debugging only. They do not replace GitHub Actions scheduling.
+
 ## Required secrets
 
 - AZURE_WEBAPP_NAME: Azure Web App name

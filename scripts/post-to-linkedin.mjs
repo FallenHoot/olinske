@@ -10,6 +10,7 @@
  *   node scripts/post-to-linkedin.mjs --post content/published/000003-*.md --variant medium
  *   node scripts/post-to-linkedin.mjs --post content/posts/000006-*.md --variant medium
  *   node scripts/post-to-linkedin.mjs --post content/published/000003-*.md --variant medium --dry-run
+ *   node scripts/post-to-linkedin.mjs --post content/published/000003-*.md --variant medium --article-card
  *
  * Environment variables:
  *   LINKEDIN_ACCESS_TOKEN  - OAuth2 access token with w_member_social scope
@@ -41,9 +42,10 @@ function argValue(flag, defaultValue = '') {
 const postArg = argValue('--post', '');
 const variant = argValue('--variant', 'medium');
 const dryRun = process.argv.includes('--dry-run');
+const attachArticleCard = process.argv.includes('--article-card');
 
 if (!postArg) {
-  console.error('Usage: node scripts/post-to-linkedin.mjs --post <post-path> [--variant short|medium|long] [--dry-run]');
+  console.error('Usage: node scripts/post-to-linkedin.mjs --post <post-path> [--variant short|medium|long] [--dry-run] [--article-card]');
   process.exit(1);
 }
 
@@ -284,6 +286,7 @@ console.log(`Canonical URL: ${canonicalUrl}`);
 console.log(`Tracked URL: ${trackedUrl}`);
 console.log(`Hashtags: ${hashtags.slice(0, 3).join(', ')}`);
 console.log(`Variant: ${variant}`);
+console.log(`Link placement: ${attachArticleCard ? 'article-card + first-comment' : 'first-comment-only'}`);
 console.log(`Commentary length: ${commentary.length} chars`);
 console.log(`First comment length: ${firstCommentText.length} chars`);
 console.log('');
@@ -297,22 +300,28 @@ if (dryRun) {
   process.exit(0);
 }
 
+const shareContent = {
+  shareCommentary: {
+    text: commentary
+  },
+  shareMediaCategory: 'NONE'
+};
+
+if (attachArticleCard) {
+  shareContent.shareMediaCategory = 'ARTICLE';
+  shareContent.media = [
+    {
+      status: 'READY',
+      originalUrl: canonicalUrl
+    }
+  ];
+}
+
 const postBody = {
   author: personUrn,
   lifecycleState: 'PUBLISHED',
   specificContent: {
-    'com.linkedin.ugc.ShareContent': {
-      shareCommentary: {
-        text: commentary
-      },
-      shareMediaCategory: 'ARTICLE',
-      media: [
-        {
-          status: 'READY',
-          originalUrl: canonicalUrl
-        }
-      ]
-    }
+    'com.linkedin.ugc.ShareContent': shareContent
   },
   visibility: {
     'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'

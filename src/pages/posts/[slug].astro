@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import VoteButtons from '../../components/VoteButtons.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -11,16 +12,108 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+const allPublishedPosts = await getCollection('posts', ({ data }) => data.status === 'published' || data.status === 'scheduled');
 const { Content, headings } = await render(post);
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const slug = post.data.slug ?? post.id.replace(/\.md$/, '');
+const canonicalUrl = Astro.site ? new URL(`/posts/${slug}/`, Astro.site).toString() : `/posts/${slug}/`;
+const ogImage = `/og/${slug}.svg`;
+const publishedIso = post.data.publishDate.toISOString();
+const modifiedIso = (post.data.lastUpdated ?? post.data.publishDate).toISOString();
+const lastReviewed = (post.data.lastUpdated ?? post.data.publishDate).toISOString().slice(0, 10);
+
+const postBySlug = new Map(
+  allPublishedPosts.map((item) => [item.data.slug ?? item.id.replace(/\.md$/, ''), item])
+);
+
+const prerequisiteLinks = (post.data.prerequisites ?? [])
+  .map((entry) => {
+    const ref = entry.replace(/^\/posts\//, '').replace(/\/$/, '');
+    const related = postBySlug.get(ref);
+    return related
+      ? {
+          href: `/posts/${ref}/`,
+          title: related.data.title,
+        }
+      : {
+          href: `/posts/${ref}/`,
+          title: ref,
+        };
+  });
+
+const followUpLinks = (post.data.followUps ?? [])
+  .map((entry) => {
+    const ref = entry.replace(/^\/posts\//, '').replace(/\/$/, '');
+    const related = postBySlug.get(ref);
+    return related
+      ? {
+          href: `/posts/${ref}/`,
+          title: related.data.title,
+        }
+      : {
+          href: `/posts/${ref}/`,
+          title: ref,
+        };
+  });
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: publishedIso,
+  dateModified: modifiedIso,
+  author: {
+    '@type': 'Person',
+    name: 'Zach Olinske'
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalUrl
+  }
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: Astro.site ? new URL('/', Astro.site).toString() : '/'
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Articles',
+      item: Astro.site ? new URL('/posts/', Astro.site).toString() : '/posts/'
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: post.data.title,
+      item: canonicalUrl
+    }
+  ]
+};
 ---
 
-<BaseLayout title={`${post.data.title} | Olinske`} description={post.data.description}>
+<BaseLayout title={`${post.data.title} | Olinske`} description={post.data.description} canonicalUrl={canonicalUrl} ogImage={ogImage} ogType="article">
+  <Fragment slot="head">
+    <meta property="article:published_time" content={publishedIso} />
+    <meta property="article:modified_time" content={modifiedIso} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </Fragment>
+
   <main class="container site-shell">
     <section class="hero-panel fade-in">
       <p class="eyebrow">{post.data.publishDate.toISOString().slice(0, 10)}</p>
       <h1 class="hero-title">{post.data.title}</h1>
       <p class="hero-subtitle">{post.data.description}</p>
+      <p class="post-meta">Last reviewed: {lastReviewed}</p>
+      {post.data.appliesTo && <p class="post-meta">Applies to: {post.data.appliesTo}</p>}
       <div class="tag-row">
         {(post.data.tags ?? []).map((tag) => (
           <span class="tag-chip">{tag}</span>
@@ -28,7 +121,46 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
       </div>
     </section>
 
-    <section class="article-shell fade-in fade-delay-1">
+    {
+      post.data.bluf && post.data.bluf.length > 0 && (
+        <section class="hero-panel fade-in fade-delay-1">
+          <p class="eyebrow">TL;DR</p>
+          <ul class="toc-list">
+            {post.data.bluf.map((item) => <li class="toc-item">{item}</li>)}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="article-shell fade-in fade-delay-2">
+      {
+        (prerequisiteLinks.length > 0 || followUpLinks.length > 0) && (
+          <aside class="toc-panel">
+            {prerequisiteLinks.length > 0 && (
+              <>
+                <h2>This post assumes knowledge from</h2>
+                <ul class="toc-list">
+                  {prerequisiteLinks.map((item) => (
+                    <li class="toc-item"><a href={item.href}>{item.title}</a></li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {followUpLinks.length > 0 && (
+              <>
+                <h2 style="margin-top:0.9rem;">Follow-up deep dives</h2>
+                <ul class="toc-list">
+                  {followUpLinks.map((item) => (
+                    <li class="toc-item"><a href={item.href}>{item.title}</a></li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </aside>
+        )
+      }
+
       <aside class="toc-panel">
         <h2>On this page</h2>
         {
@@ -49,6 +181,8 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
       <article class="article-panel">
         <Content />
       </article>
+
+      <VoteButtons slug={slug} />
     </section>
   </main>
 

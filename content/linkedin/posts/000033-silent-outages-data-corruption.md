@@ -1,5 +1,5 @@
 ---
-title: "Chapter 6b: Silent Outages—When Data Corruption Looks Like Success"
+title: "Chapter 6: Silent Outages—When Data Corruption Looks Like Success"
 publishDate: 2026-07-03
 tags:
   - cloud-architecture
@@ -9,7 +9,7 @@ type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
 sourcePost: "content/posts/000033-silent-outages-data-corruption.md"
-canonicalUrl: "https://zach.olinski.com/posts/000033-silent-outages-data-corruption"
+canonicalUrl: 'https://zach.olinske.com/posts/000033-silent-outages-data-corruption'
 hashtags:
   - DataIntegrity
   - Reliability

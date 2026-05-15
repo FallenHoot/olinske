@@ -18,6 +18,16 @@ const errors = [];
 const warnings = [];
 const SITE_BASE_URL = (process.env.BLOG_BASE_URL || 'https://zach.olinske.com').replace(/\/$/, '');
 const STRICT_VOICE_GATE = process.env.STRICT_VOICE_GATE === '1';
+const STRICT_QUESTION_GATE = process.env.STRICT_QUESTION_GATE === '1';
+const STRICT_CATEGORY_GATE = process.env.STRICT_CATEGORY_GATE === '1';
+const PRIMARY_CATEGORIES = new Set([
+  'cloud-architecture',
+  'legacy-systems',
+  'geospatial',
+  'engineering-culture',
+  'family-legacy',
+  'ai-strategy'
+]);
 const REPETITIVE_OPENERS = [
   'this is',
   'that is',
@@ -65,6 +75,7 @@ function validateArticle(filePath) {
   const { parsed } = readMatter(filePath);
   const data = parsed.data || {};
   const body = parsed.content || '';
+  const isQueuedPost = filePath.includes(`${path.sep}content${path.sep}posts${path.sep}`);
 
   if (!data.title) addError(filePath, 'missing required frontmatter field "title"');
   if (!data.publishDate) addError(filePath, 'missing required frontmatter field "publishDate"');
@@ -85,7 +96,87 @@ function validateArticle(filePath) {
     addError(filePath, 'published posts must not include a "## References" section');
   }
 
+  validatePrimaryCategory(filePath, data.tags || [], isQueuedPost);
+  validateBlufQuality(filePath, data, isQueuedPost, isPublished);
+  validateQuestionFocus(filePath, data, body, isQueuedPost, isPublished);
+
   validateVoiceQuality(filePath, body, isPublished);
+}
+
+function validatePrimaryCategory(filePath, tags, isQueuedPost) {
+  if (!Array.isArray(tags) || tags.length === 0) return;
+
+  const primaryTagsInList = tags.filter((tag) => PRIMARY_CATEGORIES.has(tag));
+  const firstTag = tags[0];
+  const firstTagIsPrimary = PRIMARY_CATEGORIES.has(firstTag);
+
+  if (!firstTagIsPrimary) {
+    const message = `first tag must be a primary category (${[...PRIMARY_CATEGORIES].join(', ')})`;
+    if (gate === 'publish' && isQueuedPost && STRICT_CATEGORY_GATE) addError(filePath, message);
+    else addWarning(filePath, message);
+  }
+
+  if (primaryTagsInList.length > 1) {
+    const message = `contains multiple primary categories (${primaryTagsInList.join(', ')}); keep exactly one`;
+    if (gate === 'publish' && isQueuedPost && STRICT_CATEGORY_GATE) addError(filePath, message);
+    else addWarning(filePath, message);
+  }
+}
+
+function validateBlufQuality(filePath, data, isQueuedPost, isPublished) {
+  if (!Array.isArray(data.bluf)) return;
+
+  if (data.bluf.length < 2 || data.bluf.length > 5) {
+    const message = 'frontmatter "bluf" should contain 2 to 5 bullets';
+    if (gate === 'publish' && isQueuedPost) addError(filePath, message);
+    else addWarning(filePath, message);
+  }
+
+  for (const item of data.bluf) {
+    if (typeof item !== 'string' || item.trim().length < 12) {
+      const message = 'frontmatter "bluf" items must be descriptive sentences';
+      if (gate === 'publish' && isQueuedPost) addError(filePath, message);
+      else addWarning(filePath, message);
+      break;
+    }
+  }
+
+  if (gate === 'publish' && isPublished && isQueuedPost && !data.bluf) {
+    addWarning(filePath, 'consider adding frontmatter "bluf" bullets for search/AI readability');
+  }
+}
+
+function validateQuestionFocus(filePath, data, body, isQueuedPost, isPublished) {
+  const coreQuestion = typeof data.coreQuestion === 'string' ? data.coreQuestion.trim() : '';
+  const questionMarksInHeadings = (body.match(/^##\s+.*\?/gim) || []).length;
+  const headingCount = (body.match(/^##\s+/gim) || []).length;
+
+  if (!coreQuestion) {
+    const message = 'missing frontmatter "coreQuestion"; define one driving question for this post';
+    if (gate === 'publish' && isQueuedPost && STRICT_QUESTION_GATE) addError(filePath, message);
+    else if (gate !== 'draft' || isPublished) addWarning(filePath, message);
+  } else {
+    if (!coreQuestion.endsWith('?')) {
+      const message = 'frontmatter "coreQuestion" should end with a question mark';
+      if (gate === 'publish' && isQueuedPost && STRICT_QUESTION_GATE) addError(filePath, message);
+      else addWarning(filePath, message);
+    }
+    if (coreQuestion.length < 20) {
+      const message = 'frontmatter "coreQuestion" is too short; make it specific';
+      if (gate === 'publish' && isQueuedPost && STRICT_QUESTION_GATE) addError(filePath, message);
+      else addWarning(filePath, message);
+    }
+  }
+
+  if (questionMarksInHeadings > 1) {
+    const message = `contains ${questionMarksInHeadings} question-form H2 headings; keep one primary question and convert others to statements`;
+    if (gate === 'publish' && isQueuedPost && STRICT_QUESTION_GATE) addError(filePath, message);
+    else addWarning(filePath, message);
+  }
+
+  if (headingCount >= 10 && !coreQuestion) {
+    addWarning(filePath, 'high section count without coreQuestion can indicate a broad multi-topic post');
+  }
 }
 
 function extractNarrativeParagraphs(text) {
@@ -170,13 +261,16 @@ function validateLinkedIn(filePath) {
   const data = parsed.data || {};
   const body = parsed.content.trim();
 
-  const requiredFields = ['title', 'publishDate', 'type', 'linkedinPostId', 'variant', 'sourcePost', 'canonicalUrl'];
+  const isStandalone = data.type === 'standalone';
+  const requiredFields = isStandalone
+    ? ['title', 'publishDate', 'type', 'linkedinPostId', 'variant']
+    : ['title', 'publishDate', 'type', 'linkedinPostId', 'variant', 'sourcePost', 'canonicalUrl'];
   for (const field of requiredFields) {
     if (!data[field]) addError(filePath, `missing required frontmatter field "${field}"`);
   }
 
-  if (data.type && data.type !== 'blog-linkedin-share') {
-    addError(filePath, 'type must be "blog-linkedin-share"');
+  if (data.type && data.type !== 'blog-linkedin-share' && data.type !== 'standalone') {
+    addError(filePath, 'type must be "blog-linkedin-share" or "standalone"');
   }
 
   if (Array.isArray(data.hashtags) && data.hashtags.length > 3) {
@@ -191,9 +285,27 @@ function validateLinkedIn(filePath) {
     addError(filePath, 'body must not include hardcoded URLs');
   }
 
+  if (isStandalone) {
+    if (data.sourcePost) addWarning(filePath, 'standalone LinkedIn entries should not include sourcePost');
+    if (data.canonicalUrl) addWarning(filePath, 'standalone LinkedIn entries should not include canonicalUrl');
+    return;
+  }
+
   if (!data.sourcePost) return;
 
-  const sourcePath = path.resolve(ROOT, data.sourcePost);
+  let sourcePath = path.resolve(ROOT, data.sourcePost);
+  if (!fs.existsSync(sourcePath)) {
+    const publishedFallback = data.sourcePost.replace(/content\/posts\//, 'content/published/');
+    const fallbackPath = path.resolve(ROOT, publishedFallback);
+    if (publishedFallback !== data.sourcePost && fs.existsSync(fallbackPath)) {
+      sourcePath = fallbackPath;
+      addWarning(filePath, `sourcePost points to content/posts; using fallback ${publishedFallback}`);
+    } else {
+      addError(filePath, `sourcePost does not exist: ${data.sourcePost}`);
+      return;
+    }
+  }
+
   if (!fs.existsSync(sourcePath)) {
     addError(filePath, `sourcePost does not exist: ${data.sourcePost}`);
     return;

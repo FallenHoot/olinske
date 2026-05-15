@@ -1,5 +1,5 @@
 ---
-title: "Reliability Is an Economic Decision, Not a Dashboard"
+title: "The Reliability Survival Guide"
 publishDate: 2026-06-01
 tags:
   - cloud-architecture

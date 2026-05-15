@@ -8,6 +8,11 @@ tags:
   - reliability
   - azure
   - storage
+coreQuestion: 'How should enterprise teams design Azure Storage BCDR so regional failures do not become business outages?'
+bluf:
+   - Redundancy protects data durability, but recovery requires explicit failover design and runbook ownership.
+   - Geo-redundancy tiers improve resilience, but RTO and business recovery time still depend on application orchestration and decision latency.
+   - Teams should capture BCDR choices in ADRs and run recurring failover drills to validate real recovery behavior.
 status: published
 ---
 

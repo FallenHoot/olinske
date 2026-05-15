@@ -1,5 +1,5 @@
 ---
-title: "Chapter 5: Provider Failures, Status Pages, and the Reality of Cloud Risk"
+title: "Chapter 5: Provider Failures as System Constraints"
 publishDate: 2026-06-11
 tags:
   - cloud-architecture

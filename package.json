@@ -8,7 +8,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "start": "astro preview --host 0.0.0.0 --port 8080",
+    "start": "node dist/server/entry.mjs",
+    "start:preview": "astro preview --host 0.0.0.0 --port 8080",
     "hooks:install": "node scripts/install-git-hooks.mjs",
     "git:sync": "node scripts/git-sync-main.mjs",
     "check": "astro check",
@@ -25,6 +26,9 @@
     "ci:publish": "npm run ci:review && npm run check:content:publish && npm run check:agent-artifacts"
   },
   "dependencies": {
+    "@astrojs/node": "^9.5.5",
+    "@azure/data-tables": "^13.3.2",
+    "@azure/identity": "^4.13.1",
     "astro": "^5.6.0",
     "cobe": "^2.0.1",
     "gsap": "^3.14.2",

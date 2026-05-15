@@ -1,6 +1,7 @@
 name: Publish Blog and Post to LinkedIn
 
-# Schedule: Wed+Sat at 11:00 Europe/Oslo. Manual dispatch anytime.
+# Schedule: Daily at 11:00 Europe/Oslo for detection.
+# Publish behavior: Wed+Sat by default, plus exact-date overrides.
 # Full chain: promote to public repo → wait for deploy → post to LinkedIn
 #
 # Logic:
@@ -11,9 +12,10 @@ name: Publish Blog and Post to LinkedIn
 
 on:
   schedule:
-    # Trigger at both possible UTC offsets, then guard on Europe/Oslo local time.
-    - cron: '0 9 * * 3,6'
-    - cron: '0 10 * * 3,6'
+    # Trigger daily at both possible UTC offsets to cover DST in Europe/Oslo.
+    # Cadence filtering happens in detect logic below.
+    - cron: '0 9 * * *'
+    - cron: '0 10 * * *'
   workflow_dispatch:
     inputs:
       slug:
@@ -64,7 +66,7 @@ jobs:
             function readPublishDate(filePath) {
               if (!filePath || !fs.existsSync(filePath)) return '';
               const raw = fs.readFileSync(filePath, 'utf8');
-              const match = raw.match(/^publishDate:\\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/m);
+              const match = raw.match(/^publishDate:\s*["']?([0-9]{4}-[0-9]{2}-[0-9]{2})["']?/m);
               return match ? match[1] : '';
             }
 
@@ -77,6 +79,14 @@ jobs:
               }).formatToParts(new Date());
               const byType = Object.fromEntries(parts.filter(p => p.type !== 'literal').map(p => [p.type, p.value]));
               return byType.year + '-' + byType.month + '-' + byType.day;
+            }
+
+            function osloWeekday() {
+              const label = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Oslo',
+                weekday: 'short'
+              }).format(new Date());
+              return label;
             }
 
             function isDue(dueDate, today) {
@@ -94,6 +104,8 @@ jobs:
             const queueData = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
             const queue = Array.isArray(queueData.queue) ? queueData.queue : [];
             const today = osloDateISO();
+            const weekday = osloWeekday();
+            const isCadenceDay = weekday === 'Wed' || weekday === 'Sat';
             const manualSlug = (process.env.MANUAL_SLUG || '').trim();
 
             const published = fs.existsSync('content/published') ? fs.readdirSync('content/published') : [];
@@ -108,8 +120,6 @@ jobs:
 
             for (const item of candidates) {
               if (!item || !item.slug) continue;
-              if (!manualSlug && !item.approved) continue;
-
               const slug = item.slug;
               const postInPosts = findFileBySlug('content/posts', slug);
               const postInPublished = findFileBySlug('content/published', slug);
@@ -126,8 +136,16 @@ jobs:
               const postDate = readPublishDate(postInPosts || postInPublished);
               const dueDate = item.scheduledDate || postDate;
 
-              if (!manualSlug && !isDue(dueDate, today)) {
-                continue;
+              if (!manualSlug) {
+                // Date-driven scheduling: publish when due, even if queue approved=false.
+                // approved=true with no date still publishes immediately (legacy behavior).
+                if (!item.approved && !dueDate) continue;
+                if (!isDue(dueDate, today)) continue;
+
+                // Default cadence is Wed/Sat. Off-cadence publishes require exact date match.
+                if (!isCadenceDay) {
+                  if (!dueDate || dueDate !== today) continue;
+                }
               }
 
               selected = {
@@ -150,6 +168,8 @@ jobs:
             console.log('due_date=' + (selected.dueDate || ''));
             console.log('needs_promote=' + (selected.needsPromote ? 'true' : 'false'));
             console.log('needs_linkedin=' + (selected.needsLinkedIn ? 'true' : 'false'));
+            console.log('weekday=' + weekday);
+            console.log('cadence_day=' + (isCadenceDay ? 'true' : 'false'));
             console.log('reason=selected ' + selected.slug);
           ")
 
@@ -190,9 +210,10 @@ jobs:
             exit 1
           fi
 
-          # Update status and date
+          # Update status and date using Oslo local date (matches scheduling timezone).
+          OSLO_DATE=$(TZ=Europe/Oslo date +%Y-%m-%d)
           sed -i "s/^status: .*/status: published/" "content/posts/${POST_FILE}"
-          sed -i "s/^publishDate: .*/publishDate: $(date -u +%Y-%m-%d)/" "content/posts/${POST_FILE}"
+          sed -i "s/^publishDate: .*/publishDate: ${OSLO_DATE}/" "content/posts/${POST_FILE}"
 
           # Move to published
           cp "content/posts/${POST_FILE}" "content/published/${POST_FILE}"

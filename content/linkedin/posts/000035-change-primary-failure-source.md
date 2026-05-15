@@ -9,7 +9,7 @@ type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
 sourcePost: "content/posts/000035-change-primary-failure-source.md"
-canonicalUrl: "https://zach.olinski.com/posts/000035-change-primary-failure-source"
+canonicalUrl: 'https://zach.olinske.com/posts/000035-change-primary-failure-source'
 hashtags:
   - Deployment
   - Reliability

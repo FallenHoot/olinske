@@ -9,7 +9,7 @@ type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
 sourcePost: "content/posts/000032-identity-tier-zero-spof.md"
-canonicalUrl: "https://zach.olinski.com/posts/000032-identity-tier-zero-spof"
+canonicalUrl: 'https://zach.olinske.com/posts/000032-identity-tier-zero-spof'
 hashtags:
   - Identity
   - Reliability

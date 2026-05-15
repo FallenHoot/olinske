@@ -8,7 +8,7 @@ tags:
 type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
-sourcePost: "content/posts/000006-bcdr-azure-storage-patterns.md"
+sourcePost: "content/published/000006-bcdr-azure-storage-patterns.md"
 canonicalUrl: "https://zach.olinske.com/posts/000006-bcdr-azure-storage-patterns"
 hashtags:
   - Azure

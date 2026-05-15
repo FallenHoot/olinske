@@ -1,3 +1,4 @@
+---
 title: "The Reliability Survival Guide"
 description: "How to keep your systems alive when everything is working against you. A field guide for architects and leaders."
 publishDate: 2026-06-01
@@ -12,6 +13,7 @@ copyright: "© 2026 Zach Olinski. All rights reserved."
 licenseUrl: "https://zach.olinski.com/docs/COPYRIGHT.md"
 attributionRequired: true
 commercialUsePermitted: false
+---
 
 # The Reliability Survival Guide
 ## A Summer Read for Building Systems That Don't Break

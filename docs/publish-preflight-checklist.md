@@ -10,6 +10,9 @@ Use this checklist before running the promotion workflow from private repo to pu
 - [ ] Confidentiality review completed
 - [ ] Voice editor review completed (AI filler removed, cadence reads human)
 - [ ] Repetition gate passed (no unresolved repetitive opener warnings)
+- [ ] First tag is exactly one primary category (cloud-architecture, legacy-systems, geospatial, engineering-culture, family-legacy, ai-strategy); enforce with `STRICT_CATEGORY_GATE=1`
+- [ ] `coreQuestion` frontmatter is present and specific (recommended; required when `STRICT_QUESTION_GATE=1`)
+- [ ] `bluf` frontmatter bullets are present and concise (recommended for AI/search readability)
 - [ ] Published output does not contain a `## References` section
 - [ ] Required agent artifacts exist and are non-empty
 

@@ -8,7 +8,7 @@ tags:
 type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
-sourcePost: "content/posts/000005-multi-agent-solutions-architecture.md"
+sourcePost: "content/published/000005-multi-agent-solutions-architecture.md"
 canonicalUrl: "https://zach.olinske.com/posts/000005-multi-agent-solutions-architecture"
 hashtags:
   - MultiAgent

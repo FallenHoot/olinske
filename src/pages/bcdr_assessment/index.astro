@@ -42,7 +42,14 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       </p>
       <p id="source-baseline-note" class="bcdr-source-note">{SLA_BASELINES.azure.note}</p>
       <p class="bcdr-source-note">
+        Azure interpretation guide:
+        <a href="https://learn.microsoft.com/en-us/azure/reliability/concept-service-level-agreements" target="_blank" rel="noopener noreferrer">Microsoft Learn SLA model</a>
+      </p>
+      <p class="bcdr-source-note">
         Service picker includes every SLA-tracked service. Composite availability is calculated from the modeled options you select.
+      </p>
+      <p class="bcdr-source-note">
+        Important: provider SLA is not your product SLA. Set a lower customer commitment, define an internal SLO above that target, and document how planned maintenance, excluded events, and outage criteria are handled.
       </p>
       <p class="bcdr-source-note">
         Quick Azure sanity check:
@@ -182,19 +189,20 @@ const baselineEntries = Object.entries(SLA_BASELINES);
             <summary class="section-header">2. Composite Availability and Commitment</summary>
             <div class="section-content">
               <div class="metric-card-row">
-                <div class="metric-card"><p class="metric-label">Modeled composite availability</p><p id="composite-sla" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Dependency availability estimate</p><p id="composite-sla" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">Monthly downtime budget</p><p id="monthly-budget" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">Yearly downtime budget</p><p id="yearly-budget" class="metric-value">-</p></div>
               </div>
               <div class="slo-form-row">
-                <label>Customer availability commitment target (%)<input id="company-sla" type="number" min="95" max="100" step="0.001" value="99.90" /></label>
-                <label>Internal safety margin above commitment (basis points)<input id="slo-buffer" type="number" min="1" max="100" step="1" value="5" /></label>
+                <label>Customer SLA target (%)<input id="company-sla" type="number" min="95" max="100" step="0.001" value="99.90" /></label>
+                <label>Internal SLO safety margin above SLA (basis points)<input id="slo-buffer" type="number" min="1" max="100" step="1" value="5" /></label>
               </div>
               <div class="metric-card-row">
-                <div class="metric-card"><p class="metric-label">Internal reliability target</p><p id="internal-slo" class="metric-value">-</p></div>
-                <div class="metric-card"><p class="metric-label">Maximum supportable commitment</p><p id="max-company-sla" class="metric-value">-</p></div>
-                <div class="metric-card"><p class="metric-label">Feasibility check</p><p id="feasibility" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Internal SLO target</p><p id="internal-slo" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Max SLA from dependency estimate</p><p id="max-company-sla" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Model check (dependencies only)</p><p id="feasibility" class="metric-value">-</p></div>
               </div>
+              <p class="bcdr-note">This check models dependency availability only. Final SLA and SLO decisions must also include code quality, release risk, maintenance policy, exclusions, and outage definition.</p>
               <p id="feasibility-note" class="bcdr-note"></p>
             </div>
           </details>
@@ -613,7 +621,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         sourceBaselineLinks.innerHTML = `<a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${baseline.sourceName} (${baseline.sourceVersion})</a>`;
         sourceBaselineNote.textContent = baseline.note;
         providerConnectNote.textContent = currentProviderMode === 'azure'
-          ? 'For Azure, validate definitions, exclusions, and claim terms before you lock any commitment.'
+          ? 'Do not mirror Microsoft SLA as your customer SLA. Define your own customer commitment and internal SLO, then align maintenance, exclusions, and outage criteria with legal and operations teams.'
           : 'Use provider-specific SLA definitions, exclusions, and claim windows as design inputs for this workload.';
       }
 
@@ -636,9 +644,11 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       yearlyBudget.textContent = `${downtime.yearlyMinutes.toFixed(3)} min`;
       internalSlo.textContent = formatPct(plan.internalSloPct);
       maxCompanySla.textContent = formatPct(plan.maxCompanySlaPct);
-      feasibility.textContent = plan.feasible ? 'Feasible' : 'Not feasible';
+      feasibility.textContent = plan.feasible ? 'Model-supported' : 'Model-not-supported';
       feasibility.className = `metric-value ${plan.feasible ? 'ok' : 'warn'}`;
-      feasibilityNote.textContent = plan.feasible ? 'Commitment is currently supportable based on modeled availability.' : 'Commitment is too aggressive for current architecture.';
+      feasibilityNote.textContent = plan.feasible
+        ? 'SLA target is supportable by the dependency model. Confirm non-platform risk and policy terms before publishing commitments.'
+        : 'SLA target is above the dependency model. Reduce commitment or improve architecture before finalizing terms.';
 
       upgradeList.innerHTML = '';
       const topImpacts = evaluateUpgradeImpacts(catalog, selections).slice(0, 5);

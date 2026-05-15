@@ -18,10 +18,10 @@ export const toolsRegistry: ToolEntry[] = [
     status: 'Live',
   },
   {
-    slug: 'next-tool-slot',
-    title: 'Next Tool Slot',
-    description: 'Reserved space for your next interactive tool. Add links here as new tools are published.',
-    href: '',
-    status: 'Coming soon',
+    slug: 'vm-lookup',
+    title: 'Azure VM Size Lookup',
+    description: 'Explore 553 Azure VM SKUs across Nordic regions. Compare pricing, vCPU, memory, availability, and find the right size for your workload.',
+    href: '/vm_lookup/',
+    status: 'Live',
   },
 ];

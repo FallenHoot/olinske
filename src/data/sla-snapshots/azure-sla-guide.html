@@ -1,0 +1,1663 @@
+ <!DOCTYPE html>
+		<html
+			class="layout layout-holy-grail   show-table-of-contents conceptual show-breadcrumb default-focus"
+			lang="en-us"
+			dir="ltr"
+			data-authenticated="false"
+			data-auth-status-determined="false"
+			data-target="docs"
+			x-ms-format-detection="none"
+		>
+			
+		<head>
+			<title>How to Read a Service-Level Agreement (SLA) | Microsoft Learn</title>
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<meta name="color-scheme" content="light dark" />
+
+			<meta name="description" content="Learn how to interpret service-level agreements (SLAs), understand what they guarantee and exclude, and use them to make better architectural decisions for your workloads." />
+			<link rel="canonical" href="https://learn.microsoft.com/en-us/azure/reliability/concept-service-level-agreements" /> 
+
+			<!-- Non-customizable open graph and sharing-related metadata -->
+			<meta name="twitter:card" content="summary_large_image" />
+			<meta name="twitter:site" content="@MicrosoftLearn" />
+			<meta property="og:type" content="website" />
+			<meta property="og:image:alt" content="Microsoft Learn" />
+			<meta property="og:image" content="https://learn.microsoft.com/en-us/media/open-graph-image.png" />
+			<!-- Page specific open graph and sharing-related metadata -->
+			<meta property="og:title" content="How to Read a Service-Level Agreement (SLA)" />
+			<meta property="og:url" content="https://learn.microsoft.com/en-us/azure/reliability/concept-service-level-agreements" />
+			<meta property="og:description" content="Learn how to interpret service-level agreements (SLAs), understand what they guarantee and exclude, and use them to make better architectural decisions for your workloads." />
+			<meta name="platform_id" content="9f1229ba-299a-d7d4-d384-1e141c5f2f2d" /> <meta name="scope" content="Azure" />
+			<meta name="locale" content="en-us" />
+			 
+			<meta name="uhfHeaderId" content="azure" />
+
+			<meta name="page_type" content="conceptual" />
+
+			<!--page specific meta tags-->
+			
+
+			<!-- custom meta tags -->
+			
+		<meta name="breadcrumb_path" content="../breadcrumb/reliability/toc.json" />
+	
+		<meta name="feedback_help_link_url" content="https://learn.microsoft.com/answers/tags/133/azure" />
+	
+		<meta name="feedback_help_link_type" content="get-help-at-qna" />
+	
+		<meta name="feedback_product_url" content="https://feedback.azure.com/d365community/forum/79b1327d-d925-ec11-b6e6-000d3a4f06a4" />
+	
+		<meta name="feedback_system" content="Standard" />
+	
+		<meta name="permissioned-type" content="public" />
+	
+		<meta name="recommendations" content="true" />
+	
+		<meta name="recommendation_types" content="Training" />
+	
+		<meta name="recommendation_types" content="Certification" />
+	
+		<meta name="ms.suite" content="office" />
+	
+		<meta name="adobe-target" content="true" />
+	
+		<meta name="learn_banner_products" content="azure" />
+	
+		<meta name="author" content="glynnniall" />
+	
+		<meta name="ms.service" content="azure" />
+	
+		<meta name="ms.subservice" content="azure-reliability" />
+	
+		<meta name="ms.topic" content="concept-article" />
+	
+		<meta name="ms.date" content="2026-03-31T00:00:00Z" />
+	
+		<meta name="ms.author" content="glynnniall" />
+	
+		<meta name="ms.custom" content="subject-reliability" />
+	
+		<meta name="ai.usage" content="ai-assisted" />
+	
+		<meta name="show_latex" content="true" />
+	
+		<meta name="document_id" content="9e26cc8d-ee15-cab0-129f-43342f56ee93" />
+	
+		<meta name="document_version_independent_id" content="ddb2b476-5254-3cda-100b-3aefeb37ef26" />
+	
+		<meta name="updated_at" content="2026-04-06T22:09:00Z" />
+	
+		<meta name="original_content_git_url" content="https://github.com/MicrosoftDocs/reliability-docs-pr/blob/live/articles/reliability/concept-service-level-agreements.md" />
+	
+		<meta name="gitcommit" content="https://github.com/MicrosoftDocs/reliability-docs-pr/blob/f9fdc71deb40161d31e7b42309b38babf8a08ef5/articles/reliability/concept-service-level-agreements.md" />
+	
+		<meta name="git_commit_id" content="f9fdc71deb40161d31e7b42309b38babf8a08ef5" />
+	
+		<meta name="site_name" content="Docs" />
+	
+		<meta name="depot_name" content="Azure.reliability" />
+	
+		<meta name="schema" content="Conceptual" />
+	
+		<meta name="toc_rel" content="toc.json" />
+	
+		<meta name="pdf_url_template" content="https://learn.microsoft.com/pdfstore/en-us/Azure.reliability/{branchName}{pdfName}" />
+	
+		<meta name="word_count" content="3141" />
+	
+		<meta name="asset_id" content="reliability/concept-service-level-agreements" />
+	
+		<meta name="moniker_range_name" content="" />
+	
+		<meta name="item_type" content="Content" />
+	
+		<meta name="source_path" content="articles/reliability/concept-service-level-agreements.md" />
+	
+		<meta name="previous_tlsh_hash" content="D1F91A92A61EC610BF816E03A59BA780E5F6908CADB17AF421196523A05B1CF79B5499F7B7776BCC1372184301517A8EA6C6B72DC03C274621A0D4FDC19D33CAE2DA26FBD8" />
+	
+		<meta name="github_feedback_content_git_url" content="https://github.com/MicrosoftDocs/reliability-docs/blob/main/articles/reliability/concept-service-level-agreements.md" />
+	
+		<meta name="markdown_url" content="https://learn.microsoft.com/en-us/azure/reliability/concept-service-level-agreements?accept=text/markdown" />
+	 
+		<meta name="cmProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/07bb3e10-d135-43ff-bc8b-360497cb39fa" data-source="generated" />
+	
+		<meta name="cmProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/68ec7f3a-2bc6-459f-b959-19beb729907d" data-source="generated" />
+	
+		<meta name="cmProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/bcbcbad5-4208-4783-8035-8481272c98b8" data-source="generated" />
+	
+		<meta name="spProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/12e559b9-eaf6-4aee-9af7-62334e15f863" data-source="generated" />
+	
+		<meta name="spProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/90370425-aca4-4a39-9533-d52e5e002a5d" data-source="generated" />
+	
+		<meta name="spProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/43b2e5aa-8a6d-4de2-a252-692232e5edc8" data-source="generated" />
+	
+
+			<!-- assets and js globals -->
+			
+			<link rel="stylesheet" href="/static/assets/0.4.03419.7832-d0a860c4/styles/site.css" />
+			
+			<script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js"></script>
+			<script src="https://js.monitor.azure.com/scripts/c/ms.jsll-4.min.js"></script>
+			<script src="/_themes/docs.theme/master/en-us/_themes/global/deprecation.js"></script>
+
+			<!-- msdocs global object -->
+			<script id="msdocs-script">
+		var msDocs = {
+  "environment": {
+    "accessLevel": "online",
+    "azurePortalHostname": "portal.azure.com",
+    "reviewFeatures": false,
+    "supportLevel": "production",
+    "systemContent": true,
+    "siteName": "learn",
+    "legacyHosting": false
+  },
+  "data": {
+    "contentLocale": "en-us",
+    "contentDir": "ltr",
+    "userLocale": "en-us",
+    "userDir": "ltr",
+    "pageTemplate": "Conceptual",
+    "brand": "azure",
+    "context": {},
+    "standardFeedback": true,
+    "showFeedbackReport": false,
+    "feedbackHelpLinkType": "get-help-at-qna",
+    "feedbackHelpLinkUrl": "https://learn.microsoft.com/answers/tags/133/azure",
+    "feedbackSystem": "Standard",
+    "feedbackGitHubRepo": "MicrosoftDocs/reliability-docs",
+    "feedbackProductUrl": "https://feedback.azure.com/d365community/forum/79b1327d-d925-ec11-b6e6-000d3a4f06a4",
+    "extendBreadcrumb": false,
+    "isEditDisplayable": false,
+    "isPrivateUnauthorized": false,
+    "hideViewSource": false,
+    "isPermissioned": false,
+    "hasRecommendations": true,
+    "contributors": [
+      {
+        "name": "glynnniall",
+        "url": "https://github.com/glynnniall"
+      },
+      {
+        "name": "johndowns",
+        "url": "https://github.com/johndowns"
+      }
+    ],
+    "mathjax": {}
+  },
+  "functions": {}
+};;
+	</script>
+
+			<!-- base scripts, msdocs global should be before this -->
+			<script src="/static/assets/0.4.03419.7832-d0a860c4/scripts/en-us/index-docs.js"></script>
+			
+
+			<!-- json-ld -->
+			
+		</head>
+	
+			<body
+				id="body"
+				data-bi-name="body"
+				class="layout-body "
+				lang="en-us"
+				dir="ltr"
+			>
+				<header class="layout-body-header background-color-body-medium">
+		<div class="header-holder has-default-focus">
+			
+		<a
+			href="#main"
+			
+			style="z-index: 1070"
+			class="outline-color-text visually-hidden-until-focused position-fixed inner-focus focus-visible top-0 left-0 right-0 padding-xs text-align-center background-color-body"
+			
+		>
+			Skip to main content
+		</a>
+	
+		<a
+			href="#"
+			data-skip-to-ask-learn
+			style="z-index: 1070"
+			class="outline-color-text visually-hidden-until-focused position-fixed inner-focus focus-visible top-0 left-0 right-0 padding-xs text-align-center background-color-body"
+			hidden
+		>
+			Skip to Ask Learn chat experience
+		</a>
+	
+
+			<div hidden id="cookie-consent-holder" data-test-id="cookie-consent-container"></div>
+			<!-- Unsupported browser warning -->
+			<div
+				id="unsupported-browser"
+				style="background-color: white; color: black; padding: 16px; border-bottom: 1px solid grey;"
+				hidden
+			>
+				<div style="max-width: 800px; margin: 0 auto;">
+					<p style="font-size: 24px">This browser is no longer supported.</p>
+					<p style="font-size: 16px; margin-top: 16px;">
+						Upgrade to Microsoft Edge to take advantage of the latest features, security updates, and technical support.
+					</p>
+					<div style="margin-top: 12px;">
+						<a
+							href="https://go.microsoft.com/fwlink/p/?LinkID=2092881 "
+							style="background-color: #0078d4; border: 1px solid #0078d4; color: white; padding: 6px 12px; border-radius: 2px; display: inline-block;"
+						>
+							Download Microsoft Edge
+						</a>
+						<a
+							href="https://learn.microsoft.com/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+							style="background-color: white; padding: 6px 12px; border: 1px solid #505050; color: #171717; border-radius: 2px; display: inline-block;"
+						>
+							More info about Internet Explorer and Microsoft Edge
+						</a>
+					</div>
+				</div>
+			</div>
+			<!-- site header -->
+			<div
+				id="ms--site-header"
+				data-test-id="site-header-wrapper"
+				itemscope="itemscope"
+				itemtype="http://schema.org/Organization"
+			>
+				<div
+					id="ms--mobile-nav"
+					class="site-header display-none-tablet padding-inline-none gap-none"
+					data-bi-name="mobile-header"
+					data-test-id="mobile-header"
+				></div>
+				<div
+					id="ms--primary-nav"
+					class="site-header display-none display-flex-tablet"
+					data-bi-name="L1-header"
+					data-test-id="primary-header"
+				></div>
+				<div
+					id="ms--secondary-nav"
+					class="site-header display-none display-flex-tablet"
+					data-bi-name="L2-header"
+					data-test-id="secondary-header"
+					
+				></div>
+			</div>
+			
+		<!-- banner -->
+		<div data-banner>
+			<div id="disclaimer-holder"></div>
+			
+		</div>
+		<!-- banner end -->
+	
+		</div>
+	</header>
+				 <section
+					id="layout-body-menu"
+					class="layout-body-menu border-right display-flex background-color-body-medium"
+					data-bi-name="menu"
+			  >
+					
+		<div
+			id="left-container"
+			class="left-container display-none padding-none display-block-tablet width-full"
+			data-toc-container="true"
+		>
+			<div
+				id="ms--toc-content"
+				class="padding-left-sm padding-right-none padding-bottom-sm height-full"
+			>
+				<nav
+					id="affixed-left-container"
+					class="margin-top-xxs-tablet position-sticky display-flex flex-direction-column width-full"
+					aria-label="Primary"
+					data-bi-name="left-toc"
+					role="navigation"
+				>
+					<div
+						id="ms--collapsible-toc-header"
+						class="display-flex flex-direction-row-reverse justify-content-center align-items-center margin-bottom-xxs margin-right-xxs"
+					>
+						<button
+							type="button"
+							class="button button-clear inner-focus"
+							data-collapsible-toc-toggle
+							aria-expanded="true"
+							aria-controls="ms--toc-content"
+							aria-label="Table of contents"
+						>
+							<span class="icon icon-mirrored-rtl font-size-md" aria-hidden="true">
+								<span class="docon docon-panel-left-contract"></span>
+							</span>
+						</button>
+						<div
+							id="ms--collapsible-toc-moniker-slot"
+							class="flex-grow-1 display-none-layout-menu-collapsed"
+						></div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	
+			  </section>
+
+				<main
+					id="main"
+					role="main"
+					class="layout-body-main "
+					data-bi-name="content"
+					lang="en-us"
+					dir="ltr"
+				>
+					
+			<div
+		id="ms--content-header"
+		class="content-header default-focus border-bottom-none"
+		data-bi-name="content-header"
+	>
+		<div class="content-header-controls margin-xxs margin-inline-sm-tablet">
+			<button
+				type="button"
+				class="contents-button button button-sm margin-right-xxs"
+				data-bi-name="contents-expand"
+				aria-haspopup="true"
+				data-contents-button
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-menu"></span></span>
+				<span class="contents-expand-title"> Table of contents </span>
+			</button>
+			<button
+				type="button"
+				class="ap-collapse-behavior ap-expanded button button-sm"
+				data-bi-name="ap-collapse"
+				aria-controls="action-panel"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-exit-mode"></span></span>
+				<span>Exit editor mode</span>
+			</button>
+		</div>
+	</div>
+			<div
+				data-main-column
+				class="reading-width margin-inline-auto layout-padding padding-top-none padding-top-sm-tablet padding-bottom-sm"
+			>
+				<div>
+					
+		<div id="article-header" class="background-color-body margin-bottom-xs display-none-print">
+			<div class="display-flex align-items-center justify-content-space-between">
+				
+		<details
+			id="article-header-breadcrumbs-overflow-popover"
+			class="popover popover-left"
+			data-for="article-header-breadcrumbs"
+		>
+			<summary
+				class="button button-clear button-primary button-sm inner-focus"
+				aria-label="All breadcrumbs"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-more"></span>
+				</span>
+			</summary>
+			<div id="article-header-breadcrumbs-overflow" class="popover-content"></div>
+		</details>
+
+		<bread-crumbs
+			id="article-header-breadcrumbs"
+			role="group"
+			aria-label="Breadcrumbs"
+			data-test-id="article-header-breadcrumbs"
+			class="overflow-hidden flex-grow-1 margin-right-sm margin-right-md-tablet margin-right-lg-desktop margin-left-negative-xxs padding-left-xxs"
+		></bread-crumbs>
+	 
+		<div
+			id="article-header-page-actions"
+			class="opacity-none margin-left-auto display-flex flex-wrap-no-wrap align-items-stretch"
+		>
+			
+		<button
+			class="button button-sm border-none inner-focus display-none-tablet flex-shrink-0 "
+			data-bi-name="ask-learn-assistant-entry"
+			data-test-id="ask-learn-assistant-modal-entry-mobile"
+			data-ask-learn-modal-entry
+			
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-none display-inline-flex-tablet display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-modal-entry-tablet"
+			data-ask-learn-modal-entry
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-flyout-entry"
+			data-ask-learn-flyout-entry
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	 
+
+			<details class="popover popover-right" id="article-header-page-actions-overflow">
+				<summary
+					class="justify-content-flex-start button button-clear button-sm button-primary inner-focus"
+					aria-label="More actions"
+					title="More actions"
+				>
+					<span class="icon" aria-hidden="true">
+						<span class="docon docon-more-vertical"></span>
+					</span>
+				</summary>
+				<div class="popover-content">
+					
+		<button
+			type="button"
+			id="ms--focus-mode-button"
+			data-focus-mode
+			data-bi-name="focus-mode-entry"
+			data-page-action-item="overflow-all"
+			data-popover-close
+			class="button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus display-none display-inline-flex-tablet"
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-glasses"></span>
+			</span>
+			<span>Reading mode</span>
+		</button>
+	 
+		<button
+			data-page-action-item="overflow-mobile"
+			type="button"
+			class="button-block button-sm inner-focus button button-clear display-none-tablet justify-content-flex-start text-align-left"
+			data-bi-name="contents-expand"
+			data-contents-button
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true"
+				><span class="docon docon-editor-list-bullet"></span
+			></span>
+			<span class="contents-expand-title">Table of contents</span>
+		</button>
+	 
+		<a
+			id="lang-link-overflow"
+			class="button-sm inner-focus button button-clear button-block justify-content-flex-start text-align-left"
+			data-bi-name="language-toggle"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-read-in-link
+			href="#"
+			hidden
+		>
+			<span class="icon" aria-hidden="true" data-read-in-link-icon>
+				<span class="docon docon-locale-globe"></span>
+			</span>
+			<span data-read-in-link-text>Read in English</span>
+		</a>
+	
+					
+		<button
+			type="button"
+			class="collection button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus"
+			data-list-type="collection"
+			data-bi-name="collection"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="collection-status">Add</span>
+		</button>
+	 
+		<button
+			type="button"
+			class="collection button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+			data-list-type="plan"
+			data-bi-name="plan"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="plan-status">Add to plan</span>
+		</button>
+	 
+					
+		<a
+			data-contenteditbtn
+			class="button button-clear button-block button-sm inner-focus justify-content-flex-start text-align-left text-decoration-none"
+			data-bi-name="edit"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			hidden
+			href="https://github.com/MicrosoftDocs/reliability-docs/blob/main/articles/reliability/concept-service-level-agreements.md"
+			data-original_content_git_url="https://github.com/MicrosoftDocs/reliability-docs-pr/blob/live/articles/reliability/concept-service-level-agreements.md"
+			data-original_content_git_url_template="{repo}/blob/{branch}/articles/reliability/concept-service-level-agreements.md"
+			data-pr_repo=""
+			data-pr_branch=""
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-edit-outline"></span>
+			</span>
+			<span>Edit</span>
+		</a>
+	  
+		<hr class="margin-block-xxs" />
+		
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="copy-markdown"
+					data-page-action-item="overflow-all"
+					data-copy-markdown
+					data-copy-state="idle"
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span data-show-when="idle" class="docon docon-code-lang"></span>
+						<span data-show-when="loading" class="loader" hidden></span>
+						<span data-show-when="success" class="docon docon-check-mark" hidden></span>
+					</span>
+					<span>Copy Markdown</span>
+				</button>
+		   
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="print"
+					data-page-action-item="overflow-all"
+					data-popover-close
+					data-print-page
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span class="docon docon-print"></span>
+					</span>
+					<span>Print</span>
+				</button>
+		  
+	
+				</div>
+			</details>
+		</div>
+	
+			</div>
+		</div>
+	  
+		<!-- privateUnauthorizedTemplate is hidden by default -->
+		<div unauthorized-private-section data-bi-name="permission-content-unauthorized-private" hidden>
+			<hr class="hr margin-top-xs margin-bottom-sm" />
+			<div class="notification notification-info">
+				<div class="notification-content">
+					<p class="margin-top-none notification-title">
+						<span class="icon" aria-hidden="true"
+							><span class="docon docon-exclamation-circle-solid"></span
+						></span>
+						<span>Note</span>
+					</p>
+					<p class="margin-top-none authentication-determined not-authenticated">
+						Access to this page requires authorization. You can try <a class="docs-sign-in" href="#" data-bi-name="permission-content-sign-in">signing in</a> or <a  class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+					<p class="margin-top-none authentication-determined authenticated">
+						Access to this page requires authorization. You can try <a class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	
+					<div class="content"><h1 id="how-to-read-a-service-level-agreement-sla">How to read a service-level agreement (SLA)</h1></div>
+					
+		<div
+			id="article-metadata"
+			data-bi-name="article-metadata"
+			data-test-id="article-metadata"
+			class="page-metadata-container display-flex gap-xxs justify-content-space-between align-items-center flex-wrap-wrap"
+		>
+			 
+				<div
+					id="user-feedback"
+					class="margin-block-xxs display-none display-none-print"
+					hidden
+					data-hide-on-archived
+				>
+					
+		<button
+			id="user-feedback-button"
+			data-test-id="conceptual-feedback-button"
+			class="button button-sm button-clear button-primary display-none"
+			type="button"
+			data-bi-name="user-feedback-button"
+			data-user-feedback-button
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-like"></span>
+			</span>
+			<span>Feedback</span>
+		</button>
+	
+				</div>
+		  
+		</div>
+	 
+		<div data-id="ai-summary" class="display-none-print">
+			<div id="ms--ai-summary-cta" class="margin-top-xs display-flex align-items-center">
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-sparkle-fill gradient-text-vivid"></span>
+				</span>
+				<button
+					id="ms--ai-summary"
+					type="button"
+					class="tag tag-sm tag-suggestion margin-left-xxs"
+					data-test-id="ai-summary-cta"
+					data-bi-name="ai-summary-cta"
+					data-an="ai-summary"
+				>
+					<span class="ai-summary-cta-text">
+						Summarize this article for me
+					</span>
+				</button>
+			</div>
+			<!-- Slot where the client will render the summary card after the user clicks the CTA -->
+			<div id="ms--ai-summary-header" class="margin-top-xs"></div>
+		</div>
+	 
+		<nav
+			id="center-doc-outline"
+			class="doc-outline display-none-desktop display-none-print margin-bottom-sm"
+			data-bi-name="intopic toc"
+			aria-label="In this article"
+		>
+			<h2 id="ms--in-this-article" class="title is-6 margin-block-xs">
+				In this article
+			</h2>
+		</nav>
+	
+					<div class="content"><p>A service-level agreement (SLA) is one of the most commonly referenced documents in cloud architecture, but it's also one of the most frequently misunderstood. Many engineers treat an SLA as a simple availability guarantee, but it's a contractual document that includes precise definitions, conditions, and exclusions that shape its meaning. If you don't read an SLA carefully, you can make architectural decisions based on unsupported assumptions.</p>
+<p>This article explains how to interpret SLAs methodically so that you can use them as engineering inputs when you design resilient workloads. This article describes how to:</p>
+<ul>
+<li>Explain what an SLA actually guarantees.</li>
+<li>Identify how technology service providers typically define and measure availability.</li>
+<li>Recognize conditions and exclusions that affect coverage.</li>
+<li>Use SLAs to inform architectural decisions, not to replace the resilience that you design.</li>
+</ul>
+<p>Most SLAs define commitments around uptime or availability, but service providers can also define SLAs around other requirements, such as performance, recovery time, or data durability.</p>
+<div class="IMPORTANT">
+<p>Important</p>
+<p>This article explains how to <em>interpret</em> SLAs. It doesn't provide legal advice or guidance about how to dispute service providers or claim service credits. It isn't specific to Microsoft SLAs. The examples and principles apply broadly to help you read any service provider's SLA critically.</p>
+</div>
+<h2 id="how-slas-relate-to-slos-and-reliability-targets">How SLAs relate to SLOs and reliability targets</h2>
+<p>Before you read an SLA, understand where it fits alongside other reliability concepts:</p>
+<ul>
+<li><p>An <strong>SLA</strong> is a contractual commitment between a service provider and a customer, with defined consequences for unmet targets.</p>
+</li>
+<li><p>A <strong>service-level objective (SLO)</strong> is an internal reliability target that you set for your own workload.</p>
+</li>
+</ul>
+<p>An SLA describes the <em>minimum</em> guarantee that the service provider commits to. An SLO reflects the reliability that your <em>users</em> actually need. Use SLAs to inform your SLO but don't simply adopt an SLA's percentage as your workload's reliability target. Account for your own code, dependencies, operational processes, and users' tolerance for downtime. Sometimes, you need stricter SLOs than your service providers' SLAs combined. Other times, your workload can tolerate problems that exceed what your service provider financially commits to.</p>
+<p>For more information about how to define SLOs and reliability targets, see <a href="/en-us/azure/well-architected/reliability/metrics" data-linktype="absolute-path">Recommendations for defining reliability targets</a>.</p>
+<h2 id="why-you-should-read-slas">Why you should read SLAs</h2>
+<p>SLAs are engineering signals, not strict availability guarantees. They describe the conditions under which a service provider commits to a defined level of service. They also describe the financial consequences if the service provider doesn't meet those commitments. SLAs don't guarantee that your application is reliable, that your users avoid downtime, or that the service provider prevents all failures.</p>
+<p>Assumptions about SLAs lead to poor architectural decisions. Architects sometimes treat an SLA's uptime percentage as a direct indicator of service reliability. This approach often overlooks critical details, including how downtime is defined, which conditions must be met, and which scenarios are excluded. The resulting workload design might not tolerate the failure modes that the SLA implies.</p>
+<p>A careful review of SLAs uncovers important signals for designing resilient systems:</p>
+<ul>
+<li><p><strong>Transient failures are expected:</strong> Service providers expect short-lived failures to occur. SLAs make this expectation explicit through downtime definitions and retry requirements. Design your architecture to handle transient failures as a normal condition, not an exceptional one.</p>
+</li>
+<li><p><strong>Services aren't equivalent:</strong> Services vary in their SLA scopes, conditions, and exclusions.</p>
+</li>
+<li><p><strong>Uptime percentages don't apply uniformly:</strong> A service with a 99.99% SLA for its core operations might offer a lower SLA or no SLA at all for specific features that you depend on.</p>
+</li>
+<li><p><strong>SLAs don't cover all reliability factors:</strong> SLAs alone don't address all reliability considerations. Also review service limits, quotas, throttling behaviors, known limitations, and operational guidance in the product documentation.</p>
+</li>
+</ul>
+<h2 id="what-an-sla-is-and-isnt">What an SLA is and isn't</h2>
+<p>An SLA is a set of conditional commitments. It states that <em>if</em> a customer meets certain requirements, <em>then</em> the service provider commits to a defined level of service. <em>If</em> the service provider fails to meet that level, <em>then</em> the customer receives compensation, usually in the form of service credits.</p>
+<p>SLAs apply only when you meet specific preconditions, such as configuration requirements, deployment topologies, or operational behaviors. The SLA specifies exactly what counts as a failure. If a problem doesn't meet the documented definition of downtime, the SLA doesn't cover it.</p>
+<p>Don't create a <em>composite SLA</em> that multiplies SLA percentages together to estimate the availability of a system that has multiple dependencies. This calculation can provide an approximate maximum limit, but it's unreliable in practice. It assumes that all services fail independently, which rarely happens. It also ignores the unique definitions, conditions, and exclusions in each SLA. Composite calculations often make a system seem more reliable than it is, and they don't replace proper SLO definition or failure mode analysis (FMA) for your workload. For more information, see <a href="/en-us/azure/well-architected/reliability/metrics" data-linktype="absolute-path">Recommendations for defining reliability targets</a>.</p>
+<h2 id="a-practical-model-for-reading-slas">A practical model for reading SLAs</h2>
+<p>Don't read an SLA from start to finish. Instead, use a structured, five-pass approach that extracts the information that matters for your architecture.</p>
+<h3 id="pass-1-definitions">Pass 1: Definitions</h3>
+<p>Start with the definitions section. The definitions control how the SLA measures availability and what failures count.</p>
+<ul>
+<li><p><strong>Definitions matter as much as percentages:</strong> A 99.99% SLA sounds impressive, but its value depends entirely on what the SLA counts as a failure and what units it measures. When the definition of downtime is narrow, the effective coverage is narrower than the percentage suggests.</p>
+</li>
+<li><p><strong>Key terms:</strong> Terms like <em>valid request</em>, <em>downtime</em>, and <em>billable minutes</em> define what the service provider commits to. If an operation doesn't qualify as a valid request under the SLA, it doesn't affect the availability calculation.</p>
+<p>Identify which operations the SLA covers, which components it explicitly or implicitly excludes, and whether it applies to each service instance or across a pool of instances.</p>
+</li>
+</ul>
+<div class="TIP">
+<p>Tip</p>
+<p>A 99.9% SLA doesn't guarantee that the service always remains available. It also doesn't mean that you should expect only 8.7 hours of downtime per year. The SLA's definition of downtime determines what gets measured. Narrow definitions mean that the service can experience problems that affect your users without violating the SLA.</p>
+</div>
+<h3 id="pass-2-measurement">Pass 2: Measurement</h3>
+<p>Understand how the SLA calculates availability:</p>
+<ul>
+<li><p><strong>Time-based versus request-based measurement:</strong> Time-based measurement typically tracks whether the service was available during each time interval. Request-based measurement tracks the ratio of successful responses to total valid requests. The same outage can produce different availability percentages depending on which method the SLA uses.</p>
+</li>
+<li><p><strong>Retries and aggregation:</strong> Some SLAs require you to retry failed requests for a specified period before they count as failures. Other SLAs aggregate availability over an entire billing period, so brief outages might not reduce the calculated availability enough to trigger a credit.</p>
+</li>
+<li><p><strong>Aggregation scope:</strong> Determine whether the SLA measures availability per individual service instance or across all instances in a scope, such as an account or subscription. When the SLA calculates availability across multiple instances, healthy instances can offset failed instances. This calculation might produce a higher reported availability than any single instance actually experienced.</p>
+</li>
+</ul>
+<div class="TIP">
+<p>Tip</p>
+<p>SLAs usually measure uptime over a billing period, not in real time. A service can experience an outage that lasts several minutes and still meet its SLA for the month.</p>
+</div>
+<h3 id="pass-3-prerequisites-variations-and-exclusions">Pass 3: Prerequisites, variations, and exclusions</h3>
+<p>Identify the conditions that the SLA requires:</p>
+<ul>
+<li><p><strong>Required configurations and behaviors:</strong> Many SLAs require specific deployment configurations or operational behaviors, such as implementing retry logic or staying within documented quotas. For example, a storage SLA might apply only when you use solid-state drives (SSDs) rather than hard disk drives (HDDs) because the service provider's uptime commitment depends on the performance characteristics of that storage type.</p>
+</li>
+<li><p><strong>Configuration affects SLA terms:</strong> Examine how your service configuration changes the SLA. Higher-priced tiers sometimes offer different SLA commitments, but the difference isn't always only a higher uptime percentage. Higher tiers might have different definitions, different measurement methods, or fewer exclusions. A premium tier SLA might define downtime more broadly (better coverage) rather than increase the uptime percentage. Don't rely on the percentage alone. Also read the definitions.</p>
+<p>Deployment models also affect SLA terms. For the same service, a single-instance deployment might have a lower SLA than a multiple-instance deployment that provides redundancy.</p>
+</li>
+<li><p><strong>Environmental and operational exclusions:</strong> SLAs commonly exclude downtime from planned maintenance, force majeure, customer-initiated actions, misconfiguration, exceeded quotas, malformed requests, and preview or unsupported features.</p>
+</li>
+</ul>
+<div class="TIP">
+<p>Tip</p>
+<p>A correct deployment doesn't guarantee SLA coverage. The SLA doesn't apply if you don't meet other conditions, such as implementing required retry logic or if an excluded event causes the failure. Check whether the features that you depend on are within the SLA's scope. SLAs often cover only specific operations, endpoints, or tiers. They might exclude preview features, certain APIs, and lower-tier versions.</p>
+</div>
+<h3 id="pass-4-design-implications">Pass 4: Design implications</h3>
+<p>To use the service most effectively, consider what the SLA reveals about how the service behaves and how you should design your solution around it:</p>
+<ul>
+<li><p><strong>Expected failure modes:</strong> The SLA's definitions and conditions indicate which failure types the service provider treats as normal and expected. Your architecture must tolerate these failures.</p>
+</li>
+<li><p><strong>Service provider priorities:</strong> How the service provider defines availability, measures it, and excludes certain scenarios reveals its core commitment and what it considers your responsibility.</p>
+</li>
+<li><p><strong>Design decisions:</strong> If the SLA excludes certain failure modes, decide whether to accept the risk, add redundancy, or use alternative services.</p>
+</li>
+</ul>
+<h3 id="pass-5-how-to-claim-service-credits">Pass 5: How to claim service credits</h3>
+<p>The SLA defines service credits as the compensation for downtime, but service providers don't usually apply them automatically. They don't proactively monitor SLA violations or file claims for you. You must detect outages that breach the SLA, document them, and submit claims within the deadline. Use the following steps to prepare for and do that process.</p>
+<h4 id="step-1-know-what-to-monitor">Step 1: Know what to monitor</h4>
+<p>Before an incident occurs, identify what data you need to collect to substantiate a claim. Review the SLA's definitions and measurement method to determine:</p>
+<ul>
+<li><p><strong>Which metrics map to the SLA:</strong> If the SLA measures request success rate, monitor HTTP response codes for the endpoints that the SLA covers. If it measures uptime in minutes, monitor service availability at regular intervals.</p>
+</li>
+<li><p><strong>Which instances are in scope:</strong> SLAs often apply to specific tiers, versions, or deployment configurations. Monitor only the instances that qualify for SLA coverage.</p>
+</li>
+<li><p><strong>What the provider considers a failure:</strong> Some SLAs define downtime narrowly. For example, the SLA might require all requests to fail for one or more consecutive minutes, or it might require a documented outage on a public list. If necessary, set up your monitoring to capture the specific failure conditions that the SLA defines.</p>
+</li>
+</ul>
+<h4 id="step-2-keep-records-during-and-after-an-incident">Step 2: Keep records during and after an incident</h4>
+<p>When an outage or degradation occurs, collect and retain evidence that aligns with the SLA's definitions:</p>
+<ul>
+<li><p><strong>Timestamps:</strong> Record the start and end time of the incident, including the time zones. Note the duration of the impact and whether it was continuous or intermittent.</p>
+</li>
+<li><p><strong>Error details:</strong> Capture the specific error codes, error messages, or timeout behaviors that you observe. These details should correspond to the failure conditions that the SLA defines.</p>
+</li>
+<li><p><strong>Request logs:</strong> If the SLA requires retry attempts before it counts a failure, retain logs to show that you met that requirement. Include the number of retries, backoff intervals, and the outcome of each attempt.</p>
+</li>
+<li><p><strong>Configuration evidence:</strong> If the SLA requires a specific deployment configuration, such as a specific amount of redundancy or a premium tier, document how your instances met those prerequisites at the time of the incident.</p>
+</li>
+<li><p><strong>Service provider communications:</strong> Save any incident notifications, status page updates, or support correspondence from the service provider that acknowledge the problem.</p>
+</li>
+</ul>
+<h4 id="step-3-determine-whether-the-incident-breaches-the-sla">Step 3: Determine whether the incident breaches the SLA</h4>
+<p>Before you file a claim, calculate whether the incident meets the threshold for a credit:</p>
+<ol>
+<li><p>Apply the SLA's availability formula by using your recorded data. Use the same units, such as minutes, requests, or another metric, that the SLA specifies.</p>
+</li>
+<li><p>Subtract any time that falls under documented exclusions, such as planned maintenance windows, excluded event types, or periods when your configuration didn't meet the SLA's prerequisites.</p>
+</li>
+<li><p>Compare the result against the SLA's committed percentage. If the calculated availability falls below the threshold, a credit might apply.</p>
+</li>
+</ol>
+<h4 id="step-4-file-the-claim-within-the-required-timeframe">Step 4: File the claim within the required timeframe</h4>
+<p>Most SLAs impose a deadline to submit claims after an incident. If you miss the deadline, you forfeit the credit regardless of the severity of the outage.</p>
+<ol>
+<li><p><strong>Find the claim window:</strong> Review the SLA document for the submission deadline. Common timeframes range from 30 to 60 days after the end of the billing month when the incident occurs, but each service provider sets its own deadline.</p>
+</li>
+<li><p><strong>Include supporting evidence:</strong> Attach the records that you collected in Step 2, including timestamps, error logs, retry evidence, and configuration details. Service providers process well-documented claims more quickly.</p>
+</li>
+<li><p><strong>Submit through the correct channel:</strong> Service providers typically require that you file claims through a support portal or a formal request process. Follow the documented procedure to avoid claim rejection.</p>
+</li>
+</ol>
+<div class="NOTE">
+<p>Note</p>
+<p>Service credits are typically a percentage of the monthly service fee for the affected service. If your monthly spend on a service is modest, a 10% credit might amount to a small sum, regardless of how severe the impact was on your business. <strong>Credits don't cover lost revenue, customer attrition, or reputational damage.</strong></p>
+</div>
+<h2 id="a-guided-example-decode-a-fictional-sla">A guided example: Decode a fictional SLA</h2>
+<p>To illustrate how to read an SLA in practice, this section uses a fictional service, <em>Pigeon Post as a Service (PPaaS)</em>. PPaaS is a hypothetical managed messaging service that delivers messages through trained carrier pigeons. An API accepts a message and sends it to a dispatcher that's responsible for releasing the pigeon and sending the message to the recipient.</p>
+<p><img src="media/concept-service-level-agreements/pigeon-post-service.svg" alt="Diagram that shows the pigeon post service architecture. A client sends messages to an API, which then connects to a dispatcher. The dispatcher sends a carrier pigeon to the recipient." data-linktype="relative-path">
+</p>
+<p>PPaaS is intentionally absurd, but the structure of its SLA reflects many real-world SLAs. This example illustrates the five-pass approach.</p>
+<div class="NOTE">
+<p>Note</p>
+<p>PPaaS is entirely fictional. Any resemblance to real services, avian or otherwise, is coincidental.</p>
+</div>
+<h3 id="the-ppaas-sla">The PPaaS SLA</h3>
+<p>The PPaaS SLA includes the following definitions:</p>
+<ul>
+<li><p><strong>Valid Request:</strong> A message dispatched through the PPaaS API that conforms to the documented message schema.</p>
+</li>
+<li><p><strong>Downtime:</strong> A period when all attempts to send a <em>Valid Request</em> to a provisioned PPaaS endpoint either fail with an error response or receive no response.</p>
+</li>
+<li><p><strong>Total Billable Minutes:</strong> The total number of minutes in the billing month during which at least one <em>Valid Request</em> submission operation was attempted.</p>
+</li>
+<li><p><strong>Monthly Uptime Percentage</strong>, calculated as:</p>
+<p>$$
+\text{Monthly Uptime Percentage} = \frac{\text{Total Billable Minutes} - \text{Downtime}}{\text{Total Billable Minutes}} \times 100
+$$</p>
+</li>
+</ul>
+<p>The PPaaS SLA includes the following service credits.</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Monthly uptime percentage</th>
+<th>Service credit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Standard Coop</strong></td>
+<td>Less than 99.9%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td><strong>Standard Coop</strong></td>
+<td>Less than 99%</td>
+<td>25%</td>
+</tr>
+<tr>
+<td><strong>Basic Coop</strong></td>
+<td>Not applicable</td>
+<td>Not applicable</td>
+</tr>
+</tbody>
+</table>
+<p>The PPaaS SLA includes the following conditions and exclusions:</p>
+<ul>
+<li><p>The SLA doesn't cover failures caused by severe weather.</p>
+</li>
+<li><p>The SLA excludes up to 15 minutes per week of scheduled coop maintenance.</p>
+</li>
+<li><p>You must implement retry logic with at least three retries and exponential backoff before a request counts as failed.</p>
+</li>
+<li><p>The SLA doesn't apply to the Basic Coop tier.</p>
+</li>
+</ul>
+<h2 id="read-the-ppaas-sla-step-by-step">Read the PPaaS SLA step by step</h2>
+<p>The following passes apply the five-pass approach to the PPaaS SLA. Each step surfaces information that should shape your architecture.</p>
+<h3 id="pass-1-understand-the-definitions">Pass 1: Understand the definitions</h3>
+<p>Examine what each defined term means:</p>
+<ul>
+<li><p><strong>Valid Request:</strong> Messages that conform to the documented schema and don't exceed the size limit. You can check the limit in the product documentation. Oversized messages that fail aren't measured against the SLA.</p>
+</li>
+<li><p><strong>Total Billable Minutes:</strong> The minutes when you attempt to send a message. If you don't send messages for part of the month, those idle minutes don't factor into the calculation, even if the service has a problem during that time.</p>
+</li>
+<li><p><strong>How availability is defined:</strong> The SLA covers the time to queue a message, not the flight time, delivery confirmation, or return transit. If your pigeon takes three days to deliver a message, that's outside the SLA's scope.</p>
+</li>
+</ul>
+<h3 id="pass-2-understand-how-availability-is-measured">Pass 2: Understand how availability is measured</h3>
+<p>The PPaaS SLA reveals the following key observations about measurement:</p>
+<ul>
+<li><p><strong>Retry requirements:</strong> Failures only count if you retry with exponential backoff. Without retries, the SLA doesn't measure the failure.</p>
+</li>
+<li><p><strong>Aggregation across a billing period:</strong> The SLA calculates availability over the entire month. A 10-minute outage might not violate the SLA if your service runs continuously the rest of the month.</p>
+</li>
+</ul>
+<h3 id="pass-3-identify-conditions-and-exclusions">Pass 3: Identify conditions and exclusions</h3>
+<p>Several conditions limit the SLA's applicability:</p>
+<ul>
+<li><p><strong>Severe weather conditions:</strong> Check your product documentation or service provider to determine how they define severe weather conditions. This exclusion removes an entire category of failures that can frequently affect a pigeon-based service.</p>
+</li>
+<li><p><strong>Scheduled coop maintenance:</strong> The SLA excludes up to 15 minutes per week of planned maintenance. This maintenance window doesn't count against the SLA, even though the service is unavailable during that time. You might have no control over when that maintenance happens. Check your product documentation about when maintenance occurs and plan accordingly.</p>
+</li>
+<li><p><strong>Tier-specific commitments:</strong> The Basic Coop tier has no SLA. If you use the Basic tier, you have no contractual availability commitment.</p>
+</li>
+</ul>
+<h3 id="pass-4-extract-architectural-signals">Pass 4: Extract architectural signals</h3>
+<p>The PPaaS SLA reveals several important signals for your architecture:</p>
+<ul>
+<li><p><strong>What PPaaS considers a failure:</strong> Only complete, sustained dispatch failures that last at least one full minute count. The SLA expects your workload to handle brief interruptions, slow dispatches, and individual request failures.</p>
+</li>
+<li><p><strong>What it doesn't guarantee:</strong> The SLA only covers whether you can successfully submit a message to the PPaaS API and have it accepted for dispatch. It doesn't guarantee delivery time, delivery success, or message integrity after you release the pigeon. Confirmed delivery falls outside the SLA entirely.</p>
+</li>
+<li><p><strong>Where architects should introduce resilience:</strong> Design for intermittent dispatch failures by implementing required retry logic. Add a fallback mechanism for situations where delivery guarantees matter because the SLA doesn't cover actual delivery. The SLA excludes weather-related outages and scheduled maintenance, so your architecture must handle those scenarios through alternative paths or tolerance for planned unavailability that occurs outside your control.</p>
+</li>
+</ul>
+<h3 id="pass-5-prepare-to-claim-service-credits">Pass 5: Prepare to claim service credits</h3>
+<p>To be ready to substantiate a claim if PPaaS fails to meet its SLA, prepare the following requirements:</p>
+<ul>
+<li><p><strong>Keep detailed logs:</strong> Track dispatch success or failure at per-minute granularity. Retain logs to show that each failed attempt included the required three retries with exponential backoff. Also retain independent weather data for your deployment region. PPaaS might attribute downtime to severe weather rather than a service problem.</p>
+</li>
+<li><p><strong>File within the claim window:</strong> Real SLAs typically require claims within 30 to 60 days after the end of the billing month. Add the deadline to your calendar so that you don't forfeit a valid claim.</p>
+</li>
+</ul>
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li>Review the SLAs for the services that you depend on. For Microsoft services, start with the <a href="https://aka.ms/csla" data-linktype="external">SLAs for online services</a>. Your workload might also depend on services from other service providers. Apply the same five-pass approach to those SLAs.</li>
+<li>Compare SLA guarantees with your workload's reliability goals to identify gaps.</li>
+<li>Learn how to define SLOs that go beyond service provider SLAs. See <a href="/en-us/azure/well-architected/reliability/metrics" data-linktype="absolute-path">Recommendations for defining reliability targets</a>.</li>
+</ul>
+</div>
+					
+		<div
+			id="ms--inline-notifications"
+			class="margin-block-xs"
+			data-bi-name="inline-notification"
+		></div>
+	 
+		<div
+			id="assertive-live-region"
+			role="alert"
+			aria-live="assertive"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+		<div
+			id="polite-live-region"
+			role="status"
+			aria-live="polite"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+	
+					
+		<!-- feedback section -->
+		<section
+			id="site-user-feedback-footer"
+			class="font-size-sm margin-top-md display-none-print display-none-desktop"
+			data-test-id="site-user-feedback-footer"
+			data-bi-name="site-feedback-section"
+		>
+			<hr class="hr" />
+			<h2 id="ms--feedback" class="title is-3">Feedback</h2>
+			<div class="display-flex flex-wrap-wrap align-items-center">
+				<p class="font-weight-semibold margin-xxs margin-left-none">
+					Was this page helpful?
+				</p>
+				<div class="buttons">
+					<button
+						class="thumb-rating-button like button button-primary button-sm"
+						data-test-id="footer-rating-yes"
+						data-binary-rating-response="rating-yes"
+						type="button"
+						title="This article is helpful"
+						data-bi-name="button-rating-yes"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-like"></span>
+						</span>
+						<span>Yes</span>
+					</button>
+					<button
+						class="thumb-rating-button dislike button button-primary button-sm"
+						id="standard-rating-no-button"
+						hidden
+						data-test-id="footer-rating-no"
+						data-binary-rating-response="rating-no"
+						type="button"
+						title="This article is not helpful"
+						data-bi-name="button-rating-no"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-dislike"></span>
+						</span>
+						<span>No</span>
+					</button>
+					<details
+						class="popover popover-top"
+						id="mobile-help-popover"
+						data-test-id="footer-feedback-popover"
+					>
+						<summary
+							class="thumb-rating-button dislike button button-primary button-sm"
+							data-test-id="details-footer-rating-no"
+							data-binary-rating-response="rating-no"
+							title="This article is not helpful"
+							data-bi-name="button-rating-no"
+							aria-pressed="false"
+							data-bi-an="feedback-unhelpful-popover"
+						>
+							<span class="icon" aria-hidden="true">
+								<span class="docon docon-dislike"></span>
+							</span>
+							<span>No</span>
+						</summary>
+						<div
+							class="popover-content width-200 width-300-tablet"
+							role="dialog"
+							aria-labelledby="popover-heading"
+							aria-describedby="popover-description"
+						>
+							<p id="popover-heading" class="font-size-lg margin-bottom-xxs font-weight-semibold">
+								Need help with this topic?
+							</p>
+							<p id="popover-description" class="font-size-sm margin-bottom-xs">
+								Want to try using Ask Learn to clarify or guide you through this topic?
+							</p>
+							
+		<div class="buttons flex-direction-row flex-wrap justify-content-center gap-xxs">
+			<div>
+		<button
+			class="button button-sm border inner-focus display-none margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-test-id="ask-learn-assistant-modal-entry-mobile-feedback"
+			data-ask-learn-modal-entry-feedback
+			data-bi-an=feedback-unhelpful-popover
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-inline-flex display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-modal-entry-tablet-feedback"
+			data-ask-learn-modal-entry-feedback
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-flyout-entry-feedback"
+			data-ask-learn-flyout-entry-show-only
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	</div>
+			<button
+				type="button"
+				class="button button-sm margin-right-xxs"
+				data-help-option="suggest-fix"
+				data-bi-name="feedback-suggest"
+				data-bi-an="feedback-unhelpful-popover"
+				data-test-id="suggest-fix"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-feedback"></span>
+				</span>
+				<span> Suggest a fix? </span>
+			</button>
+		</div>
+	
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
+		<!-- end feedback section -->
+	
+				</div>
+				
+		<div id="ms--additional-resources-mobile" class="display-none-print">
+			<hr class="hr" hidden />
+			<h2 id="ms--additional-resources-mobile-heading" class="title is-3" hidden>
+				Additional resources
+			</h2>
+			
+		<section
+			id="right-rail-recommendations-mobile"
+			class=""
+			data-bi-name="recommendations"
+			hidden
+		></section>
+	 
+		<section
+			id="right-rail-training-mobile"
+			class=""
+			data-bi-name="learning-resource-card"
+			hidden
+		></section>
+	 
+		<section
+			id="right-rail-events-mobile"
+			class=""
+			data-bi-name="events-card"
+			hidden
+		></section>
+	
+		</div>
+	 
+		<div
+			id="article-metadata-footer"
+			data-bi-name="article-metadata-footer"
+			data-test-id="article-metadata-footer"
+			class="page-metadata-container"
+		>
+			<hr class="hr" />
+			<ul class="metadata page-metadata" data-bi-name="page info" lang="en-us" dir="ltr">
+				<li class="visibility-hidden-visual-diff">
+			<span class="badge badge-sm text-wrap-pretty">
+				<span>Last updated on <local-time format="twoDigitNumeric"
+		datetime="2026-04-01T22:18:00.000Z"
+		data-article-date-source="calculated"
+		class="is-invisible"
+	>
+		2026-04-01
+	</local-time></span>
+			</span>
+		</li>
+			</ul>
+		</div>
+	
+			</div>
+			
+		<div
+			id="action-panel"
+			role="region"
+			aria-label="Action Panel"
+			class="action-panel"
+			tabindex="-1"
+		></div>
+	
+		
+				</main>
+				<aside
+					id="layout-body-aside"
+					class="layout-body-aside  "
+					data-bi-name="aside"
+					aria-label="Additional resources"
+			  >
+					
+		<div
+			id="ms--additional-resources"
+			class="right-container padding-sm display-none display-block-desktop height-full"
+			data-bi-name="pageactions"
+		>
+			<div id="affixed-right-container" data-bi-name="right-column">
+				
+		<nav
+			id="side-doc-outline"
+			class="doc-outline border-bottom padding-bottom-xs margin-bottom-xs scrollbar-width-thin"
+			data-bi-name="intopic toc"
+			aria-label="In this article"
+		>
+			<h3>In this article</h3>
+		</nav>
+	
+				<!-- Feedback -->
+				
+		<section
+			id="ms--site-user-feedback-right-rail"
+			class="font-size-sm display-none-print"
+			data-test-id="site-user-feedback-right-rail"
+			data-bi-name="site-feedback-right-rail"
+		>
+			<div class="display-flex flex-wrap-wrap align-items-center">
+				<p class="font-weight-semibold margin-xxs margin-left-none">
+					Was this page helpful?
+				</p>
+				<div class="display-flex flex-wrap-nowrap">
+					<button
+						class="thumb-rating-button like inner-focus"
+						data-test-id="right-rail-rating-yes"
+						data-binary-rating-response="rating-yes"
+						type="button"
+						title="This article is helpful"
+						aria-label="This article is helpful"
+						data-bi-name="button-rating-yes"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-like"></span>
+						</span>
+					</button>
+					<button
+						class="thumb-rating-button dislike inner-focus"
+						id="right-rail-no-button"
+						hidden
+						data-test-id="right-rail-rating-no"
+						data-binary-rating-response="rating-no"
+						type="button"
+						title="This article is not helpful"
+						aria-label="This article is not helpful"
+						data-bi-name="button-rating-no"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-dislike"></span>
+						</span>
+					</button>
+					<details class="popover popover-right" id="help-popover" data-test-id="feedback-popover">
+						<summary
+							tabindex="0"
+							class="thumb-rating-button dislike inner-focus"
+							data-test-id="details-right-rail-rating-no"
+							data-binary-rating-response="rating-no"
+							title="This article is not helpful"
+							aria-label="This article is not helpful"
+							data-bi-name="button-rating-no"
+							aria-pressed="false"
+							data-bi-an="feedback-unhelpful-popover"
+						>
+							<span class="icon" aria-hidden="true">
+								<span class="docon docon-dislike"></span>
+							</span>
+						</summary>
+						<div
+							class="popover-content width-200 width-300-tablet"
+							role="dialog"
+							aria-labelledby="popover-heading-right-rail"
+							aria-describedby="popover-description-right-rail"
+						>
+							<p
+								id="popover-heading-right-rail"
+								class="font-size-lg margin-bottom-xxs font-weight-semibold"
+							>
+								Need help with this topic?
+							</p>
+							<p id="popover-description-right-rail" class="font-size-sm margin-bottom-xs">
+								Want to try using Ask Learn to clarify or guide you through this topic?
+							</p>
+							
+		<div class="buttons flex-direction-row flex-wrap justify-content-center gap-xxs">
+			<div>
+		<button
+			class="button button-sm border inner-focus display-none margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-test-id="ask-learn-assistant-modal-entry-mobile-feedback"
+			data-ask-learn-modal-entry-feedback
+			data-bi-an=feedback-unhelpful-popover
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-inline-flex display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-modal-entry-tablet-feedback"
+			data-ask-learn-modal-entry-feedback
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-flyout-entry-feedback"
+			data-ask-learn-flyout-entry-show-only
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	</div>
+			<button
+				type="button"
+				class="button button-sm margin-right-xxs"
+				data-help-option="suggest-fix"
+				data-bi-name="feedback-suggest"
+				data-bi-an="feedback-unhelpful-popover"
+				data-test-id="suggest-fix"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-feedback"></span>
+				</span>
+				<span> Suggest a fix? </span>
+			</button>
+		</div>
+	
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
+	
+			</div>
+		</div>
+	
+			  </aside> <section
+					id="layout-body-flyout"
+					class="layout-body-flyout "
+					data-bi-name="flyout"
+			  >
+					 <div
+	class="height-full border-left background-color-body-medium"
+	id="ask-learn-flyout"
+></div>
+			  </section> <div class="layout-body-footer " data-bi-name="layout-footer">
+		<footer
+			id="footer"
+			data-test-id="footer"
+			data-bi-name="footer"
+			class="footer-layout padding-xs padding-sm-desktop has-default-focus border-top"
+			role="contentinfo"
+		>
+			<div class="display-flex gap-xs flex-wrap-wrap is-full-height padding-right-lg-desktop">
+				
+		<a
+			data-mscc-ic="false"
+			href="#"
+			data-bi-name="select-locale"
+			class="locale-selector-link flex-shrink-0 button button-sm button-clear external-link-indicator"
+			id=""
+			title=""
+			><span class="icon" aria-hidden="true"
+				><span class="docon docon-world"></span></span
+			><span class="local-selector-link-text">en-us</span></a
+		>
+	 <div class="ccpa-privacy-link" data-ccpa-privacy-link hidden>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://aka.ms/yourcaliforniaprivacychoices"
+			data-bi-name="your-privacy-choices"
+			class="button button-sm button-clear flex-shrink-0 external-link-indicator"
+			id=""
+			title=""
+			>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 30 14"
+			xml:space="preserve"
+			height="16"
+			width="43"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<path
+				d="M7.4 12.8h6.8l3.1-11.6H7.4C4.2 1.2 1.6 3.8 1.6 7s2.6 5.8 5.8 5.8z"
+				style="fill-rule:evenodd;clip-rule:evenodd;fill:#fff"
+			></path>
+			<path
+				d="M22.6 0H7.4c-3.9 0-7 3.1-7 7s3.1 7 7 7h15.2c3.9 0 7-3.1 7-7s-3.2-7-7-7zm-21 7c0-3.2 2.6-5.8 5.8-5.8h9.9l-3.1 11.6H7.4c-3.2 0-5.8-2.6-5.8-5.8z"
+				style="fill-rule:evenodd;clip-rule:evenodd;fill:#06f"
+			></path>
+			<path
+				d="M24.6 4c.2.2.2.6 0 .8L22.5 7l2.2 2.2c.2.2.2.6 0 .8-.2.2-.6.2-.8 0l-2.2-2.2-2.2 2.2c-.2.2-.6.2-.8 0-.2-.2-.2-.6 0-.8L20.8 7l-2.2-2.2c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0l2.2 2.2L23.8 4c.2-.2.6-.2.8 0z"
+				style="fill:#fff"
+			></path>
+			<path
+				d="M12.7 4.1c.2.2.3.6.1.8L8.6 9.8c-.1.1-.2.2-.3.2-.2.1-.5.1-.7-.1L5.4 7.7c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0L8 8.6l3.8-4.5c.2-.2.6-.2.9 0z"
+				style="fill:#06f"
+			></path>
+		</svg>
+	
+			<span>Your Privacy Choices</span></a
+		>
+	
+	</div>
+				<div class="flex-shrink-0">
+		<div class="dropdown has-caret-up">
+			<button
+				data-test-id="theme-selector-button"
+				class="dropdown-trigger button button-clear button-sm inner-focus theme-dropdown-trigger"
+				aria-controls="{{ themeMenuId }}"
+				aria-expanded="false"
+				title="Theme"
+				data-bi-name="theme"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-sun"></span></span>
+				<span>Theme</span>
+				<span class="icon expanded-indicator" aria-hidden="true">
+					<span class="docon docon-chevron-down-light"></span>
+				</span>
+			</button>
+			<div class="dropdown-menu" id="{{ themeMenuId }}" role="menu">
+				<ul class="theme-selector padding-xxs" data-test-id="theme-dropdown-menu">
+					<li class="theme display-block">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							data-theme-to="light"
+						>
+							<span class="theme-light margin-right-xxs">
+								<span
+									class="theme-selector-icon border display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span role="menuitem"> Light </span>
+						</button>
+					</li>
+					<li class="theme display-block">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							data-theme-to="dark"
+						>
+							<span class="theme-dark margin-right-xxs">
+								<span
+									class="border theme-selector-icon display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span role="menuitem"> Dark </span>
+						</button>
+					</li>
+					<li class="theme display-block">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							data-theme-to="high-contrast"
+						>
+							<span class="theme-high-contrast margin-right-xxs">
+								<span
+									class="border theme-selector-icon display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span role="menuitem"> High contrast </span>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+			</div>
+			<ul class="links" data-bi-name="footerlinks">
+				<li class="manage-cookies-holder" hidden=""></li>
+				<li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/principles-for-ai-generated-content"
+			data-bi-name="aiDisclaimer"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>AI Disclaimer</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/previous-versions/"
+			data-bi-name="archivelink"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Previous Versions</a
+		>
+	
+	</li> <li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://techcommunity.microsoft.com/t5/microsoft-learn-blog/bg-p/MicrosoftLearnBlog"
+			data-bi-name="bloglink"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Blog</a
+		>
+	
+	</li> <li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/contribute"
+			data-bi-name="contributorGuide"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Contribute</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://go.microsoft.com/fwlink/?LinkId=521839"
+			data-bi-name="privacy"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Privacy</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://go.microsoft.com/fwlink/?linkid=2259814"
+			data-bi-name="consumer-health-privacy"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Consumer Health Privacy</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/legal/termsofuse"
+			data-bi-name="termsofuse"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Terms of Use</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://www.microsoft.com/legal/intellectualproperty/Trademarks/"
+			data-bi-name="trademarks"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Trademarks</a
+		>
+	
+	</li>
+				<li>&copy; Microsoft 2026</li>
+			</ul>
+		</footer>
+	</footer>
+			</body>
+		</html>

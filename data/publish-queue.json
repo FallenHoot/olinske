@@ -5,7 +5,7 @@
     { "slug": "000006-bcdr-azure-storage-patterns",          "approved": true },
     { "slug": "000007-finops-azure-data-explorer",           "approved": true },
     { "slug": "000009-ai-foundry-container-apps-a2a",        "approved": true },
-    { "slug": "000010-bcdr-aks",                             "approved": true },
+    { "slug": "000010-bcdr-for-aks-what-fails-and-what-does-not", "approved": true },
     { "slug": "000011-mcp-protocol-enterprise-agents",       "approved": true },
     { "slug": "000012-spring-cleaning-cloud-finops",          "approved": true },
     { "slug": "000013-azure-sre-agent-honest-assessment",     "approved": true },

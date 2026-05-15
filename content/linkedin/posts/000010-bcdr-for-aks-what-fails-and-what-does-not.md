@@ -8,8 +8,8 @@ tags:
 type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
-sourcePost: "content/posts/000010-bcdr-aks.md"
-canonicalUrl: "https://zach.olinske.com/posts/000010-bcdr-aks"
+sourcePost: "content/posts/000010-bcdr-for-aks-what-fails-and-what-does-not.md"
+canonicalUrl: "https://zach.olinske.com/posts/000010-bcdr-for-aks-what-fails-and-what-does-not"
 hashtags:
   - AKS
   - Kubernetes

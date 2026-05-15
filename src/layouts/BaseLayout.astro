@@ -112,7 +112,8 @@ const resolvedOgImage = (() => {
         </a>
         <nav class="site-nav" aria-label="Primary">
           <a class={currentPath === '/' ? 'nav-link is-active' : 'nav-link'} href="/">Home</a>
-          <a class="nav-link" href="/about/">About</a>
+          <a class={currentPath.startsWith('/about') ? 'nav-link is-active' : 'nav-link'} href="/about/">About</a>
+          <a class={currentPath.startsWith('/tools') ? 'nav-link is-active' : 'nav-link'} href="/tools/">Tools</a>
           <button class="nav-link menu-btn" data-menu-btn type="button">Topics</button>
           {showThemeToggle && <ThemeToggle />}
         </nav>

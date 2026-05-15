@@ -1263,6 +1263,17 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       window.location.reload();
     });
 
+    // Step navigation: scroll to target section when clicking step buttons
+    document.querySelectorAll('.step-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
     const saved = localStorage.getItem('bcdr-assessment-session-v3') ?? localStorage.getItem('bcdr-assessment-session-v2');
     if (saved) {
       try {

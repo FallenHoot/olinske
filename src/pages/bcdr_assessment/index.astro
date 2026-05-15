@@ -1,0 +1,1102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SERVICE_CATALOG, SLA_BASELINES } from '../../../bcdr_assessment/catalog';
+import { APRL_RECOMMENDATIONS } from '../../../bcdr_assessment/aprlRecommendations';
+
+const catalogJson = JSON.stringify(SERVICE_CATALOG);
+const baselinesJson = JSON.stringify(SLA_BASELINES);
+const aprlRecommendationsJson = JSON.stringify(APRL_RECOMMENDATIONS);
+const baselineEntries = Object.entries(SLA_BASELINES);
+---
+
+<BaseLayout
+  title="BCDR Assessment | Olinske"
+  description="Interactive multi-cloud BCDR assessment with searchable service selection, continuity risk analysis, and executive export."
+>
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Interactive Companion</p>
+      <h1 class="hero-title">BCDR Assessment</h1>
+      <p class="hero-subtitle">
+        Select critical services, model composite availability, assess operational readiness, and validate commitment feasibility.
+      </p>
+
+      <label class="provider-selector" for="provider-scope">
+        Provider scope
+        <select id="provider-scope" aria-label="Provider scope">
+          <option value="azure">Azure</option>
+          <option value="aws">AWS</option>
+          <option value="gcp">GCP</option>
+          <option value="oci">Oracle Cloud (OCI)</option>
+          <option value="multi">Multi-cloud workload</option>
+        </select>
+      </label>
+
+      <p class="bcdr-source-note">
+        Source baseline:
+        <span id="source-baseline-links">
+          <a href={SLA_BASELINES.azure.sourceUrl} target="_blank" rel="noopener noreferrer">
+            {SLA_BASELINES.azure.sourceName} ({SLA_BASELINES.azure.sourceVersion})
+          </a>
+        </span>
+      </p>
+      <p id="source-baseline-note" class="bcdr-source-note">{SLA_BASELINES.azure.note}</p>
+      <p class="bcdr-source-note">
+        Coverage status: all SLA-indexed services are listed in the selector. Composite calculations include selected modeled options.
+      </p>
+      <p class="bcdr-source-note">
+        Quick Azure cross-check:
+        <a href="https://azurecharts.com/sla" target="_blank" rel="noopener noreferrer">AzureCharts SLA board</a>
+        (community mirror). Official commitment source remains Microsoft published SLA terms.
+      </p>
+      <p id="provider-connect-note" class="bcdr-source-note"></p>
+      <details class="collapsible-section">
+        <summary class="section-header">Verified Multi-Cloud SLA Sources</summary>
+        <div class="section-content">
+          <ul class="upgrade-list">
+            {baselineEntries.map(([provider, baseline]) => (
+              <li>
+                <strong>{provider.toUpperCase()}</strong>: <a href={baseline.sourceUrl} target="_blank" rel="noopener noreferrer">{baseline.sourceName}</a> ({baseline.sourceVersion})
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
+      <p class="bcdr-warning">Autosave is browser-local only. Export or print for durable records.</p>
+    </section>
+
+    <section class="bcdr-workflow fade-in fade-delay-1">
+      <aside class="bcdr-panel bcdr-steps">
+        <h2>Assessment Workflow</h2>
+        <ol class="step-list">
+          <li><button type="button" class="step-btn" data-target="workflow-interview">Interview <span id="step-indicator-1" class="step-indicator not-assessed">Not assessed</span></button></li>
+          <li><button type="button" class="step-btn" data-target="workflow-services">Critical path <span id="step-indicator-2" class="step-indicator not-assessed">Not assessed</span></button></li>
+          <li><button type="button" class="step-btn" data-target="workflow-commitment">Commitment <span id="step-indicator-3" class="step-indicator not-assessed">Not assessed</span></button></li>
+          <li><button type="button" class="step-btn" data-target="workflow-upgrades">Improve and simulate <span id="step-indicator-4" class="step-indicator not-assessed">Not assessed</span></button></li>
+          <li><button type="button" class="step-btn" data-target="workflow-executive-evidence">Executive evidence <span id="step-indicator-5" class="step-indicator not-assessed">Not assessed</span></button></li>
+        </ol>
+        <div class="workflow-progress-card">
+          <p class="metric-label">Workflow completion</p>
+          <p id="workflow-progress" class="metric-value">0%</p>
+          <p id="workflow-confidence-note" class="bcdr-note">No confidence risks flagged yet.</p>
+        </div>
+      </aside>
+
+      <div class="bcdr-grid">
+        <article class="bcdr-panel" id="workflow-interview">
+          <details class="collapsible-section" open>
+            <summary class="section-header">0. Foundational Interview</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Capture the operational and business context that determines BCDR risk appetite.</p>
+
+              <div class="interview-grid">
+                <label>
+                  Business criticality
+                  <select id="q-criticality">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+
+                <label>
+                  Reputation impact if unavailable
+                  <select id="q-reputation-impact">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+
+                <label>
+                  Estimated churn risk (%)
+                  <input id="q-churn-risk" type="number" min="0" max="100" step="1" value="8" />
+                </label>
+
+                <label>
+                  Maximum tolerated downtime (minutes)
+                  <input id="q-mtd" type="number" min="1" step="1" value="120" />
+                </label>
+
+                <label>
+                  Recovery time objective (RTO minutes)
+                  <input id="q-rto" type="number" min="1" step="1" value="90" />
+                </label>
+
+                <label>
+                  Recovery point objective (RPO minutes)
+                  <input id="q-rpo" type="number" min="0" step="1" value="15" />
+                </label>
+
+                <label>
+                  Cross-cloud connectivity resilience
+                  <select id="q-interconnect">
+                    <option value="not-applicable">Not applicable (single-cloud workload)</option>
+                    <option value="redundant">Redundant interconnect paths tested</option>
+                    <option value="single">Single interconnect path only</option>
+                    <option value="unknown">Unknown or unverified</option>
+                  </select>
+                </label>
+
+                <label>
+                  Recovery runbook quality
+                  <select id="q-runbook">
+                    <option value="yes">Documented and tested</option>
+                    <option value="partial">Documented but not fully tested</option>
+                    <option value="no">Missing</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="metric-card-row interview-metrics">
+                <div class="metric-card"><p class="metric-label">Readiness score</p><p id="readiness-score" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">High gaps</p><p id="gap-high" class="metric-value warn">-</p></div>
+                <div class="metric-card"><p class="metric-label">Medium gaps</p><p id="gap-medium" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">RTO vs MTD</p><p id="recreate-rto" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Reputation exposure</p><p id="reputation-risk" class="metric-value">-</p></div>
+              </div>
+
+              <ul id="interview-gaps" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="bcdr-panel" id="workflow-services">
+          <details class="collapsible-section" open>
+            <summary class="section-header">1. Critical Path Services</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Add only services in the transaction path. Each service field is searchable inline.</p>
+              <p id="service-search-note" class="bcdr-note">Catalog coverage: 689 services total (Azure 128, AWS 321, GCP 165, OCI 75).</p>
+              <div id="service-config" class="service-config"></div>
+              <datalist id="service-catalog-datalist"></datalist>
+              <div class="service-actions">
+                <button id="add-service" type="button" class="add-service-btn">Add more</button>
+                <p id="service-limit-note" class="bcdr-note"></p>
+              </div>
+            </div>
+          </details>
+        </article>
+
+        <article class="bcdr-panel" id="workflow-commitment">
+          <details class="collapsible-section" open>
+            <summary class="section-header">2. Composite Availability and Commitment</summary>
+            <div class="section-content">
+              <div class="metric-card-row">
+                <div class="metric-card"><p class="metric-label">Modeled composite availability</p><p id="composite-sla" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Monthly downtime budget</p><p id="monthly-budget" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Yearly downtime budget</p><p id="yearly-budget" class="metric-value">-</p></div>
+              </div>
+              <div class="slo-form-row">
+                <label>Customer availability commitment target (%)<input id="company-sla" type="number" min="95" max="100" step="0.001" value="99.90" /></label>
+                <label>Internal safety margin above commitment (basis points)<input id="slo-buffer" type="number" min="1" max="100" step="1" value="5" /></label>
+              </div>
+              <div class="metric-card-row">
+                <div class="metric-card"><p class="metric-label">Internal reliability target</p><p id="internal-slo" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Maximum supportable commitment</p><p id="max-company-sla" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Feasibility check</p><p id="feasibility" class="metric-value">-</p></div>
+              </div>
+              <p id="feasibility-note" class="bcdr-note"></p>
+            </div>
+          </details>
+        </article>
+
+        <section class="bcdr-panel" id="workflow-upgrades">
+          <details class="collapsible-section" open>
+            <summary class="section-header">4. Fastest Ways to Improve Availability</summary>
+            <div class="section-content">
+              <ul id="upgrade-list" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-aprl">
+          <details class="collapsible-section" open>
+            <summary class="section-header">Resource-Specific APRL Recommendations</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Recommendations are filtered from APRL using your currently selected resources.</p>
+              <ul id="aprl-recommendations" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-waf-crosswalk">
+          <details class="collapsible-section" open>
+            <summary class="section-header">3. WAF Reliability Crosswalk Coverage</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Checks are provider-specific for single-cloud scope. Multi-cloud scope evaluates each provider separately.</p>
+              <p id="waf-coverage-headline" class="bcdr-note"></p>
+              <ul id="waf-coverage-list" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-findings">
+          <details class="collapsible-section" open>
+            <summary class="section-header">Assessment Findings Register</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Prioritized findings and actions based on interview inputs, commitment feasibility, and selected resources.</p>
+              <ul id="findings-register" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-scenarios">
+          <details class="collapsible-section" open>
+            <summary class="section-header">Scenario Simulator</summary>
+            <div class="section-content">
+              <div class="metric-card-row">
+                <div class="metric-card"><p class="metric-label">Dependency failure scenario</p><p id="scenario-dependency" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Regional outage scenario</p><p id="scenario-regional" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Data corruption scenario</p><p id="scenario-data" class="metric-value">-</p></div>
+              </div>
+              <p id="scenario-notes" class="bcdr-note"></p>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-executive-evidence">
+          <details class="collapsible-section" open>
+            <summary class="section-header">5. Executive Evidence Pack</summary>
+            <div class="section-content">
+              <div class="service-actions">
+                <button id="generate-executive-summary" type="button" class="add-service-btn">Generate executive summary</button>
+                <p id="executive-summary-status" class="bcdr-note"></p>
+              </div>
+              <label>Executive narrative<textarea id="executive-summary" class="step-meta-input" rows="5" placeholder="Summarize current risk, feasible commitment, and approved actions."></textarea></label>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-export">
+          <details class="collapsible-section" open>
+            <summary class="section-header">6. Export Before You Leave</summary>
+            <div class="section-content">
+              <div class="export-actions">
+                <button id="export-json" type="button" class="add-service-btn">Export JSON</button>
+                <button id="export-markdown" type="button" class="add-service-btn">Export Markdown</button>
+                <button id="export-pdf" type="button" class="add-service-btn">Export PDF</button>
+                <button id="export-pptx" type="button" class="add-service-btn">Export PowerPoint (.pptx)</button>
+                <button id="export-ppt-text" type="button" class="add-service-btn">Export PPT-style text</button>
+                <span class="bcdr-pill">Downloaded locally from browser</span>
+                <button id="clear-local-session" type="button" class="remove-service-btn">Clear local session</button>
+              </div>
+              <p class="bcdr-note">This prototype uses local state only; no server-side data persistence is enabled.</p>
+              <p id="export-status" class="bcdr-note">No export yet in this browser session.</p>
+            </div>
+          </details>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script id="bcdr-catalog" type="application/json" set:html={catalogJson}></script>
+  <script id="bcdr-baselines" type="application/json" set:html={baselinesJson}></script>
+  <script id="bcdr-aprl-recommendations" type="application/json" set:html={aprlRecommendationsJson}></script>
+
+  <script type="module">
+    import { calculateCompositeAvailabilityPct, downtimeBudgetFromPct, evaluateUpgradeImpacts, computeSloPlan, formatPct } from '../../../bcdr_assessment/calculator';
+
+    const catalog = JSON.parse(document.getElementById('bcdr-catalog')?.textContent ?? '[]');
+    const baselines = JSON.parse(document.getElementById('bcdr-baselines')?.textContent ?? '{}');
+    const aprlRecommendations = JSON.parse(document.getElementById('bcdr-aprl-recommendations')?.textContent ?? '{}');
+    const sourceBaselineLinks = document.getElementById('source-baseline-links');
+    const sourceBaselineNote = document.getElementById('source-baseline-note');
+    const providerConnectNote = document.getElementById('provider-connect-note');
+    const providerScope = document.getElementById('provider-scope');
+    const serviceConfig = document.getElementById('service-config');
+    const serviceDatalist = document.getElementById('service-catalog-datalist');
+    const addServiceButton = document.getElementById('add-service');
+    const serviceLimitNote = document.getElementById('service-limit-note');
+    const compositeSla = document.getElementById('composite-sla');
+    const monthlyBudget = document.getElementById('monthly-budget');
+    const yearlyBudget = document.getElementById('yearly-budget');
+    const companySlaInput = document.getElementById('company-sla');
+    const sloBufferInput = document.getElementById('slo-buffer');
+    const internalSlo = document.getElementById('internal-slo');
+    const maxCompanySla = document.getElementById('max-company-sla');
+    const feasibility = document.getElementById('feasibility');
+    const feasibilityNote = document.getElementById('feasibility-note');
+    const upgradeList = document.getElementById('upgrade-list');
+    const workflowAprlPanel = document.getElementById('workflow-aprl');
+    const aprlRecommendationsList = document.getElementById('aprl-recommendations');
+    const wafCoverageHeadline = document.getElementById('waf-coverage-headline');
+    const wafCoverageList = document.getElementById('waf-coverage-list');
+    const findingsRegister = document.getElementById('findings-register');
+    const scenarioDependency = document.getElementById('scenario-dependency');
+    const scenarioRegional = document.getElementById('scenario-regional');
+    const scenarioData = document.getElementById('scenario-data');
+    const scenarioNotes = document.getElementById('scenario-notes');
+    const readinessScore = document.getElementById('readiness-score');
+    const gapHigh = document.getElementById('gap-high');
+    const gapMedium = document.getElementById('gap-medium');
+    const recreateRto = document.getElementById('recreate-rto');
+    const reputationRisk = document.getElementById('reputation-risk');
+    const interviewGaps = document.getElementById('interview-gaps');
+    const executiveSummary = document.getElementById('executive-summary');
+    const generateExecutiveSummaryButton = document.getElementById('generate-executive-summary');
+    const executiveSummaryStatus = document.getElementById('executive-summary-status');
+    const exportStatus = document.getElementById('export-status');
+    const workflowProgress = document.getElementById('workflow-progress');
+    const workflowConfidenceNote = document.getElementById('workflow-confidence-note');
+
+    const stepIndicators = {
+      1: document.getElementById('step-indicator-1'),
+      2: document.getElementById('step-indicator-2'),
+      3: document.getElementById('step-indicator-3'),
+      4: document.getElementById('step-indicator-4'),
+      5: document.getElementById('step-indicator-5'),
+    };
+
+    const interviewInputs = {
+      criticality: document.getElementById('q-criticality'),
+      reputationImpact: document.getElementById('q-reputation-impact'),
+      churnRisk: document.getElementById('q-churn-risk'),
+      mtd: document.getElementById('q-mtd'),
+      rto: document.getElementById('q-rto'),
+      rpo: document.getElementById('q-rpo'),
+      interconnect: document.getElementById('q-interconnect'),
+      runbook: document.getElementById('q-runbook'),
+    };
+
+    const providerLabels = { azure: 'Azure', aws: 'AWS', gcp: 'GCP', oci: 'OCI', multi: 'Multi-cloud' };
+    let currentProviderMode = providerScope.value;
+    let nextRowId = 1;
+    const selectedRows = [{ rowId: 1, serviceId: '', optionId: '' }];
+
+    const getVisibleCatalog = () => currentProviderMode === 'multi' ? catalog : catalog.filter((s) => s.provider === currentProviderMode);
+    const getServiceById = (id) => catalog.find((s) => s.id === id);
+    const getProviderBaselineVersion = (provider) => baselines?.[provider]?.sourceVersion ?? 'Unknown';
+    const serviceDisplayLabel = (service) => currentProviderMode === 'multi' ? `[${providerLabels[service.provider] ?? service.provider}] ${service.name}` : service.name;
+    const toSelections = () => selectedRows.filter((r) => r.serviceId && r.optionId).map((r) => ({ selectionId: `row-${r.rowId}`, serviceId: r.serviceId, optionId: r.optionId, enabled: true }));
+
+    const evaluateProviderWafCoverage = (provider, providerSelections, plan, interviewResult) => {
+      const runbookReady = interviewInputs.runbook.value === 'yes';
+      const rpoTarget = Number(interviewInputs.rpo.value);
+
+      const controlsByProvider = {
+        azure: [
+          { title: 'Runbook and failover tasks are documented and tested', passed: runbookReady },
+          { title: 'Recovery objective is within tolerated downtime', passed: interviewResult.rto <= interviewResult.mtd },
+          { title: 'At least two Azure dependencies are modeled in critical path', passed: providerSelections.length >= 2 },
+          { title: 'Target commitment is feasible against modeled architecture', passed: plan.feasible },
+        ],
+        aws: [
+          { title: 'Runbook and operator response plan are tested', passed: runbookReady },
+          { title: 'RPO is constrained to a practical recovery window (<=30 min)', passed: rpoTarget <= 30 },
+          { title: 'At least two AWS dependencies are modeled in critical path', passed: providerSelections.length >= 2 },
+          { title: 'Target commitment is feasible against modeled architecture', passed: plan.feasible },
+        ],
+        gcp: [
+          { title: 'Runbook includes tested procedures and owner accountability', passed: runbookReady },
+          { title: 'Recovery objective is within tolerated downtime', passed: interviewResult.rto <= interviewResult.mtd },
+          { title: 'At least two GCP dependencies are modeled in critical path', passed: providerSelections.length >= 2 },
+          { title: 'Target commitment is feasible against modeled architecture', passed: plan.feasible },
+        ],
+        oci: [
+          { title: 'Runbook and restoration procedure are tested', passed: runbookReady },
+          { title: 'RPO is constrained to a practical recovery window (<=30 min)', passed: rpoTarget <= 30 },
+          { title: 'At least two OCI dependencies are modeled in critical path', passed: providerSelections.length >= 2 },
+          { title: 'Target commitment is feasible against modeled architecture', passed: plan.feasible },
+        ],
+      };
+
+      const controls = controlsByProvider[provider] ?? [];
+      const passed = controls.filter((control) => control.passed).length;
+      const pct = controls.length === 0 ? 0 : Math.round((passed / controls.length) * 100);
+
+      return { controls, passed, total: controls.length, pct };
+    };
+
+    const evaluateInterview = (activeSelections) => {
+      const findings = [];
+      const criticality = interviewInputs.criticality.value;
+      const reputationImpact = interviewInputs.reputationImpact.value;
+      const churnRisk = Number(interviewInputs.churnRisk.value);
+      const mtd = Number(interviewInputs.mtd.value);
+      const rto = Number(interviewInputs.rto.value);
+      const rpo = Number(interviewInputs.rpo.value);
+      const interconnect = interviewInputs.interconnect.value;
+      const runbook = interviewInputs.runbook.value;
+
+      if (rto > mtd) findings.push({ severity: 'high', text: 'Restore target exceeds maximum tolerated downtime.' });
+      if (runbook === 'no') findings.push({ severity: 'high', text: 'No documented recovery runbook.' });
+      if (runbook === 'partial') findings.push({ severity: 'medium', text: 'Recovery runbook is incomplete or untested.' });
+      if (rpo > 30) findings.push({ severity: 'medium', text: 'RPO target exceeds 30 minutes.' });
+      if (activeSelections.length < 2) findings.push({ severity: 'medium', text: 'Critical-path service model appears incomplete.' });
+
+      if (currentProviderMode === 'multi') {
+        if (interconnect === 'single') findings.push({ severity: 'high', text: 'Multi-cloud workload has only one interconnect path.' });
+        if (interconnect === 'unknown' || interconnect === 'not-applicable') {
+          findings.push({ severity: 'medium', text: 'Interconnect resilience is unknown for multi-cloud scope.' });
+        }
+      }
+
+      let high = findings.filter((f) => f.severity === 'high').length;
+      let medium = findings.filter((f) => f.severity === 'medium').length;
+
+      if (criticality === 'high' && (high > 0 || medium > 0)) {
+        high += 1;
+      }
+
+      const score = Math.max(0, 100 - (high * 20 + medium * 10));
+      return { findings, high, medium, score, rto, mtd, reputationImpact, churnRisk };
+    };
+
+    const renderInterview = (activeSelections) => {
+      const result = evaluateInterview(activeSelections);
+      readinessScore.textContent = `${result.score}%`;
+      gapHigh.textContent = String(result.high);
+      gapMedium.textContent = String(result.medium);
+
+      const rtoDelta = result.mtd - result.rto;
+      recreateRto.textContent = rtoDelta >= 0 ? `Within target by ${rtoDelta} min` : `Exceeds target by ${Math.abs(rtoDelta)} min`;
+      recreateRto.className = `metric-value ${rtoDelta >= 0 ? 'ok' : 'warn'}`;
+
+      let reputationLevel = 'Low';
+      let reputationClass = 'metric-value ok';
+      if (result.reputationImpact === 'high' || result.churnRisk >= 15) {
+        reputationLevel = 'High';
+        reputationClass = 'metric-value warn';
+      } else if (result.reputationImpact === 'medium' || result.churnRisk >= 8) {
+        reputationLevel = 'Medium';
+        reputationClass = 'metric-value';
+      }
+
+      reputationRisk.textContent = reputationLevel;
+      reputationRisk.className = reputationClass;
+
+      interviewGaps.innerHTML = '';
+      if (result.findings.length === 0) {
+        const item = document.createElement('li');
+        item.textContent = 'No immediate foundational gaps detected from current inputs.';
+        interviewGaps.appendChild(item);
+      } else {
+        for (const finding of result.findings.slice(0, 8)) {
+          const item = document.createElement('li');
+          item.innerHTML = `<strong>${finding.severity.toUpperCase()}</strong>: ${finding.text}`;
+          interviewGaps.appendChild(item);
+        }
+      }
+
+      return result;
+    };
+
+    const setStepIndicator = (step, status) => {
+      const indicator = stepIndicators[step];
+      if (!indicator) return;
+      indicator.className = `step-indicator ${status}`;
+      indicator.textContent = status === 'complete' ? 'Complete' : status === 'partial' ? 'Partial' : 'Not assessed';
+    };
+
+    const updateWorkflowStatus = (selections, plan, interviewResult, upgradeCount) => {
+      const step1 = interviewResult.score >= 75 ? 'complete' : interviewResult.score >= 50 ? 'partial' : 'not-assessed';
+      const step2 = selections.length >= 4 ? 'complete' : selections.length >= 2 ? 'partial' : 'not-assessed';
+      const step3 = plan.feasible ? 'complete' : selections.length > 0 ? 'partial' : 'not-assessed';
+      const step4 = upgradeCount >= 3 ? 'complete' : upgradeCount >= 1 ? 'partial' : 'not-assessed';
+      const step5 = executiveSummary.value.trim().length >= 80 ? 'complete' : executiveSummary.value.trim().length >= 20 ? 'partial' : 'not-assessed';
+
+      setStepIndicator(1, step1);
+      setStepIndicator(2, step2);
+      setStepIndicator(3, step3);
+      setStepIndicator(4, step4);
+      setStepIndicator(5, step5);
+
+      const scoreFromStatus = (status) => status === 'complete' ? 1 : status === 'partial' ? 0.5 : 0;
+      const completion = Math.round(((scoreFromStatus(step1) + scoreFromStatus(step2) + scoreFromStatus(step3) + scoreFromStatus(step4) + scoreFromStatus(step5)) / 5) * 100);
+      workflowProgress.textContent = `${completion}%`;
+
+      const notes = [];
+      if (interviewResult.high > 0) notes.push(`${interviewResult.high} high interview gap(s).`);
+      if (!plan.feasible) notes.push('Commitment is currently not feasible.');
+      if (selections.length < 2) notes.push('Critical path likely incomplete.');
+      workflowConfidenceNote.textContent = notes.length > 0 ? notes.join(' ') : 'No confidence risks flagged yet.';
+    };
+
+    const renderConfig = () => {
+      serviceConfig.innerHTML = '';
+      const visible = getVisibleCatalog();
+      const lookup = new Map();
+      serviceDatalist.innerHTML = '';
+
+      for (const service of visible) {
+        const label = serviceDisplayLabel(service);
+        lookup.set(label.toLowerCase(), service);
+        const option = document.createElement('option');
+        option.value = label;
+        serviceDatalist.appendChild(option);
+      }
+
+      for (const [idx, rowState] of selectedRows.entries()) {
+        const row = document.createElement('div');
+        row.className = 'service-row';
+
+        const serviceInput = document.createElement('input');
+        serviceInput.type = 'text';
+        serviceInput.setAttribute('list', 'service-catalog-datalist');
+        serviceInput.setAttribute('aria-label', `Service selection for row ${idx + 1}`);
+        const selected = getServiceById(rowState.serviceId);
+        if (selected) serviceInput.value = serviceDisplayLabel(selected);
+
+        serviceInput.addEventListener('change', () => {
+          const typed = serviceInput.value.trim().toLowerCase();
+          const matched = lookup.get(typed);
+          if (!matched) {
+            serviceInput.value = selected ? serviceDisplayLabel(selected) : '';
+            return;
+          }
+          rowState.serviceId = matched.id;
+          rowState.optionId = matched.defaultOptionId ?? '';
+          render();
+        });
+
+        const optionSelect = document.createElement('select');
+        optionSelect.setAttribute('aria-label', `SLA requirement row ${idx + 1}`);
+
+        if (!selected) {
+          const placeholder = document.createElement('option');
+          placeholder.value = '';
+          placeholder.textContent = 'Select SLA requirement';
+          optionSelect.appendChild(placeholder);
+          optionSelect.disabled = true;
+        } else {
+          for (const option of selected.options) {
+            const node = document.createElement('option');
+            node.value = option.id;
+            node.textContent = option.modeled === false ? option.label : `${option.label} (${option.availabilityPct.toFixed(3)}%)`;
+            if (rowState.optionId === option.id) node.selected = true;
+            optionSelect.appendChild(node);
+          }
+          optionSelect.addEventListener('change', () => { rowState.optionId = optionSelect.value; render(); });
+        }
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'remove-service-btn';
+        removeButton.textContent = 'Remove';
+        removeButton.disabled = selectedRows.length === 1;
+        removeButton.addEventListener('click', () => {
+          const removeIdx = selectedRows.findIndex((r) => r.rowId === rowState.rowId);
+          if (removeIdx >= 0) selectedRows.splice(removeIdx, 1);
+          render();
+        });
+
+        row.append(serviceInput, optionSelect, removeButton);
+        serviceConfig.appendChild(row);
+      }
+
+      addServiceButton.disabled = selectedRows.length >= 30;
+      serviceLimitNote.textContent = addServiceButton.disabled ? 'Maximum of 30 service rows reached.' : '';
+    };
+
+    const render = () => {
+      if (currentProviderMode === 'multi') {
+        sourceBaselineLinks.innerHTML = ['azure', 'aws', 'gcp', 'oci']
+          .map((provider) => {
+            const baseline = baselines[provider];
+            return `<a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${provider.toUpperCase()} SLA source</a>`;
+          })
+          .join(' | ');
+        sourceBaselineNote.textContent = 'Multi-cloud mode requires provider-specific SLA review for each selected service, including prerequisites and exclusions.';
+        providerConnectNote.textContent = 'Connectivity commitments vary by provider and topology. Validate interconnect SLA terms separately from service SLAs.';
+      } else {
+        const baseline = baselines[currentProviderMode] ?? baselines.azure;
+        sourceBaselineLinks.innerHTML = `<a href="${baseline.sourceUrl}" target="_blank" rel="noopener noreferrer">${baseline.sourceName} (${baseline.sourceVersion})</a>`;
+        sourceBaselineNote.textContent = baseline.note;
+        providerConnectNote.textContent = currentProviderMode === 'azure'
+          ? 'For Azure, also apply the Microsoft SLA five-pass interpretation model before finalizing commitments.'
+          : 'Use provider-specific SLA definitions, exclusions, and claim windows as design inputs for this workload.';
+      }
+
+      renderConfig();
+      const selections = toSelections();
+      const composite = calculateCompositeAvailabilityPct(catalog, selections);
+      const downtime = downtimeBudgetFromPct(composite);
+      const plan = computeSloPlan(composite, Number(companySlaInput.value), Number(sloBufferInput.value));
+      const interviewResult = renderInterview(selections);
+
+      const providerSelections = {
+        azure: selections.filter((selection) => getServiceById(selection.serviceId)?.provider === 'azure'),
+        aws: selections.filter((selection) => getServiceById(selection.serviceId)?.provider === 'aws'),
+        gcp: selections.filter((selection) => getServiceById(selection.serviceId)?.provider === 'gcp'),
+        oci: selections.filter((selection) => getServiceById(selection.serviceId)?.provider === 'oci'),
+      };
+
+      compositeSla.textContent = formatPct(composite);
+      monthlyBudget.textContent = `${downtime.monthlyMinutes.toFixed(3)} min`;
+      yearlyBudget.textContent = `${downtime.yearlyMinutes.toFixed(3)} min`;
+      internalSlo.textContent = formatPct(plan.internalSloPct);
+      maxCompanySla.textContent = formatPct(plan.maxCompanySlaPct);
+      feasibility.textContent = plan.feasible ? 'Feasible' : 'Not feasible';
+      feasibility.className = `metric-value ${plan.feasible ? 'ok' : 'warn'}`;
+      feasibilityNote.textContent = plan.feasible ? 'Commitment is currently supportable based on modeled availability.' : 'Commitment is too aggressive for current architecture.';
+
+      upgradeList.innerHTML = '';
+      const topImpacts = evaluateUpgradeImpacts(catalog, selections).slice(0, 5);
+      for (const impact of topImpacts) {
+        const item = document.createElement('li');
+        item.innerHTML = `<strong>${impact.serviceName}</strong>: ${impact.fromLabel} -> ${impact.toLabel} (<strong>+${impact.compositeDeltaPct.toFixed(6)}%</strong> composite).`;
+        upgradeList.appendChild(item);
+      }
+
+      const azureServiceIds = [...new Set(
+        selections
+          .map((selection) => getServiceById(selection.serviceId))
+          .filter((service) => service?.provider === 'azure')
+          .map((service) => service.id)
+      )];
+      const aprlItems = azureServiceIds
+        .flatMap((serviceId) => aprlRecommendations[serviceId] ?? [])
+        .sort((a, b) => (a.impact === b.impact ? 0 : a.impact === 'high' ? -1 : 1));
+
+      const aprlEnabled = currentProviderMode === 'azure' || (currentProviderMode === 'multi' && azureServiceIds.length > 0);
+      workflowAprlPanel.style.display = aprlEnabled ? '' : 'none';
+
+      aprlRecommendationsList.innerHTML = '';
+      if (!aprlEnabled) {
+        const item = document.createElement('li');
+        item.textContent = 'APRL recommendations are available only for Azure services.';
+        aprlRecommendationsList.appendChild(item);
+      } else if (aprlItems.length === 0) {
+        const item = document.createElement('li');
+        item.textContent = 'No mapped APRL guidance yet for current Azure selections. Keep adding critical Azure resources for targeted guidance.';
+        aprlRecommendationsList.appendChild(item);
+      } else {
+        for (const rec of aprlItems.slice(0, 10)) {
+          const item = document.createElement('li');
+          item.innerHTML = `<strong>${rec.impact.toUpperCase()}</strong>: <a href="${rec.url}" target="_blank" rel="noopener noreferrer">${rec.title}</a>`;
+          aprlRecommendationsList.appendChild(item);
+        }
+      }
+
+      const assessedProviders = currentProviderMode === 'multi'
+        ? ['azure', 'aws', 'gcp', 'oci']
+        : [currentProviderMode];
+
+      const providerCoverage = assessedProviders.map((provider) => {
+        const coverage = evaluateProviderWafCoverage(provider, providerSelections[provider] ?? [], plan, interviewResult);
+        return { provider, ...coverage };
+      });
+
+      wafCoverageList.innerHTML = '';
+      for (const coverage of providerCoverage) {
+        const header = document.createElement('li');
+        header.innerHTML = `<strong>${coverage.provider.toUpperCase()} coverage: ${coverage.pct}% (${coverage.passed}/${coverage.total})</strong>`;
+        wafCoverageList.appendChild(header);
+
+        for (const control of coverage.controls) {
+          const item = document.createElement('li');
+          item.textContent = `${control.passed ? 'PASS' : 'GAP'}: ${control.title}`;
+          wafCoverageList.appendChild(item);
+        }
+      }
+
+      if (currentProviderMode === 'multi') {
+        const summary = providerCoverage.map((coverage) => `${coverage.provider.toUpperCase()} ${coverage.pct}%`).join(' | ');
+        wafCoverageHeadline.textContent = `Multi-cloud coverage is reported per provider: ${summary}.`;
+      } else {
+        const single = providerCoverage[0];
+        wafCoverageHeadline.textContent = `${single.provider.toUpperCase()} WAF reliability coverage is ${single.pct}% based on current assessment evidence.`;
+      }
+
+      const findings = [];
+      if (!plan.feasible) {
+        const gap = Math.abs(plan.gapToCompositePct).toFixed(3);
+        findings.push({
+          severity: 'high',
+          title: 'Commitment exceeds modeled capability',
+          detail: `Internal target is ${gap}% above current modeled composite availability.`,
+          action: 'Lower external commitment or implement top reliability upgrades before confirming contractual terms.',
+        });
+      }
+      if (interviewResult.high > 0) {
+        findings.push({
+          severity: 'high',
+          title: 'Foundational operational gaps',
+          detail: `${interviewResult.high} high-severity interview gap(s) are currently open.`,
+          action: 'Close runbook, RTO/MTD, and interconnect risks before launch gating.',
+        });
+      }
+      if (selections.length < 3) {
+        findings.push({
+          severity: 'medium',
+          title: 'Critical-path model may be incomplete',
+          detail: `Only ${selections.length} service selection(s) are currently modeled.`,
+          action: 'Include identity, data, and edge dependencies for realistic composite availability.',
+        });
+      }
+      const highImpactAprlCount = aprlItems.filter((item) => item.impact === 'high').length;
+      if (highImpactAprlCount > 0) {
+        findings.push({
+          severity: 'medium',
+          title: 'High-impact APRL recommendations available',
+          detail: `${highImpactAprlCount} high-impact APRL recommendation(s) match current resource selections.`,
+          action: 'Convert these recommendations into dated implementation tickets with owners.',
+        });
+      }
+      if (topImpacts.length > 0) {
+        findings.push({
+          severity: 'medium',
+          title: 'Material reliability gains are available',
+          detail: `Top modeled action can improve composite availability by ${topImpacts[0].compositeDeltaPct.toFixed(6)}%.`,
+          action: 'Prioritize highest-impact option upgrades in the next reliability sprint.',
+        });
+      }
+      if (findings.length === 0) {
+        findings.push({
+          severity: 'low',
+          title: 'No immediate gaps flagged',
+          detail: 'Current assessment inputs do not surface high or medium concerns.',
+          action: 'Validate with a live failover drill and keep evidence attached to this assessment.',
+        });
+      }
+
+      findingsRegister.innerHTML = '';
+      for (const finding of findings.slice(0, 6)) {
+        const item = document.createElement('li');
+        item.innerHTML = `<strong>${finding.severity.toUpperCase()}</strong> - ${finding.title}: ${finding.detail} Action: ${finding.action}`;
+        findingsRegister.appendChild(item);
+      }
+
+      updateWorkflowStatus(selections, plan, interviewResult, topImpacts.length);
+
+      scenarioDependency.textContent = `${Math.max(10, Math.round(Number(companySlaInput.value))) } min`;
+      scenarioRegional.textContent = `${Math.max(20, Math.round(Number(sloBufferInput.value) * 3)) } min`;
+      scenarioData.textContent = `${Math.max(15, Math.round(Number(sloBufferInput.value) * 2)) } min`;
+      scenarioNotes.textContent = `Scenario estimates are simplified and should be calibrated with drill data. Current readiness: ${interviewResult.score}% (${interviewResult.high} high, ${interviewResult.medium} medium).`;
+
+      const snapshot = {
+        generatedAt: new Date().toISOString(),
+        selections,
+        composite,
+        plan,
+        interview: {
+          score: interviewResult.score,
+          highGaps: interviewResult.high,
+          mediumGaps: interviewResult.medium,
+          findings: interviewResult.findings,
+        },
+        wafCoverage: providerCoverage,
+        findings,
+        executiveSummary: executiveSummary.value,
+      };
+
+      localStorage.setItem('bcdr-assessment-session-v2', JSON.stringify({
+        currentProviderMode,
+        nextRowId,
+        selectedRows,
+        companySla: companySlaInput.value,
+        sloBuffer: sloBufferInput.value,
+        executiveSummary: executiveSummary.value,
+        interview: Object.fromEntries(Object.entries(interviewInputs).map(([key, input]) => [key, input.value])),
+      }));
+      window.__bcdrSnapshot = snapshot;
+    };
+
+    const buildExecutiveSummary = () => {
+      const snapshot = window.__bcdrSnapshot ?? {};
+      const interview = snapshot.interview ?? {};
+      const plan = snapshot.plan ?? {};
+      const findings = Array.isArray(interview.findings) ? interview.findings : [];
+      const topActions = evaluateUpgradeImpacts(catalog, toSelections()).slice(0, 2);
+
+      const riskLine = interview.score == null
+        ? 'Current resilience posture is still being assessed.'
+        : `Current readiness score is ${interview.score}%, with ${interview.highGaps ?? 0} high gap(s) and ${interview.mediumGaps ?? 0} medium gap(s).`;
+
+      const commitmentLine = plan.feasible
+        ? `Current architecture can support the requested commitment with an internal target of ${formatPct(plan.internalSloPct)}.`
+        : `Current architecture cannot support the requested commitment; internal target of ${formatPct(plan.internalSloPct)} is above modeled composite capability.`;
+
+      const actionLine = topActions.length === 0
+        ? 'No immediate upgrade candidates are currently ranked for modeled availability gain.'
+        : `Top actions: ${topActions.map((item, idx) => `${idx + 1}) ${item.serviceName}: ${item.toLabel}`).join('; ')}.`;
+
+      const findingLine = findings.length === 0
+        ? 'No critical foundational findings are currently flagged.'
+        : `Priority finding: ${findings[0].severity.toUpperCase()} - ${findings[0].text}`;
+
+      return `${riskLine} ${commitmentLine} ${findingLine} ${actionLine}`;
+    };
+
+    providerScope.addEventListener('change', () => { currentProviderMode = providerScope.value; render(); });
+    addServiceButton.addEventListener('click', () => { if (selectedRows.length >= 30) return; nextRowId += 1; selectedRows.push({ rowId: nextRowId, serviceId: '', optionId: '' }); render(); });
+    companySlaInput.addEventListener('input', render);
+    sloBufferInput.addEventListener('input', render);
+    executiveSummary.addEventListener('input', render);
+    generateExecutiveSummaryButton.addEventListener('click', () => {
+      executiveSummary.value = buildExecutiveSummary();
+      executiveSummaryStatus.textContent = 'Executive summary generated from current assessment state.';
+      render();
+    });
+    Object.values(interviewInputs).forEach((input) => {
+      input.addEventListener('input', render);
+      input.addEventListener('change', render);
+    });
+
+    const getDateStamp = () => {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const downloadTextFile = (fileName, content, mimeType) => {
+      const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    const buildMarkdownReport = (snapshot) => {
+      const lines = [];
+      lines.push('# BCDR Assessment Report');
+      lines.push('');
+      lines.push(`- Generated: ${snapshot.generatedAt ?? ''}`);
+      lines.push(`- Composite availability: ${snapshot.composite != null ? formatPct(snapshot.composite) : ''}`);
+      lines.push(`- Feasible commitment: ${snapshot.plan?.feasible ? 'Yes' : 'No'}`);
+      lines.push('');
+      lines.push('## Findings');
+      lines.push('');
+      lines.push('| Severity | Title | Detail | Action |');
+      lines.push('| --- | --- | --- | --- |');
+      const findings = Array.isArray(snapshot.findings) ? snapshot.findings : [];
+      for (const finding of findings) {
+        lines.push(`| ${(finding.severity ?? '').toUpperCase()} | ${finding.title ?? ''} | ${finding.detail ?? ''} | ${finding.action ?? ''} |`);
+      }
+      lines.push('');
+      lines.push('## Executive Summary');
+      lines.push('');
+      lines.push(snapshot.executiveSummary ?? '');
+      return lines.join('\n');
+    };
+
+    const buildPptStyleText = (snapshot) => {
+      const findings = Array.isArray(snapshot.findings) ? snapshot.findings : [];
+      const lines = [];
+      lines.push('SLIDE 1 - BCDR ASSESSMENT OVERVIEW');
+      lines.push(`Assessment date: ${new Date().toLocaleDateString()}`);
+      lines.push('');
+      lines.push('SLIDE 2 - EXECUTIVE SUMMARY');
+      lines.push(`Composite availability: ${snapshot.composite != null ? formatPct(snapshot.composite) : 'N/A'}`);
+      lines.push(`Commitment feasible: ${snapshot.plan?.feasible ? 'Yes' : 'No'}`);
+      lines.push('');
+      lines.push('SLIDE 3 - PRIORITIZED FINDINGS');
+      findings.forEach((finding, idx) => {
+        lines.push(`${idx + 1}. [${(finding.severity ?? '').toUpperCase()}] ${finding.title ?? ''}`);
+        lines.push(`   Detail: ${finding.detail ?? ''}`);
+        lines.push(`   Recommendation: ${finding.action ?? ''}`);
+      });
+      return lines.join('\n');
+    };
+
+    const loadExternalScript = (id, src) => new Promise((resolve, reject) => {
+      const existing = document.getElementById(id);
+      if (existing) {
+        resolve();
+        return;
+      }
+      const script = document.createElement('script');
+      script.id = id;
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      document.head.appendChild(script);
+    });
+
+    document.getElementById('export-json').addEventListener('click', () => {
+      const content = JSON.stringify(window.__bcdrSnapshot ?? {}, null, 2);
+      downloadTextFile(`bcdr-assessment-${getDateStamp()}.json`, content, 'application/json');
+      exportStatus.textContent = 'JSON export downloaded.';
+    });
+
+    document.getElementById('export-markdown').addEventListener('click', () => {
+      const markdown = buildMarkdownReport(window.__bcdrSnapshot ?? {});
+      downloadTextFile(`bcdr-assessment-${getDateStamp()}.md`, markdown, 'text/markdown');
+      exportStatus.textContent = 'Markdown export downloaded.';
+    });
+
+    document.getElementById('export-ppt-text').addEventListener('click', () => {
+      const pptText = buildPptStyleText(window.__bcdrSnapshot ?? {});
+      downloadTextFile(`bcdr-assessment-ppt-text-${getDateStamp()}.txt`, pptText, 'text/plain');
+      exportStatus.textContent = 'PPT-style text export downloaded.';
+    });
+
+    document.getElementById('export-pdf').addEventListener('click', () => {
+      Promise.resolve()
+        .then(() => loadExternalScript('bcdr-jspdf', 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'))
+        .then(() => loadExternalScript('bcdr-jspdf-autotable', 'https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js'))
+        .then(() => {
+      const jsPDF = window.jspdf?.jsPDF;
+      if (!jsPDF) {
+        throw new Error('jsPDF global not available after script load.');
+      }
+      const snapshot = window.__bcdrSnapshot ?? {};
+      const findings = Array.isArray(snapshot.findings) ? snapshot.findings : [];
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text('BCDR Assessment Report', 14, 18);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`Generated: ${snapshot.generatedAt ?? ''}`, 14, 26);
+      doc.text(`Composite availability: ${snapshot.composite != null ? formatPct(snapshot.composite) : 'N/A'}`, 14, 32);
+      doc.text(`Commitment feasible: ${snapshot.plan?.feasible ? 'Yes' : 'No'}`, 14, 38);
+
+      if (typeof doc.autoTable !== 'function') {
+        throw new Error('jspdf-autotable plugin is not attached to jsPDF instance.');
+      }
+
+      doc.autoTable({
+        startY: 46,
+        head: [['Severity', 'Title', 'Detail', 'Action']],
+        body: findings.length > 0
+          ? findings.map((f) => [(f.severity ?? '').toUpperCase(), f.title ?? '', f.detail ?? '', f.action ?? ''])
+          : [['-', 'No findings recorded', '-', '-']],
+        styles: { fontSize: 8, cellPadding: 2 },
+      });
+
+      doc.save(`bcdr-assessment-${getDateStamp()}.pdf`);
+      exportStatus.textContent = 'PDF export downloaded.';
+      })
+      .catch((error) => {
+        console.error('PDF export failed', error);
+        exportStatus.textContent = 'PDF export failed. Verify internet access to CDN or check browser console.';
+      });
+    });
+
+    document.getElementById('export-pptx').addEventListener('click', async () => {
+      let PptxGenJS;
+      try {
+        await loadExternalScript('bcdr-pptxgenjs', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
+        PptxGenJS = window.PptxGenJS;
+        if (!PptxGenJS) {
+          throw new Error('PptxGenJS export not found.');
+        }
+      } catch (error) {
+        console.error('PowerPoint export failed to load library', error);
+        exportStatus.textContent = 'PowerPoint export failed. Verify internet access to CDN or check browser console.';
+        return;
+      }
+
+      const snapshot = window.__bcdrSnapshot ?? {};
+      const findings = Array.isArray(snapshot.findings) ? snapshot.findings : [];
+      const pptx = new PptxGenJS();
+      pptx.layout = 'LAYOUT_16x9';
+      pptx.author = 'BCDR Assessment';
+      pptx.subject = 'BCDR Assessment Export';
+      pptx.title = 'BCDR Assessment Report';
+
+      const slide1 = pptx.addSlide();
+      slide1.addText('BCDR Assessment Report', { x: 0.6, y: 0.6, w: 9, h: 0.6, fontSize: 30, bold: true, color: '0C3461' });
+      slide1.addText(`Generated: ${snapshot.generatedAt ?? ''}`, { x: 0.6, y: 1.5, w: 9, h: 0.4, fontSize: 12 });
+      slide1.addText(`Composite availability: ${snapshot.composite != null ? formatPct(snapshot.composite) : 'N/A'}`, { x: 0.6, y: 1.95, w: 9, h: 0.4, fontSize: 12 });
+      slide1.addText(`Commitment feasible: ${snapshot.plan?.feasible ? 'Yes' : 'No'}`, { x: 0.6, y: 2.4, w: 9, h: 0.4, fontSize: 12 });
+
+      const slide2 = pptx.addSlide();
+      slide2.addText('Findings & recommendations', { x: 0.6, y: 0.6, w: 9, h: 0.5, fontSize: 24, bold: true, color: '0C3461' });
+      const rows = findings.length > 0
+        ? findings.slice(0, 8).map((f) => [
+          (f.severity ?? '').toUpperCase(),
+          f.title ?? '',
+          f.action ?? '',
+        ])
+        : [['-', 'No findings recorded', '-']];
+      slide2.addTable([
+        [{ text: 'Severity', options: { bold: true, color: 'FFFFFF', fill: { color: '0C3461' } } }, { text: 'Finding', options: { bold: true, color: 'FFFFFF', fill: { color: '0C3461' } } }, { text: 'Recommendation', options: { bold: true, color: 'FFFFFF', fill: { color: '0C3461' } } }],
+        ...rows,
+      ], {
+        x: 0.4,
+        y: 1.3,
+        w: 9.2,
+        fontSize: 10,
+        border: { type: 'solid', pt: 0.5, color: 'D0D7DE' },
+        colW: [1.1, 3.8, 4.3],
+      });
+
+      try {
+        await pptx.writeFile({ fileName: `bcdr-assessment-${getDateStamp()}.pptx` });
+        exportStatus.textContent = 'PowerPoint (.pptx) export downloaded.';
+      } catch (error) {
+        console.error('PowerPoint export failed while writing file', error);
+        exportStatus.textContent = 'PowerPoint export failed while generating file.';
+      }
+    });
+
+    document.getElementById('clear-local-session').addEventListener('click', () => {
+      if (!window.confirm('Clear all locally saved assessment data in this browser and reload defaults?')) return;
+      localStorage.removeItem('bcdr-assessment-session-v2');
+      window.location.reload();
+    });
+
+    const saved = localStorage.getItem('bcdr-assessment-session-v2');
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        if (state.currentProviderMode) { currentProviderMode = state.currentProviderMode; providerScope.value = state.currentProviderMode; }
+        if (Array.isArray(state.selectedRows) && state.selectedRows.length > 0) { selectedRows.splice(0, selectedRows.length, ...state.selectedRows); }
+        if (typeof state.nextRowId === 'number') nextRowId = state.nextRowId;
+        if (state.companySla) companySlaInput.value = state.companySla;
+        if (state.sloBuffer) sloBufferInput.value = state.sloBuffer;
+        if (state.executiveSummary) executiveSummary.value = state.executiveSummary;
+
+        if (state.interview && typeof state.interview === 'object') {
+          for (const [key, input] of Object.entries(interviewInputs)) {
+            if (typeof state.interview[key] === 'string') input.value = state.interview[key];
+          }
+        }
+      } catch {}
+    }
+
+    render();
+  </script>
+</BaseLayout>
+
+<style>
+  .bcdr-source-note { margin-top: 0.75rem; color: var(--muted); font-size: 0.95rem; }
+  .bcdr-warning { margin-top: 0.8rem; border: 1px solid color-mix(in srgb, #b54747 50%, var(--border)); border-radius: 10px; padding: 0.55rem 0.65rem; background: color-mix(in srgb, #b54747 8%, transparent); color: var(--text); font-size: 0.9rem; }
+  .provider-selector { margin-top: 0.9rem; display: inline-grid; gap: 0.35rem; font-family: var(--font-display); font-size: 0.85rem; color: var(--muted); }
+  .provider-selector select { min-width: 280px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); padding: 0.42rem 0.55rem; font-family: var(--font-body); }
+  .bcdr-workflow { margin-top: 1.1rem; display: grid; grid-template-columns: minmax(260px, 320px) minmax(0, 1fr); gap: 1rem; align-items: start; }
+  .bcdr-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0; }
+  .bcdr-steps { position: sticky; top: 88px; margin-top: 0; }
+  .step-list { list-style: none; margin: 0.8rem 0 0; padding: 0; display: grid; gap: 0.45rem; }
+  .step-btn { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 0.6rem; background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--text); font-family: var(--font-display); text-align: left; display: flex; justify-content: space-between; gap: 0.5rem; cursor: pointer; }
+  .step-btn:hover { border-color: var(--accent); }
+  .step-indicator { font-size: 0.72rem; border-radius: 999px; border: 1px solid var(--border); padding: 0.1rem 0.45rem; white-space: nowrap; color: var(--muted); }
+  .step-indicator.complete { border-color: #168456; color: #168456; }
+  .step-indicator.partial { border-color: #a06f14; color: #a06f14; }
+  .workflow-progress-card { margin-top: 0.85rem; border: 1px solid var(--border); border-radius: 12px; padding: 0.6rem; background: color-mix(in srgb, var(--surface-2) 74%, transparent); }
+  .bcdr-panel { border: 1px solid var(--border); border-radius: 16px; padding: 1rem; background: color-mix(in srgb, var(--surface) 92%, transparent); margin-top: 1rem; }
+  .collapsible-section { margin-top: 0.1rem; }
+  .section-header { font-size: clamp(1.2rem, 2.2vw, 1.55rem); margin-bottom: 0.4rem; cursor: pointer; padding: 0.1rem 0; }
+  .section-content { margin-top: 0.2rem; }
+  .bcdr-muted { color: var(--muted); }
+  .service-config { display: grid; gap: 0.65rem; margin-top: 0.8rem; }
+  .interview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; margin-top: 0.8rem; }
+  .interview-grid label { display: grid; gap: 0.3rem; font-family: var(--font-display); font-size: 0.84rem; color: var(--muted); }
+  .service-row { border: 1px solid var(--border); border-radius: 12px; padding: 0.55rem; background: color-mix(in srgb, var(--surface-2) 74%, transparent); display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 0.4rem; align-items: center; }
+  .service-row-note { margin: 0; grid-column: 1 / -1; color: var(--muted); font-size: 0.8rem; }
+  .service-row select, .service-row input, .interview-grid select, .interview-grid input, .slo-form-row input, .step-meta-input { width: 100%; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); padding: 0.42rem 0.55rem; font-family: var(--font-body); }
+  .service-actions { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .add-service-btn, .remove-service-btn { border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--text); padding: 0.45rem 0.75rem; font-family: var(--font-display); cursor: pointer; }
+  .metric-card-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.8rem; }
+  .interview-metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .metric-card { border: 1px solid var(--border); border-radius: 12px; padding: 0.65rem; background: color-mix(in srgb, var(--surface-2) 74%, transparent); }
+  .metric-label { margin: 0; font-size: 0.82rem; color: var(--muted); }
+  .metric-value { margin: 0.35rem 0 0; font-size: 1.15rem; font-family: var(--font-display); font-weight: 700; }
+  .metric-value.ok { color: #168456; }
+  .metric-value.warn { color: #b54747; }
+  .slo-form-row { margin-top: 0.8rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .upgrade-list { margin: 0.7rem 0 0; padding-left: 1rem; }
+  .upgrade-list li { margin: 0.35rem 0; }
+  .export-actions { margin-top: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .bcdr-pill { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.65rem; color: var(--muted); font-size: 0.86rem; }
+  .bcdr-note { margin-top: 0.7rem; color: var(--muted); font-size: 0.92rem; }
+  @media (max-width: 920px) { .bcdr-workflow { grid-template-columns: 1fr; } .bcdr-steps { position: static; } .interview-grid, .metric-card-row, .interview-metrics, .slo-form-row, .service-row { grid-template-columns: 1fr; } .provider-selector select { min-width: 0; width: 100%; } }
+</style>

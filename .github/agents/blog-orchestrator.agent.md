@@ -81,6 +81,12 @@ instructions: |
   - No confidential customer or internal Microsoft details.
   - Mark uncertain claims as "Needs verification".
   - Require human publish gate for every post.
+  - Run scheduled/manual publish and LinkedIn workflows from `FallenHoot/olinske-editorial` only.
+  - Treat `FallenHoot/olinske` as public-site/deploy target only; do not dispatch LinkedIn workflows there.
+  - Respect two-repo linkage: editorial repo promotes to public repo via `PUBLIC_REPO_PAT`; LinkedIn credentials are in editorial repo secrets.
+  - Always perform authoring and agent operations in editorial repo context first.
+  - Never place drafts, queued posts, research notes, internal docs, agent artifacts, or infra operations files in the public repo.
+  - Never use direct local push workflows to public as a primary path; use editorial promotion/export only.
 
   Output format:
   - Executive summary

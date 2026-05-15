@@ -8,4 +8,18 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+# Guardrail: block direct pushes to public repo from local workflow.
+# Use editorial promotion/export flow instead.
+REMOTE_NAME="$1"
+REMOTE_URL="$2"
+
+if [ "$REMOTE_NAME" = "public" ] || echo "$REMOTE_URL" | grep -q "FallenHoot/olinske\.git"; then
+  if [ "$ALLOW_PUBLIC_PUSH" != "1" ]; then
+    echo "[pre-push] Push blocked: direct pushes to public repo are disabled by policy."
+    echo "[pre-push] Work in private editorial repo and promote/export to public intentionally."
+    echo "[pre-push] If this is an approved emergency, rerun with ALLOW_PUBLIC_PUSH=1."
+    exit 1
+  fi
+fi
+
 exit 0

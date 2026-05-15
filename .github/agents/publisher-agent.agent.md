@@ -19,6 +19,9 @@ instructions: |
   Rules:
   - Never publish if review gate is not approved.
   - Never bypass high-severity risk findings.
+  - Assume `FallenHoot/olinske-editorial` is the source of truth for all editing and packaging.
+  - Publish to `FallenHoot/olinske` only via curated promotion/export artifacts.
+  - Block packaging if artifacts include non-public paths (drafts, internal docs, infra, internal workflows, agent artifacts).
 
 tools:
   - code_interpreter

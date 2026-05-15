@@ -1,0 +1,304 @@
+{
+  "location": "norwayeast",
+  "sourceId": "/subscriptions/e0c2992e-e755-4da6-bf52-3514fdce93cf/resourceGroups/rg-techblog/providers/microsoft.insights/components/appi-olenske-prod",
+  "displayName": "Visitor Analytics Dashboard",
+  "tags": {
+    "environment": "prod",
+    "project": "olinski-blog"
+  },
+  "serializedData": {
+    "version": "Notebook/1.0",
+    "items": [
+      {
+        "type": 1,
+        "content": {
+          "json": "# Visitor Analytics Dashboard\n\nReal-time metrics for zach.olinski.com traffic and user engagement."
+        },
+        "name": "title"
+      },
+      {
+        "type": 9,
+        "content": {
+          "version": "KqlParameterItemsMetadata",
+          "parameters": [
+            {
+              "id": "TimeRange",
+              "version": "KqlParameterItemsMetadata",
+              "name": "Time Range",
+              "type": 4,
+              "description": "Set the time range for the data",
+              "value": {
+                "durationMs": 604800000
+              },
+              "isRequired": true,
+              "isHidden": false,
+              "isLocked": false
+            }
+          ],
+          "style": "pills",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components"
+        },
+        "name": "parameters"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize UniqueUsers = dcount(user_Id), TotalViews = count()\n| project UniqueUsers, TotalViews",
+          "size": 4,
+          "title": "Unique Visitors (7d)",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "tiles",
+          "tileSettings": {
+            "showBorder": false,
+            "titleContent": {
+              "columnMatch": "UniqueUsers",
+              "formatter": 1,
+              "formatOptions": {
+                "showIcon": true
+              }
+            },
+            "leftContent": {
+              "columnMatch": "UniqueUsers",
+              "formatter": 12,
+              "formatOptions": {
+                "palette": "blue"
+              }
+            }
+          }
+        },
+        "name": "UniqueVisitors"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize TotalPageViews = count()\n| project TotalPageViews",
+          "size": 4,
+          "title": "Total Page Views (7d)",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "tiles",
+          "tileSettings": {
+            "showBorder": false,
+            "titleContent": {
+              "columnMatch": "TotalPageViews",
+              "formatter": 1
+            },
+            "leftContent": {
+              "columnMatch": "TotalPageViews",
+              "formatter": 12,
+              "formatOptions": {
+                "palette": "green"
+              }
+            }
+          }
+        },
+        "name": "TotalPageViews"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize Sessions = dcount(session_Id)\n| project Sessions",
+          "size": 4,
+          "title": "Sessions (7d)",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "tiles",
+          "tileSettings": {
+            "showBorder": false,
+            "titleContent": {
+              "columnMatch": "Sessions",
+              "formatter": 1
+            },
+            "leftContent": {
+              "columnMatch": "Sessions",
+              "formatter": 12,
+              "formatOptions": {
+                "palette": "purple"
+              }
+            }
+          }
+        },
+        "name": "SessionCount"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize AvgDuration = avg(duration)\n| project AvgDuration = round(AvgDuration / 1000, 2)",
+          "size": 4,
+          "title": "Avg Session Duration (s)",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "tiles",
+          "tileSettings": {
+            "showBorder": false,
+            "titleContent": {
+              "columnMatch": "AvgDuration",
+              "formatter": 1
+            },
+            "leftContent": {
+              "columnMatch": "AvgDuration",
+              "formatter": 12,
+              "formatOptions": {
+                "palette": "orange"
+              }
+            }
+          }
+        },
+        "name": "AvgSessionDuration"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize Views = count() by name\n| order by Views desc\n| project Page = name, Views",
+          "size": 0,
+          "title": "Top Pages",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "table",
+          "gridSettings": {
+            "rowLimit": 10,
+            "filter": true,
+            "sortBy": [
+              {
+                "itemKey": "Views",
+                "sortOrder": 2
+              }
+            ]
+          },
+          "chartSettings": {
+            "seriesLabelSettings": [
+              {
+                "seriesName": "Views",
+                "color": "blue"
+              }
+            ]
+          }
+        },
+        "name": "TopPages"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize Views = count() by client_Browser\n| order by Views desc\n| project Browser = client_Browser, Views",
+          "size": 0,
+          "title": "Traffic by Browser",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "piechart",
+          "chartSettings": {
+            "seriesLabelSettings": [
+              {
+                "seriesName": "Views",
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "name": "BrowserTraffic"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize Views = count() by tostring(client_CountryOrRegion)\n| order by Views desc\n| project Region = client_CountryOrRegion, Views",
+          "size": 0,
+          "title": "Traffic by Region",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "table",
+          "gridSettings": {
+            "rowLimit": 15,
+            "filter": true,
+            "sortBy": [
+              {
+                "itemKey": "Views",
+                "sortOrder": 2
+              }
+            ]
+          }
+        },
+        "name": "RegionTraffic"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize Views = count() by bin(timestamp, 1d)\n| order by timestamp asc",
+          "size": 0,
+          "title": "Daily Page Views Trend",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "linechart",
+          "chartSettings": {
+            "seriesLabelSettings": [
+              {
+                "seriesName": "Views",
+                "color": "purple"
+              }
+            ]
+          }
+        },
+        "name": "DailyTrend"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "pageViews\n| where timestamp > ago(7d)\n| summarize Users = dcount(user_Id) by bin(timestamp, 1d)\n| order by timestamp asc",
+          "size": 0,
+          "title": "Daily Unique Users Trend",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "columnchart",
+          "chartSettings": {
+            "seriesLabelSettings": [
+              {
+                "seriesName": "Users",
+                "color": "blue"
+              }
+            ]
+          }
+        },
+        "name": "DailyUsersTrend"
+      },
+      {
+        "type": 3,
+        "content": {
+          "version": "KqlItem/1.0",
+          "query": "requests\n| where timestamp > ago(7d)\n| summarize AvgDuration = avg(duration), FailureRate = (todouble(count(where success == false)) / count()) * 100 by name\n| order by AvgDuration desc\n| project Endpoint = name, ['Avg Duration (ms)'] = round(AvgDuration), ['Failure Rate (%)'] = round(FailureRate, 2)",
+          "size": 0,
+          "title": "API Performance",
+          "timeContextFromParameter": "TimeRange",
+          "queryType": 0,
+          "resourceType": "microsoft.insights/components",
+          "visualization": "table",
+          "gridSettings": {
+            "rowLimit": 10,
+            "filter": true
+          }
+        },
+        "name": "APIPerformance"
+      }
+    ],
+    "isLocked": false,
+    "fallbackResourceIds": []
+  },
+  "kind": "shared"
+}

@@ -20,7 +20,7 @@ export const SLA_SOURCE_REGISTRY: Record<SlaProviderKey, SlaSourceRecord> = {
     sourceVersionLabel: 'Microsoft Online Services SLA (WW), May 2026',
     lastVerifiedAt: '2026-05-15',
     localSnapshotPath: 'src/data/sla-snapshots/azure-sla-guide.html',
-    notes: 'Use the five-pass model from Microsoft Learn to interpret definitions, measurement, exclusions, and claim process.',
+    notes: 'Before setting targets, read how Azure defines availability, how it is measured, what is excluded, and how claims are filed.',
   },
   aws: {
     provider: 'aws',
@@ -29,7 +29,7 @@ export const SLA_SOURCE_REGISTRY: Record<SlaProviderKey, SlaSourceRecord> = {
     sourceVersionLabel: 'AWS Service Level Agreements index',
     lastVerifiedAt: '2026-05-15',
     localSnapshotPath: 'src/data/sla-snapshots/aws-sla-index.html',
-    notes: 'Service-level terms are service-specific. Validate regional, multi-AZ, and request-log claim prerequisites.',
+    notes: 'AWS terms vary by service. Double-check region and Multi-AZ conditions, plus evidence needed for a claim.',
   },
   gcp: {
     provider: 'gcp',
@@ -38,7 +38,7 @@ export const SLA_SOURCE_REGISTRY: Record<SlaProviderKey, SlaSourceRecord> = {
     sourceVersionLabel: 'Google Cloud Service Level Agreements index',
     lastVerifiedAt: '2026-05-15',
     localSnapshotPath: 'src/data/sla-snapshots/gcp-sla-index.html',
-    notes: 'Service terms can vary by network tier, region family, and covered-service scope.',
+    notes: 'GCP terms can change by network tier, region setup, and exact service scope. Verify the details before committing.',
   },
   oci: {
     provider: 'oci',
@@ -47,6 +47,6 @@ export const SLA_SOURCE_REGISTRY: Record<SlaProviderKey, SlaSourceRecord> = {
     sourceVersionLabel: 'OCI SLA page with PaaS and IaaS Pillar reference',
     lastVerifiedAt: '2026-05-15',
     localSnapshotPath: 'src/data/sla-snapshots/oci-sla-index.html',
-    notes: 'Reference OCI availability, performance, and manageability commitments plus Pillar document terms.',
+    notes: 'For OCI, confirm availability commitments and related Pillar terms so expectations match contract language.',
   },
 };

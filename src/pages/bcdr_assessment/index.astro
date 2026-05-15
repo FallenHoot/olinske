@@ -208,6 +208,52 @@ const baselineEntries = Object.entries(SLA_BASELINES);
                 </label>
               </div>
 
+              <details class="collapsible-section" open>
+                <summary class="section-header">Team Readiness</summary>
+                <div class="section-content">
+                  <p class="bcdr-muted">Assess the operational maturity and team capability for recovery execution.</p>
+                  <div class="interview-grid">
+                    <label>
+                      Primary on-call responder
+                      <select id="q-oncall-owner">
+                        <option value="yes">Named and trained</option>
+                        <option value="rotating">On-call rotation established</option>
+                        <option value="unclear">Unclear or undefined</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      Last recovery procedure execution
+                      <select id="q-last-exec">
+                        <option value="recent">Within last 3 months</option>
+                        <option value="semi">3-6 months ago</option>
+                        <option value="old">Older than 6 months</option>
+                        <option value="never">Never executed in production</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      Team can execute recovery within RTO?
+                      <select id="q-team-rto-capable">
+                        <option value="yes">Yes, validated in drill</option>
+                        <option value="unsure">Possibly, not tested under load</option>
+                        <option value="no">No or likely not</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      Backup/restore expertise available?
+                      <select id="q-backup-expertise">
+                        <option value="dedicated">Dedicated data engineer or DBA</option>
+                        <option value="shared">Shared across team</option>
+                        <option value="one-person">Single person, no backup coverage</option>
+                        <option value="external">External vendor only</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </details>
+
               <div class="metric-card-row interview-metrics">
                 <div class="metric-card"><p class="metric-label">Readiness score</p><p id="readiness-score" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">High gaps</p><p id="gap-high" class="metric-value warn">-</p></div>
@@ -215,9 +261,26 @@ const baselineEntries = Object.entries(SLA_BASELINES);
                 <div class="metric-card"><p class="metric-label">RTO vs MTD</p><p id="recreate-rto" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">Reputation exposure</p><p id="reputation-risk" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">Reliability posture</p><p id="reliability-posture" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Team readiness</p><p id="team-readiness-score" class="metric-value">-</p></div>
               </div>
 
               <ul id="interview-gaps" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="bcdr-panel" id="workflow-critical-flows">
+          <details class="collapsible-section" open>
+            <summary class="section-header">0a. Critical Flow Mapping</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Map user journeys to services. Ensures services are selected for a reason.</p>
+              <div id="flow-config" class="flow-config"></div>
+              <div class="service-actions">
+                <button id="add-flow" type="button" class="add-service-btn">Add flow</button>
+                <p id="flow-note" class="bcdr-note"></p>
+              </div>
+              <p id="flow-coverage-note" class="bcdr-note"></p>
+              <div id="flow-service-coverage" class="upgrade-list"></div>
             </div>
           </details>
         </article>
@@ -298,6 +361,17 @@ const baselineEntries = Object.entries(SLA_BASELINES);
             <div class="section-content">
               <p class="bcdr-muted">Prioritized findings and actions based on interview inputs, commitment feasibility, and selected resources.</p>
               <ul id="findings-register" class="upgrade-list"></ul>
+            </div>
+          </details>
+        </section>
+
+        <section class="bcdr-panel" id="workflow-cost-simulator">
+          <details class="collapsible-section" open>
+            <summary class="section-header">Cost-Benefit Simulator</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Compare recovery posture costs, complexity, and RTO tradeoffs.</p>
+              <div id="posture-comparison" class="upgrade-list"></div>
+              <p id="cost-simulator-note" class="bcdr-note"></p>
             </div>
           </details>
         </section>
@@ -396,7 +470,15 @@ const baselineEntries = Object.entries(SLA_BASELINES);
     const recreateRto = document.getElementById('recreate-rto');
     const reputationRisk = document.getElementById('reputation-risk');
     const reliabilityPosture = document.getElementById('reliability-posture');
+    const teamReadinessScore = document.getElementById('team-readiness-score');
     const interviewGaps = document.getElementById('interview-gaps');
+    const flowConfig = document.getElementById('flow-config');
+    const addFlowButton = document.getElementById('add-flow');
+    const flowNote = document.getElementById('flow-note');
+    const flowCoverageNote = document.getElementById('flow-coverage-note');
+    const flowServiceCoverage = document.getElementById('flow-service-coverage');
+    const postureComparison = document.getElementById('posture-comparison');
+    const costSimulatorNote = document.getElementById('cost-simulator-note');
     const executiveSummary = document.getElementById('executive-summary');
     const generateExecutiveSummaryButton = document.getElementById('generate-executive-summary');
     const executiveSummaryStatus = document.getElementById('executive-summary-status');
@@ -427,12 +509,26 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       drillCadence: document.getElementById('q-drill-cadence'),
       monitoring: document.getElementById('q-monitoring'),
       constraints: document.getElementById('q-constraints'),
+      oncallOwner: document.getElementById('q-oncall-owner'),
+      lastExec: document.getElementById('q-last-exec'),
+      teamRtoCapable: document.getElementById('q-team-rto-capable'),
+      backupExpertise: document.getElementById('q-backup-expertise'),
+    };
+
+    const postureData = {
+      'backup-only': { costMonthly: 500, rtoMinutes: 1440, complexity: 'Low', riskScore: 'High' },
+      'cold-standby': { costMonthly: 2000, rtoMinutes: 360, complexity: 'Medium', riskScore: 'Medium' },
+      'warm-standby': { costMonthly: 5000, rtoMinutes: 60, complexity: 'Medium-High', riskScore: 'Low' },
+      'multi-zone': { costMonthly: 8000, rtoMinutes: 15, complexity: 'High', riskScore: 'Low' },
+      'active-active': { costMonthly: 15000, rtoMinutes: 1, complexity: 'Very High', riskScore: 'Very Low' },
     };
 
     const providerLabels = { azure: 'Azure', aws: 'AWS', gcp: 'GCP', oci: 'OCI', multi: 'Multi-cloud' };
     let currentProviderMode = providerScope.value;
     let nextRowId = 1;
+    let nextFlowId = 1;
     const selectedRows = [{ rowId: 1, serviceId: '', optionId: '' }];
+    const criticalFlows = [];
 
     const setProviderGuidance = (provider) => {
       if (provider === 'azure') {
@@ -1186,15 +1282,258 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       } catch {}
     }
 
-    if (!selectedRows.some((row) => row.serviceId && row.optionId)) {
-      const firstService = getVisibleCatalog()[0];
-      if (firstService) {
-        selectedRows[0].serviceId = firstService.id;
-        selectedRows[0].optionId = firstService.defaultOptionId ?? firstService.options.find((option) => option.modeled !== false)?.id ?? firstService.options[0]?.id ?? '';
-      }
-    }
+    // Critical Flow Mapping
+    addFlowButton.addEventListener('click', () => {
+      if (criticalFlows.length >= 15) return;
+      nextFlowId += 1;
+      criticalFlows.push({ flowId: nextFlowId, name: `Flow ${nextFlowId}`, description: '', serviceIds: new Set() });
+      render();
+    });
 
-    render();
+    const renderCriticalFlows = () => {
+      flowConfig.innerHTML = '';
+      if (criticalFlows.length === 0) {
+        const note = document.createElement('p');
+        note.className = 'bcdr-muted';
+        note.textContent = 'No flows defined yet. Add flows to map to your services.';
+        flowConfig.appendChild(note);
+      } else {
+        for (const flow of criticalFlows) {
+          const flowDiv = document.createElement('div');
+          flowDiv.className = 'flow-editor';
+          flowDiv.style.cssText = 'border: 1px solid var(--border); border-radius: 12px; padding: 0.6rem; margin-bottom: 0.6rem; background: color-mix(in srgb, var(--surface-2) 74%, transparent);';
+          
+          const nameInput = document.createElement('input');
+          nameInput.type = 'text';
+          nameInput.placeholder = 'Flow name (e.g., Checkout, Reporting)';
+          nameInput.value = flow.name;
+          nameInput.style.cssText = 'width: 100%; margin-bottom: 0.4rem;';
+          nameInput.addEventListener('change', () => { flow.name = nameInput.value; render(); });
+          
+          const descInput = document.createElement('textarea');
+          descInput.placeholder = 'Description: which user journey?';
+          descInput.value = flow.description;
+          descInput.rows = 2;
+          descInput.style.cssText = 'width: 100%; margin-bottom: 0.4rem;';
+          descInput.addEventListener('change', () => { flow.description = descInput.value; render(); });
+          
+          const servicesLabel = document.createElement('p');
+          servicesLabel.style.cssText = 'margin: 0.4rem 0 0.3rem; font-size: 0.85rem; color: var(--muted);';
+          servicesLabel.textContent = `Map services to this flow:`;
+          
+          const servicesDiv = document.createElement('div');
+          servicesDiv.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-bottom: 0.4rem; max-height: 120px; overflow-y: auto;';
+          
+          const selections = toSelections();
+          for (const selection of selections) {
+            const service = getServiceById(selection.serviceId);
+            if (!service) continue;
+            
+            const label = document.createElement('label');
+            label.style.cssText = 'display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem;';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = flow.serviceIds.has(service.id);
+            checkbox.addEventListener('change', () => {
+              if (checkbox.checked) {
+                flow.serviceIds.add(service.id);
+              } else {
+                flow.serviceIds.delete(service.id);
+              }
+              render();
+            });
+            
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(serviceDisplayLabel(service)));
+            servicesDiv.appendChild(label);
+          }
+          
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'remove-service-btn';
+          removeBtn.textContent = 'Remove flow';
+          removeBtn.addEventListener('click', () => {
+            const idx = criticalFlows.findIndex(f => f.flowId === flow.flowId);
+            if (idx >= 0) criticalFlows.splice(idx, 1);
+            render();
+          });
+          
+          flowDiv.append(nameInput, descInput, servicesLabel, servicesDiv, removeBtn);
+          flowConfig.appendChild(flowDiv);
+        }
+      }
+      
+      const selections = toSelections();
+      const selectedServiceIds = new Set(selections.map(sel => sel.serviceId).filter(Boolean));
+      const unmappedServices = [...selectedServiceIds].filter(sid =>
+        !criticalFlows.some(f => f.serviceIds.has(sid))
+      );
+      const uncoveredFlows = criticalFlows.filter(f => f.serviceIds.size === 0);
+      
+      flowNote.textContent = criticalFlows.length >= 15 ? 'Maximum of 15 flows reached.' : '';
+      
+      if (unmappedServices.length > 0 || uncoveredFlows.length > 0) {
+        flowCoverageNote.style.color = '#b54747';
+        const uncoveredMsg = uncoveredFlows.length > 0 ? `${uncoveredFlows.length} flow(s) have no service mapping. ` : '';
+        const unmappedMsg = unmappedServices.length > 0 ? `${unmappedServices.length} selected service(s) are not mapped to any flow.` : '';
+        flowCoverageNote.textContent = `⚠ Coverage gap: ${uncoveredMsg}${unmappedMsg}`;
+      } else if (criticalFlows.length > 0 && selectedServiceIds.size > 0) {
+        flowCoverageNote.style.color = '#168456';
+        flowCoverageNote.textContent = '✓ All critical paths are mapped to services.';
+      } else {
+        flowCoverageNote.textContent = '';
+      }
+    };
+
+    // Team Readiness Evaluation
+    const evaluateTeamReadiness = () => {
+      const oncall = interviewInputs.oncallOwner.value;
+      const lastExec = interviewInputs.lastExec.value;
+      const capable = interviewInputs.teamRtoCapable.value;
+      const expertise = interviewInputs.backupExpertise.value;
+      
+      let score = 100;
+      if (oncall !== 'yes') score -= (oncall === 'unclear' ? 25 : 10);
+      if (lastExec === 'never') score -= 40;
+      else if (lastExec === 'old') score -= 30;
+      else if (lastExec === 'semi') score -= 15;
+      if (capable !== 'yes') score -= (capable === 'no' ? 40 : 20);
+      if (expertise === 'external') score -= 45;
+      else if (expertise === 'one-person') score -= 35;
+      else if (expertise === 'shared') score -= 10;
+      
+      return Math.max(0, score);
+    };
+
+    // Cost-Benefit Simulator
+    const renderCostSimulator = () => {
+      const rto = Number(interviewInputs.rto.value);
+      const currentPosture = interviewInputs.recoveryPosture.value;
+      
+      postureComparison.innerHTML = '';
+      const header = document.createElement('li');
+      header.style.cssText = 'display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.6fr 1.2fr 1.2fr; gap: 0.6rem; font-weight: 700; font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); margin-bottom: 0.4rem;';
+      header.innerHTML = '<span>Posture</span><span>Monthly Cost</span><span>Annual Cost</span><span>RTO</span><span>Complexity</span><span>Risk</span>';
+      postureComparison.appendChild(header);
+      
+      const postureLabels = {
+        'backup-only': 'Backup-only',
+        'cold-standby': 'Cold standby',
+        'warm-standby': 'Warm standby',
+        'multi-zone': 'Multi-zone active-passive',
+        'active-active': 'Active-active',
+      };
+      
+      for (const [posture, data] of Object.entries(postureData)) {
+        const row = document.createElement('li');
+        row.style.cssText = `display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.6fr 1.2fr 1.2fr; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.85rem; ${posture === currentPosture ? 'background: color-mix(in srgb, var(--accent) 15%, transparent); padding: 0.4rem; border-radius: 8px;' : ''}`;
+        const rtoMatch = data.rtoMinutes >= rto ? '✓' : '✗';
+        const label = posture === currentPosture ? `<strong>${postureLabels[posture] || posture} (current)</strong>` : postureLabels[posture] || posture;
+        row.innerHTML = `
+          <span>${label}</span>
+          <span>$${data.costMonthly.toLocaleString()}</span>
+          <span>$${(data.costMonthly * 12).toLocaleString()}</span>
+          <span>${rtoMatch} ${data.rtoMinutes}m</span>
+          <span>${data.complexity}</span>
+          <span>${data.riskScore}</span>
+        `;
+        postureComparison.appendChild(row);
+      }
+      
+      const costData = postureData[currentPosture];
+      if (costData) {
+        costSimulatorNote.textContent = `Current posture (${postureLabels[currentPosture]}) costs $${(costData.costMonthly * 12).toLocaleString()}/year and delivers ${costData.rtoMinutes}-minute RTO. Compare other postures above to see cost-benefit tradeoffs.`;
+      }
+    };
+
+    // Enhanced Executive Summary with Conditions
+    const buildEnhancedExecutiveSummary = () => {
+      const snapshot = window.__bcdrSnapshot ?? {};
+      const interview = snapshot.interview ?? {};
+      const plan = snapshot.plan ?? {};
+      const teamScore = evaluateTeamReadiness();
+      const posture = interviewInputs.recoveryPosture.value;
+      
+      const conditions = [];
+      
+      // Posture-specific conditions
+      if (posture === 'backup-only') conditions.push('monthly backup restoration is tested and documented');
+      else if (posture === 'cold-standby') conditions.push('cold-standby failover is validated quarterly');
+      else if (posture === 'warm-standby') conditions.push('warm-standby synchronization state is verified every 6 months');
+      else if (posture === 'active-active') conditions.push('active-active failover is tested continuously with synthetic transactions');
+      
+      // Team readiness conditions
+      if (teamScore >= 80) conditions.push('team has executed recovery in the last 3 months');
+      else if (teamScore >= 60) conditions.push('team readiness score is at least 60 before go-live');
+      else conditions.push('team must improve readiness to at least 60 before this commitment');
+      
+      // Monitoring condition
+      const monitoring = interviewInputs.monitoring.value;
+      if (monitoring === 'flow') conditions.push('critical-flow monitoring dashboards are actively maintained');
+      else if (monitoring === 'component') conditions.push('component monitoring is supplemented with synthetic flow tests');
+      else conditions.push('flow-level monitoring must be in place before production');
+      
+      // Feasibility condition
+      if (!plan.feasible) conditions.push('this commitment exceeds the modeled composite availability and must be lowered');
+      
+      // Drill condition
+      if (interviewInputs.drillCadence.value === 'none') conditions.push('recovery drills are scheduled and executed regularly');
+      
+      const riskLine = interview.score == null
+        ? 'Resilience posture assessment is in progress.'
+        : `Current readiness: ${interview.score}% (${interview.highGaps ?? 0} high, ${interview.mediumGaps ?? 0} medium gap(s)).`;
+      
+      const feasLine = plan.feasible
+        ? `Architecture supports target commitment.`
+        : `Architecture does not support target; commitment must be lowered.`;
+      
+      const baseText = `${riskLine} ${feasLine}`;
+      const condText = conditions.length > 0
+        ? `This commitment is valid IF: ${conditions.join('; ')}.`
+        : 'No conditional constraints identified.';
+      
+      return `${baseText}\n\nConditions: ${condText}\n\nTeam readiness score: ${teamScore}%.`;
+    };
+
+    // Hook up team readiness metric and cost-benefit rendering
+    const originalRender = render;
+    render = function() {
+      originalRender.call(this);
+      renderCriticalFlows();
+      teamReadinessScore.textContent = `${evaluateTeamReadiness()}%`;
+      teamReadinessScore.className = `metric-value ${evaluateTeamReadiness() >= 75 ? 'ok' : evaluateTeamReadiness() >= 50 ? '' : 'warn'}`;
+      renderCostSimulator();
+    };
+
+    // Enhanced generate button
+    generateExecutiveSummaryButton.addEventListener('click', () => {
+      executiveSummary.value = buildEnhancedExecutiveSummary();
+      executiveSummaryStatus.textContent = 'Enhanced executive summary with conditions generated.';
+      render();
+    });
+
+    // Update localStorage to save critical flows
+    const originalSave = () => {
+      localStorage.setItem('bcdr-assessment-session-v3', JSON.stringify({
+        currentProviderMode,
+        nextRowId,
+        nextFlowId,
+        selectedRows,
+        criticalFlows: criticalFlows.map(f => ({ ...f, serviceIds: Array.from(f.serviceIds) })),
+        companySla: companySlaInput.value,
+        sloBuffer: sloBufferInput.value,
+        executiveSummary: executiveSummary.value,
+        interview: Object.fromEntries(Object.entries(interviewInputs).map(([key, input]) => [key, input.value])),
+      }));
+    };
+    
+    // Save on every render
+    const origRender2 = render;
+    render = function() {
+      origRender2.call(this);
+      originalSave();
+    };
   </script>
 </BaseLayout>
 

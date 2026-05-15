@@ -294,7 +294,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
   <script id="bcdr-aprl-recommendations" type="application/json" set:html={aprlRecommendationsJson}></script>
 
   <script type="module">
-    import { calculateCompositeAvailabilityPct, downtimeBudgetFromPct, evaluateUpgradeImpacts, computeSloPlan, formatPct } from '../../../bcdr_assessment/calculator';
+    import { calculateCompositeAvailabilityPct, downtimeBudgetFromPct, evaluateUpgradeImpacts, computeSloPlan, formatPct } from '../../bcdr_assessment/calculator';
 
     const catalog = JSON.parse(document.getElementById('bcdr-catalog')?.textContent ?? '[]');
     const baselines = JSON.parse(document.getElementById('bcdr-baselines')?.textContent ?? '{}');

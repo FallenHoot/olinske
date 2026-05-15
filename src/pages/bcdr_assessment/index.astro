@@ -325,6 +325,47 @@ const baselineEntries = Object.entries(SLA_BASELINES);
           </details>
         </article>
 
+        <section class="bcdr-panel" id="workflow-business-impact">
+          <details class="collapsible-section" open>
+            <summary class="section-header">2a. Business Impact and DR Decision</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Translate reliability targets into financial exposure and force an explicit architecture decision when targets and posture conflict.</p>
+              <div class="slo-form-row">
+                <label>Estimated revenue at risk per hour (USD)<input id="q-hourly-risk" type="number" min="0" step="100" value="5000" /></label>
+                <label>Estimated write rate (records/minute)<input id="q-record-rate" type="number" min="0" step="1" value="100" /></label>
+              </div>
+              <div class="slo-form-row">
+                <label>Regulatory exposure
+                  <select id="q-regulatory-impact">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+                <label>Mismatch decision (required when posture and RTO conflict)
+                  <select id="q-mismatch-decision">
+                    <option value="undecided">Undecided</option>
+                    <option value="increase-investment">Increase investment</option>
+                    <option value="relax-rto">Relax RTO</option>
+                    <option value="accept-risk">Accept risk with exception</option>
+                  </select>
+                </label>
+              </div>
+              <div class="metric-card-row">
+                <div class="metric-card"><p class="metric-label">Max downtime loss (MTD)</p><p id="business-downtime-loss" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Annual expected loss</p><p id="business-annual-loss" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Data loss exposure (RPO)</p><p id="business-data-exposure" class="metric-value">-</p></div>
+              </div>
+              <div class="metric-card-row">
+                <div class="metric-card"><p class="metric-label">Customer trust risk</p><p id="business-trust-risk" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">DR compatibility</p><p id="dr-compatibility" class="metric-value">-</p></div>
+                <div class="metric-card"><p class="metric-label">Maturity path</p><p id="maturity-path" class="metric-value">-</p></div>
+              </div>
+              <p id="dr-decision-note" class="bcdr-note"></p>
+            </div>
+          </details>
+        </section>
+
         <section class="bcdr-panel" id="workflow-upgrades">
           <details class="collapsible-section" open>
             <summary class="section-header">4. Fastest Ways to Improve Availability</summary>
@@ -460,6 +501,17 @@ const baselineEntries = Object.entries(SLA_BASELINES);
     const wafCoverageHeadline = document.getElementById('waf-coverage-headline');
     const wafCoverageList = document.getElementById('waf-coverage-list');
     const findingsRegister = document.getElementById('findings-register');
+    const hourlyRiskInput = document.getElementById('q-hourly-risk');
+    const recordRateInput = document.getElementById('q-record-rate');
+    const regulatoryImpactInput = document.getElementById('q-regulatory-impact');
+    const mismatchDecisionInput = document.getElementById('q-mismatch-decision');
+    const businessDowntimeLoss = document.getElementById('business-downtime-loss');
+    const businessAnnualLoss = document.getElementById('business-annual-loss');
+    const businessDataExposure = document.getElementById('business-data-exposure');
+    const businessTrustRisk = document.getElementById('business-trust-risk');
+    const drCompatibility = document.getElementById('dr-compatibility');
+    const maturityPath = document.getElementById('maturity-path');
+    const drDecisionNote = document.getElementById('dr-decision-note');
     const scenarioDependency = document.getElementById('scenario-dependency');
     const scenarioRegional = document.getElementById('scenario-regional');
     const scenarioData = document.getElementById('scenario-data');
@@ -513,6 +565,10 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       lastExec: document.getElementById('q-last-exec'),
       teamRtoCapable: document.getElementById('q-team-rto-capable'),
       backupExpertise: document.getElementById('q-backup-expertise'),
+      hourlyRisk: hourlyRiskInput,
+      recordRate: recordRateInput,
+      regulatoryImpact: regulatoryImpactInput,
+      mismatchDecision: mismatchDecisionInput,
     };
 
     const postureData = {
@@ -521,6 +577,71 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       'warm-standby': { costMonthly: 5000, rtoMinutes: 60, complexity: 'Medium-High', riskScore: 'Low' },
       'multi-zone': { costMonthly: 8000, rtoMinutes: 15, complexity: 'High', riskScore: 'Low' },
       'active-active': { costMonthly: 15000, rtoMinutes: 1, complexity: 'Very High', riskScore: 'Very Low' },
+    };
+
+    const postureRank = {
+      'backup-only': 1,
+      'cold-standby': 2,
+      'warm-standby': 3,
+      'multi-zone': 4,
+      'active-active': 5,
+    };
+
+    const postureLabel = {
+      'backup-only': 'Backup-only',
+      'cold-standby': 'Cold standby',
+      'warm-standby': 'Warm standby',
+      'multi-zone': 'Multi-zone active-passive',
+      'active-active': 'Active-active',
+    };
+
+    const getRequiredPostureForRto = (rto) => {
+      if (rto <= 15) return 'multi-zone';
+      if (rto <= 60) return 'warm-standby';
+      if (rto <= 240) return 'cold-standby';
+      return 'backup-only';
+    };
+
+    const evaluateTeamReadiness = () => {
+      const oncall = interviewInputs.oncallOwner.value;
+      const lastExec = interviewInputs.lastExec.value;
+      const capable = interviewInputs.teamRtoCapable.value;
+      const expertise = interviewInputs.backupExpertise.value;
+
+      let score = 100;
+      if (oncall !== 'yes') score -= (oncall === 'unclear' ? 25 : 10);
+      if (lastExec === 'never') score -= 40;
+      else if (lastExec === 'old') score -= 30;
+      else if (lastExec === 'semi') score -= 15;
+      if (capable !== 'yes') score -= (capable === 'no' ? 40 : 20);
+      if (expertise === 'external') score -= 45;
+      else if (expertise === 'one-person') score -= 35;
+      else if (expertise === 'shared') score -= 10;
+
+      return Math.max(0, score);
+    };
+
+    const evaluateBusinessImpact = (composite, interviewResult) => {
+      const hourlyRisk = Number(hourlyRiskInput.value) || 0;
+      const recordRate = Number(recordRateInput.value) || 0;
+      const companySla = Number(companySlaInput.value) || 0;
+      const rpo = Number(interviewInputs.rpo.value) || 0;
+      const regulatoryImpact = regulatoryImpactInput.value;
+
+      const maxDowntimeLoss = hourlyRisk * (interviewResult.mtd / 60);
+      const gapPct = Math.max(0, companySla - composite) / 100;
+      const expectedAnnualDownMinutes = 525600 * gapPct;
+      const annualExpectedLoss = hourlyRisk * (expectedAnnualDownMinutes / 60);
+      const dataLossExposure = recordRate * rpo;
+
+      const trustRisk =
+        regulatoryImpact === 'high' || interviewResult.reputationImpact === 'high' || interviewResult.churnRisk >= 15
+          ? 'High'
+          : (regulatoryImpact === 'medium' || interviewResult.reputationImpact === 'medium' || interviewResult.churnRisk >= 8)
+          ? 'Medium'
+          : 'Low';
+
+      return { maxDowntimeLoss, annualExpectedLoss, dataLossExposure, trustRisk, regulatoryImpact };
     };
 
     const providerLabels = { azure: 'Azure', aws: 'AWS', gcp: 'GCP', oci: 'OCI', multi: 'Multi-cloud' };
@@ -605,6 +726,7 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       const drillCadence = interviewInputs.drillCadence.value;
       const monitoring = interviewInputs.monitoring.value;
       const constraints = interviewInputs.constraints.value;
+      const mismatchDecision = interviewInputs.mismatchDecision.value;
 
       if (rto > mtd) findings.push({ severity: 'high', text: 'Restore target exceeds maximum tolerated downtime.' });
       if (runbook === 'no') findings.push({ severity: 'high', text: 'No documented recovery runbook.' });
@@ -622,6 +744,28 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       if (monitoring === 'basic' || monitoring === 'none') findings.push({ severity: monitoring === 'none' ? 'high' : 'medium', text: 'Monitoring is not tied closely enough to critical flows.' });
       if (constraints === 'compliance' || constraints === 'shared') findings.push({ severity: 'medium', text: 'Recovery options are constrained by policy, residency, or shared dependencies.' });
 
+      const requiredPosture = getRequiredPostureForRto(rto);
+      const compatible = (postureRank[recoveryPosture] ?? 0) >= (postureRank[requiredPosture] ?? 0);
+      if (!compatible) {
+        findings.push({
+          severity: 'high',
+          text: `RTO target requires ${postureLabel[requiredPosture]}, but current posture is ${postureLabel[recoveryPosture]}.`,
+        });
+        if (mismatchDecision === 'undecided') {
+          findings.push({
+            severity: 'high',
+            text: 'DR posture mismatch requires an explicit decision: increase investment, relax RTO, or accept risk.',
+          });
+        }
+      }
+
+      const teamScore = evaluateTeamReadiness();
+      if (teamScore < 60) {
+        findings.push({ severity: 'high', text: 'Team readiness is below 60%; execution risk is high for declared targets.' });
+      } else if (teamScore < 75) {
+        findings.push({ severity: 'medium', text: 'Team readiness is moderate; run drills and close ownership gaps.' });
+      }
+
       if (currentProviderMode === 'multi') {
         if (interconnect === 'single') findings.push({ severity: 'high', text: 'Multi-cloud workload has only one interconnect path.' });
         if (interconnect === 'unknown' || interconnect === 'not-applicable') {
@@ -636,16 +780,29 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         high += 1;
       }
 
-      const postureLabel = {
-        'backup-only': 'Backup-only',
-        'cold-standby': 'Cold standby',
-        'warm-standby': 'Warm standby',
-        'multi-zone': 'Multi-zone',
-        'active-active': 'Active-active',
-      }[recoveryPosture] ?? 'Unclear';
+      const normalizedPostureLabel = postureLabel[recoveryPosture] ?? 'Unclear';
 
       const score = Math.max(0, 100 - (high * 20 + medium * 10));
-      return { findings, high, medium, score, rto, mtd, reputationImpact, churnRisk, postureLabel, degradation, failback, drillCadence, monitoring, constraints };
+      return {
+        findings,
+        high,
+        medium,
+        score,
+        rto,
+        mtd,
+        reputationImpact,
+        churnRisk,
+        postureLabel: normalizedPostureLabel,
+        degradation,
+        failback,
+        drillCadence,
+        monitoring,
+        constraints,
+        requiredPosture,
+        compatible,
+        mismatchDecision,
+        teamScore,
+      };
     };
 
     const renderInterview = (activeSelections) => {
@@ -679,6 +836,9 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       if (result.constraints && result.constraints !== 'none') postureSummary.push(result.constraints);
       reliabilityPosture.textContent = postureSummary.join(' | ');
       reliabilityPosture.className = `metric-value ${result.score >= 80 ? 'ok' : result.score >= 60 ? '' : 'warn'}`;
+
+      teamReadinessScore.textContent = `${result.teamScore}%`;
+      teamReadinessScore.className = `metric-value ${result.teamScore >= 75 ? 'ok' : result.teamScore >= 60 ? '' : 'warn'}`;
 
       interviewGaps.innerHTML = '';
       if (result.findings.length === 0) {
@@ -858,6 +1018,47 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         ? 'SLA target is supportable by the dependency model. Confirm non-platform risk and policy terms before publishing commitments.'
         : 'SLA target is above the dependency model. Reduce commitment or improve architecture before finalizing terms.';
 
+      const business = evaluateBusinessImpact(composite, interviewResult);
+      businessDowntimeLoss.textContent = `$${Math.round(business.maxDowntimeLoss).toLocaleString()}`;
+      businessAnnualLoss.textContent = `$${Math.round(business.annualExpectedLoss).toLocaleString()}`;
+      businessDataExposure.textContent = `${Math.round(business.dataLossExposure).toLocaleString()} records`;
+      businessTrustRisk.textContent = business.trustRisk;
+      businessTrustRisk.className = `metric-value ${business.trustRisk === 'High' ? 'warn' : business.trustRisk === 'Low' ? 'ok' : ''}`;
+
+      const requiredPostureLabel = postureLabel[interviewResult.requiredPosture] ?? interviewResult.requiredPosture;
+      const currentPostureLabel = postureLabel[interviewInputs.recoveryPosture.value] ?? interviewInputs.recoveryPosture.value;
+      drCompatibility.textContent = interviewResult.compatible ? 'Compatible' : 'Not compatible';
+      drCompatibility.className = `metric-value ${interviewResult.compatible ? 'ok' : 'warn'}`;
+
+      const currentLevel = postureRank[interviewInputs.recoveryPosture.value] ?? 1;
+      const targetLevel = postureRank[interviewResult.requiredPosture] ?? currentLevel;
+      maturityPath.textContent = `L${currentLevel} -> L${targetLevel}`;
+      maturityPath.className = `metric-value ${currentLevel >= targetLevel ? 'ok' : 'warn'}`;
+
+      if (!interviewResult.compatible) {
+        const decisionText = interviewResult.mismatchDecision === 'undecided'
+          ? 'Decision required: choose increase investment, relax RTO, or accept risk with exception.'
+          : `Decision captured: ${interviewResult.mismatchDecision.replace('-', ' ')}.`;
+        drDecisionNote.textContent = `RTO ${interviewResult.rto} min requires ${requiredPostureLabel}, but current posture is ${currentPostureLabel}. ${decisionText}`;
+      } else {
+        drDecisionNote.textContent = `Current posture (${currentPostureLabel}) is compatible with declared RTO (${interviewResult.rto} min).`;
+      }
+
+      postureComparison.innerHTML = '';
+      const costHeader = document.createElement('li');
+      costHeader.textContent = 'Posture tradeoff (monthly cost, annual cost, modeled RTO)';
+      postureComparison.appendChild(costHeader);
+      for (const [postureId, posture] of Object.entries(postureData)) {
+        const li = document.createElement('li');
+        const meetsRto = posture.rtoMinutes <= interviewResult.rto;
+        const marker = postureId === interviewInputs.recoveryPosture.value ? 'CURRENT' : (meetsRto ? 'MEETS RTO' : 'MISSES RTO');
+        li.textContent = `${postureLabel[postureId]}: $${posture.costMonthly.toLocaleString()}/month, $${(posture.costMonthly * 12).toLocaleString()}/year, ${posture.rtoMinutes} min (${marker})`;
+        postureComparison.appendChild(li);
+      }
+      costSimulatorNote.textContent = 'Cost estimates are directional and intended for option comparison, not billing forecasts.';
+
+      renderCriticalFlows();
+
       upgradeList.innerHTML = '';
       const topImpacts = evaluateUpgradeImpacts(catalog, selections).slice(0, 5);
       for (const impact of topImpacts) {
@@ -936,6 +1137,16 @@ const baselineEntries = Object.entries(SLA_BASELINES);
           action: 'Lower external commitment or implement top reliability upgrades before confirming contractual terms.',
         });
       }
+      if (!interviewResult.compatible) {
+        findings.push({
+          severity: 'high',
+          title: 'DR pattern mismatch with declared RTO',
+          detail: `Declared RTO requires ${postureLabel[interviewResult.requiredPosture]}, but selected posture is ${postureLabel[interviewInputs.recoveryPosture.value]}.`,
+          action: interviewResult.mismatchDecision === 'undecided'
+            ? 'Capture one explicit decision now: increase investment, relax RTO, or accept risk with exception.'
+            : `Decision captured: ${interviewResult.mismatchDecision.replace('-', ' ')}. Convert this into approved action and timeline.`,
+        });
+      }
       if (interviewResult.high > 0) {
         findings.push({
           severity: 'high',
@@ -967,6 +1178,14 @@ const baselineEntries = Object.entries(SLA_BASELINES);
           title: 'Material reliability gains are available',
           detail: `Top modeled action can improve composite availability by ${topImpacts[0].compositeDeltaPct.toFixed(6)}%.`,
           action: 'Prioritize highest-impact option upgrades in the next reliability sprint.',
+        });
+      }
+      if (business.annualExpectedLoss > 0) {
+        findings.push({
+          severity: business.annualExpectedLoss >= 500000 ? 'high' : 'medium',
+          title: 'Business exposure from reliability gap',
+          detail: `Estimated annual expected loss is $${Math.round(business.annualExpectedLoss).toLocaleString()} with current target and architecture assumptions.`,
+          action: 'Use this value in investment decisions and tie remediation budget to loss reduction.',
         });
       }
       if (findings.length === 0) {
@@ -1011,7 +1230,9 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       localStorage.setItem('bcdr-assessment-session-v3', JSON.stringify({
         currentProviderMode,
         nextRowId,
+        nextFlowId,
         selectedRows,
+        criticalFlows: criticalFlows.map((flow) => ({ ...flow, serviceIds: Array.from(flow.serviceIds) })),
         companySla: companySlaInput.value,
         sloBuffer: sloBufferInput.value,
         executiveSummary: executiveSummary.value,
@@ -1025,25 +1246,31 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       const interview = snapshot.interview ?? {};
       const plan = snapshot.plan ?? {};
       const findings = Array.isArray(interview.findings) ? interview.findings : [];
-      const topActions = evaluateUpgradeImpacts(catalog, toSelections()).slice(0, 2);
+      const topActions = evaluateUpgradeImpacts(catalog, toSelections()).slice(0, 1);
+      const business = evaluateBusinessImpact(snapshot.composite ?? 0, {
+        mtd: Number(interviewInputs.mtd.value),
+        reputationImpact: interviewInputs.reputationImpact.value,
+        churnRisk: Number(interviewInputs.churnRisk.value),
+      });
 
-      const riskLine = interview.score == null
-        ? 'Current resilience posture is still being assessed.'
-        : `Current readiness score is ${interview.score}%, with ${interview.highGaps ?? 0} high gap(s) and ${interview.mediumGaps ?? 0} medium gap(s).`;
+      const requiredPosture = getRequiredPostureForRto(Number(interviewInputs.rto.value));
+      const currentPosture = interviewInputs.recoveryPosture.value;
+      const isCompatible = (postureRank[currentPosture] ?? 0) >= (postureRank[requiredPosture] ?? 0);
 
-      const commitmentLine = plan.feasible
-        ? `Current architecture can support the requested commitment with an internal target of ${formatPct(plan.internalSloPct)}.`
-        : `Current architecture cannot support the requested commitment; internal target of ${formatPct(plan.internalSloPct)} is above modeled composite capability.`;
+      const riskLine = `Current risk: ${isCompatible ? 'posture is aligned to declared RTO' : 'recovery posture is below what declared RTO requires'}; readiness ${interview.score ?? 0}% with ${interview.highGaps ?? 0} high gap(s).`;
+      const exposureLine = `Exposure: max downtime loss is $${Math.round(business.maxDowntimeLoss).toLocaleString()}, annual expected loss is $${Math.round(business.annualExpectedLoss).toLocaleString()}, and RPO exposure is ${Math.round(business.dataLossExposure).toLocaleString()} records.`;
+      const decisionLine = `Decision: target RTO ${interviewInputs.rto.value} minutes requires ${postureLabel[requiredPosture]}, current posture is ${postureLabel[currentPosture]}, selected decision is ${interviewInputs.mismatchDecision.value.replace('-', ' ')}.`;
+      const costLine = `Cost tradeoff: current posture estimates $${(postureData[currentPosture].costMonthly * 12).toLocaleString()} yearly. ${topActions.length > 0 ? `Top action is ${topActions[0].serviceName} -> ${topActions[0].toLabel}.` : 'No ranked architecture upgrade action is available yet.'}`;
 
-      const actionLine = topActions.length === 0
-        ? 'No immediate upgrade candidates are currently ranked for modeled availability gain.'
-        : `Top actions: ${topActions.map((item, idx) => `${idx + 1}) ${item.serviceName}: ${item.toLabel}`).join('; ')}.`;
+      const summaryTail = plan.feasible
+        ? 'Commitment is currently model-supported, pending operational execution evidence.'
+        : 'Commitment is not model-supported and should be reduced or architecture investment increased.';
 
       const findingLine = findings.length === 0
-        ? 'No critical foundational findings are currently flagged.'
+        ? 'No additional findings are currently flagged.'
         : `Priority finding: ${findings[0].severity.toUpperCase()} - ${findings[0].text}`;
 
-      return `${riskLine} ${commitmentLine} ${findingLine} ${actionLine}`;
+      return `${riskLine}\n${exposureLine}\n${decisionLine}\n${costLine}\n${summaryTail}\n${findingLine}`;
     };
 
     providerScope.addEventListener('change', () => { currentProviderMode = providerScope.value; render(); });
@@ -1281,6 +1508,10 @@ const baselineEntries = Object.entries(SLA_BASELINES);
         if (state.currentProviderMode) { currentProviderMode = state.currentProviderMode; providerScope.value = state.currentProviderMode; }
         if (Array.isArray(state.selectedRows) && state.selectedRows.length > 0) { selectedRows.splice(0, selectedRows.length, ...state.selectedRows); }
         if (typeof state.nextRowId === 'number') nextRowId = state.nextRowId;
+        if (typeof state.nextFlowId === 'number') nextFlowId = state.nextFlowId;
+        if (Array.isArray(state.criticalFlows)) {
+          criticalFlows.splice(0, criticalFlows.length, ...state.criticalFlows.map((flow) => ({ ...flow, serviceIds: new Set(flow.serviceIds ?? []) })));
+        }
         if (state.companySla) companySlaInput.value = state.companySla;
         if (state.sloBuffer) sloBufferInput.value = state.sloBuffer;
         if (state.executiveSummary) executiveSummary.value = state.executiveSummary;
@@ -1397,154 +1628,15 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       }
     };
 
-    // Team Readiness Evaluation
-    const evaluateTeamReadiness = () => {
-      const oncall = interviewInputs.oncallOwner.value;
-      const lastExec = interviewInputs.lastExec.value;
-      const capable = interviewInputs.teamRtoCapable.value;
-      const expertise = interviewInputs.backupExpertise.value;
-      
-      let score = 100;
-      if (oncall !== 'yes') score -= (oncall === 'unclear' ? 25 : 10);
-      if (lastExec === 'never') score -= 40;
-      else if (lastExec === 'old') score -= 30;
-      else if (lastExec === 'semi') score -= 15;
-      if (capable !== 'yes') score -= (capable === 'no' ? 40 : 20);
-      if (expertise === 'external') score -= 45;
-      else if (expertise === 'one-person') score -= 35;
-      else if (expertise === 'shared') score -= 10;
-      
-      return Math.max(0, score);
-    };
-
-    // Cost-Benefit Simulator
-    const renderCostSimulator = () => {
-      const rto = Number(interviewInputs.rto.value);
-      const currentPosture = interviewInputs.recoveryPosture.value;
-      
-      postureComparison.innerHTML = '';
-      const header = document.createElement('li');
-      header.style.cssText = 'display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.6fr 1.2fr 1.2fr; gap: 0.6rem; font-weight: 700; font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); margin-bottom: 0.4rem;';
-      header.innerHTML = '<span>Posture</span><span>Monthly Cost</span><span>Annual Cost</span><span>RTO</span><span>Complexity</span><span>Risk</span>';
-      postureComparison.appendChild(header);
-      
-      const postureLabels = {
-        'backup-only': 'Backup-only',
-        'cold-standby': 'Cold standby',
-        'warm-standby': 'Warm standby',
-        'multi-zone': 'Multi-zone active-passive',
-        'active-active': 'Active-active',
-      };
-      
-      for (const [posture, data] of Object.entries(postureData)) {
-        const row = document.createElement('li');
-        row.style.cssText = `display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.6fr 1.2fr 1.2fr; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.85rem; ${posture === currentPosture ? 'background: color-mix(in srgb, var(--accent) 15%, transparent); padding: 0.4rem; border-radius: 8px;' : ''}`;
-        const rtoMatch = data.rtoMinutes >= rto ? '✓' : '✗';
-        const label = posture === currentPosture ? `<strong>${postureLabels[posture] || posture} (current)</strong>` : postureLabels[posture] || posture;
-        row.innerHTML = `
-          <span>${label}</span>
-          <span>$${data.costMonthly.toLocaleString()}</span>
-          <span>$${(data.costMonthly * 12).toLocaleString()}</span>
-          <span>${rtoMatch} ${data.rtoMinutes}m</span>
-          <span>${data.complexity}</span>
-          <span>${data.riskScore}</span>
-        `;
-        postureComparison.appendChild(row);
+    if (!selectedRows.some((row) => row.serviceId && row.optionId)) {
+      const firstService = getVisibleCatalog()[0];
+      if (firstService) {
+        selectedRows[0].serviceId = firstService.id;
+        selectedRows[0].optionId = firstService.defaultOptionId ?? firstService.options.find((option) => option.modeled !== false)?.id ?? firstService.options[0]?.id ?? '';
       }
-      
-      const costData = postureData[currentPosture];
-      if (costData) {
-        costSimulatorNote.textContent = `Current posture (${postureLabels[currentPosture]}) costs $${(costData.costMonthly * 12).toLocaleString()}/year and delivers ${costData.rtoMinutes}-minute RTO. Compare other postures above to see cost-benefit tradeoffs.`;
-      }
-    };
+    }
 
-    // Enhanced Executive Summary with Conditions
-    const buildEnhancedExecutiveSummary = () => {
-      const snapshot = window.__bcdrSnapshot ?? {};
-      const interview = snapshot.interview ?? {};
-      const plan = snapshot.plan ?? {};
-      const teamScore = evaluateTeamReadiness();
-      const posture = interviewInputs.recoveryPosture.value;
-      
-      const conditions = [];
-      
-      // Posture-specific conditions
-      if (posture === 'backup-only') conditions.push('monthly backup restoration is tested and documented');
-      else if (posture === 'cold-standby') conditions.push('cold-standby failover is validated quarterly');
-      else if (posture === 'warm-standby') conditions.push('warm-standby synchronization state is verified every 6 months');
-      else if (posture === 'active-active') conditions.push('active-active failover is tested continuously with synthetic transactions');
-      
-      // Team readiness conditions
-      if (teamScore >= 80) conditions.push('team has executed recovery in the last 3 months');
-      else if (teamScore >= 60) conditions.push('team readiness score is at least 60 before go-live');
-      else conditions.push('team must improve readiness to at least 60 before this commitment');
-      
-      // Monitoring condition
-      const monitoring = interviewInputs.monitoring.value;
-      if (monitoring === 'flow') conditions.push('critical-flow monitoring dashboards are actively maintained');
-      else if (monitoring === 'component') conditions.push('component monitoring is supplemented with synthetic flow tests');
-      else conditions.push('flow-level monitoring must be in place before production');
-      
-      // Feasibility condition
-      if (!plan.feasible) conditions.push('this commitment exceeds the modeled composite availability and must be lowered');
-      
-      // Drill condition
-      if (interviewInputs.drillCadence.value === 'none') conditions.push('recovery drills are scheduled and executed regularly');
-      
-      const riskLine = interview.score == null
-        ? 'Resilience posture assessment is in progress.'
-        : `Current readiness: ${interview.score}% (${interview.highGaps ?? 0} high, ${interview.mediumGaps ?? 0} medium gap(s)).`;
-      
-      const feasLine = plan.feasible
-        ? `Architecture supports target commitment.`
-        : `Architecture does not support target; commitment must be lowered.`;
-      
-      const baseText = `${riskLine} ${feasLine}`;
-      const condText = conditions.length > 0
-        ? `This commitment is valid IF: ${conditions.join('; ')}.`
-        : 'No conditional constraints identified.';
-      
-      return `${baseText}\n\nConditions: ${condText}\n\nTeam readiness score: ${teamScore}%.`;
-    };
-
-    // Hook up team readiness metric and cost-benefit rendering
-    const originalRender = render;
-    render = function() {
-      originalRender.call(this);
-      renderCriticalFlows();
-      teamReadinessScore.textContent = `${evaluateTeamReadiness()}%`;
-      teamReadinessScore.className = `metric-value ${evaluateTeamReadiness() >= 75 ? 'ok' : evaluateTeamReadiness() >= 50 ? '' : 'warn'}`;
-      renderCostSimulator();
-    };
-
-    // Enhanced generate button
-    generateExecutiveSummaryButton.addEventListener('click', () => {
-      executiveSummary.value = buildEnhancedExecutiveSummary();
-      executiveSummaryStatus.textContent = 'Enhanced executive summary with conditions generated.';
-      render();
-    });
-
-    // Update localStorage to save critical flows
-    const originalSave = () => {
-      localStorage.setItem('bcdr-assessment-session-v3', JSON.stringify({
-        currentProviderMode,
-        nextRowId,
-        nextFlowId,
-        selectedRows,
-        criticalFlows: criticalFlows.map(f => ({ ...f, serviceIds: Array.from(f.serviceIds) })),
-        companySla: companySlaInput.value,
-        sloBuffer: sloBufferInput.value,
-        executiveSummary: executiveSummary.value,
-        interview: Object.fromEntries(Object.entries(interviewInputs).map(([key, input]) => [key, input.value])),
-      }));
-    };
-    
-    // Save on every render
-    const origRender2 = render;
-    render = function() {
-      origRender2.call(this);
-      originalSave();
-    };
+    render();
   </script>
 </BaseLayout>
 

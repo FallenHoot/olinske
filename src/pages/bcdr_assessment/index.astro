@@ -559,6 +559,16 @@ const baselineEntries = Object.entries(SLA_BASELINES);
           optionSelect.appendChild(placeholder);
           optionSelect.disabled = true;
         } else {
+          // Repair stale saved state where option IDs no longer exist after catalog updates.
+          const hasCurrentOption = selected.options.some((option) => option.id === rowState.optionId);
+          if (!hasCurrentOption) {
+            rowState.optionId =
+              selected.defaultOptionId
+              ?? selected.options.find((option) => option.modeled !== false)?.id
+              ?? selected.options[0]?.id
+              ?? '';
+          }
+
           for (const option of selected.options) {
             const node = document.createElement('option');
             node.value = option.id;

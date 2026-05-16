@@ -11,25 +11,29 @@ export const SLA_BASELINES: Record<CloudProvider, {
     sourceName: SLA_SOURCE_REGISTRY.azure.providerName,
     sourceVersion: `${SLA_SOURCE_REGISTRY.azure.sourceVersionLabel} (verified ${SLA_SOURCE_REGISTRY.azure.lastVerifiedAt})`,
     sourceUrl: SLA_SOURCE_REGISTRY.azure.officialIndexUrl,
-    note: SLA_SOURCE_REGISTRY.azure.notes,
+    note:
+      `${SLA_SOURCE_REGISTRY.azure.notes} Local snapshot: ${SLA_SOURCE_REGISTRY.azure.localSnapshotPath}.`,
   },
   aws: {
     sourceName: SLA_SOURCE_REGISTRY.aws.providerName,
     sourceVersion: `${SLA_SOURCE_REGISTRY.aws.sourceVersionLabel} (verified ${SLA_SOURCE_REGISTRY.aws.lastVerifiedAt})`,
     sourceUrl: SLA_SOURCE_REGISTRY.aws.officialIndexUrl,
-    note: SLA_SOURCE_REGISTRY.aws.notes,
+    note:
+      `${SLA_SOURCE_REGISTRY.aws.notes} Local snapshot: ${SLA_SOURCE_REGISTRY.aws.localSnapshotPath}.`,
   },
   gcp: {
     sourceName: SLA_SOURCE_REGISTRY.gcp.providerName,
     sourceVersion: `${SLA_SOURCE_REGISTRY.gcp.sourceVersionLabel} (verified ${SLA_SOURCE_REGISTRY.gcp.lastVerifiedAt})`,
     sourceUrl: SLA_SOURCE_REGISTRY.gcp.officialIndexUrl,
-    note: SLA_SOURCE_REGISTRY.gcp.notes,
+    note:
+      `${SLA_SOURCE_REGISTRY.gcp.notes} Local snapshot: ${SLA_SOURCE_REGISTRY.gcp.localSnapshotPath}.`,
   },
   oci: {
     sourceName: SLA_SOURCE_REGISTRY.oci.providerName,
     sourceVersion: `${SLA_SOURCE_REGISTRY.oci.sourceVersionLabel} (verified ${SLA_SOURCE_REGISTRY.oci.lastVerifiedAt})`,
     sourceUrl: SLA_SOURCE_REGISTRY.oci.officialIndexUrl,
-    note: SLA_SOURCE_REGISTRY.oci.notes,
+    note:
+      `${SLA_SOURCE_REGISTRY.oci.notes} Local snapshot: ${SLA_SOURCE_REGISTRY.oci.localSnapshotPath}.`,
   },
 };
 

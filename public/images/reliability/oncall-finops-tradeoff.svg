@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">On-call and FinOps Trade-off</title>
+  <desc id="desc">Short-term cost cuts can increase incident effort and burnout risk, reducing long-term reliability.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f9f6fb; }
+      .axis { stroke: #513765; stroke-width: 3; }
+      .cost { fill: none; stroke: #6a45a0; stroke-width: 6; }
+      .human { fill: none; stroke: #b35636; stroke-width: 6; }
+      .txtH { fill: #3a284a; font-family: Segoe UI, Arial, sans-serif; font-size: 26px; font-weight: 700; }
+      .txtS { fill: #4b3a5b; font-family: Segoe UI, Arial, sans-serif; font-size: 18px; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="58" text-anchor="middle" class="txtH">Trade-off Curve: FinOps Savings vs Human Reliability Cost</text>
+
+  <line class="axis" x1="120" y1="640" x2="1080" y2="640"/>
+  <line class="axis" x1="120" y1="640" x2="120" y2="140"/>
+
+  <path class="cost" d="M150 610 C 320 560, 520 510, 760 450 C 900 412, 980 380, 1050 350"/>
+  <text x="820" y="430" class="txtS">Apparent short-term savings</text>
+
+  <path class="human" d="M150 620 C 360 600, 540 560, 700 490 C 850 420, 960 300, 1050 170"/>
+  <text x="860" y="220" class="txtS">Incident load and burnout risk</text>
+
+  <text x="560" y="700" text-anchor="middle" class="txtS">Aggressiveness of cost reduction actions</text>
+  <text x="44" y="390" text-anchor="middle" class="txtS" transform="rotate(-90 44 390)">Relative impact</text>
+</svg>

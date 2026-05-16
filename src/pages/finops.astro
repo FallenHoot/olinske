@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts', ({ data }) => data.status === 'published' || data.status === 'scheduled'))
+  .filter((post) => {
+    const tags = post.data.tags ?? [];
+    return tags.includes('finops') || tags.includes('cost') || tags.includes('cloud-architecture') || tags.includes('reliability');
+  })
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<BaseLayout
+  title="FinOps | Olinske"
+  description="A curated index for FinOps decisions tied to architecture and reliability outcomes."
+  canonicalUrl={Astro.site ? new URL('/finops/', Astro.site).toString() : '/finops/'}
+>
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Topic Index</p>
+      <h1 class="hero-title">FinOps</h1>
+      <p class="hero-subtitle">
+        FinOps is treated here as an architecture decision surface, not a monthly reporting function.
+      </p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-1">
+      <h2>Thinking model</h2>
+      <p>
+        Cost, performance, and reliability are coupled. Use these posts to establish constraints first,
+        then pick operating patterns that keep margin and availability aligned.
+      </p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-2">
+      <h2>Recommended reading order</h2>
+      <ol>
+        {posts.map((post) => (
+          <li>
+            <a href={`/posts/${post.data.slug ?? post.id.replace(/\.md$/, '')}/`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </main>
+</BaseLayout>

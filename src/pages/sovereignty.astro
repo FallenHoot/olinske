@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts', ({ data }) => data.status === 'published' || data.status === 'scheduled'))
+  .filter((post) => {
+    const tags = post.data.tags ?? [];
+    return tags.includes('sovereignty') || tags.includes('cloud-architecture') || tags.includes('governance');
+  })
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<BaseLayout
+  title="Sovereignty | Olinske"
+  description="A curated index for sovereignty architecture, control boundaries, and policy-driven trade-offs."
+  canonicalUrl={Astro.site ? new URL('/sovereignty/', Astro.site).toString() : '/sovereignty/'}
+>
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Topic Index</p>
+      <h1 class="hero-title">Sovereignty</h1>
+      <p class="hero-subtitle">
+        Use this track to evaluate sovereignty requirements against platform realities, regional design, and operating cost.
+      </p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-1">
+      <h2>Thinking model</h2>
+      <p>
+        Sovereignty decisions are rarely purely legal or purely technical. These posts map where policy intent and platform constraints diverge.
+      </p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-2">
+      <h2>Recommended reading order</h2>
+      <ol>
+        {posts.map((post) => (
+          <li>
+            <a href={`/posts/${post.data.slug ?? post.id.replace(/\.md$/, '')}/`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </main>
+</BaseLayout>

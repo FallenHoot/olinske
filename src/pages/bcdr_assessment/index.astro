@@ -319,7 +319,8 @@ const baselineEntries = Object.entries(SLA_BASELINES);
                 <div class="metric-card"><p class="metric-label">Max SLA from dependency estimate</p><p id="max-company-sla" class="metric-value">-</p></div>
                 <div class="metric-card"><p class="metric-label">Model check (dependencies only)</p><p id="feasibility" class="metric-value">-</p></div>
               </div>
-              <p class="bcdr-note">This check models dependency availability only. Final SLA and SLO decisions must also include code quality, release risk, maintenance policy, exclusions, and outage definition.</p>
+              <p class="bcdr-note"><strong>Composite availability as architectural floor:</strong> Without independent redundancy or fallback paths, your system availability cannot exceed your weakest dependency. This baseline shows what you inherit from your infrastructure decisions alone.</p>
+              <p class="bcdr-note"><strong>SLA defensibility check:</strong> Your claimed SLA must be defensible under real failure conditions—not just mathematically possible. Consider: SLA exclusions (planned maintenance, force majeure, misconfiguration), correlated failures (region-level events), and operational risks (code quality, deployment frequency, team incident response capability). If your team cannot actually execute recovery within your RTO, or your architecture lacks documented fallback patterns, your SLA is not defensible—the math doesn't matter.</p>
               <p id="feasibility-note" class="bcdr-note"></p>
             </div>
           </details>
@@ -1061,8 +1062,11 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       maxCompanySla.textContent = formatPct(plan.maxCompanySlaPct);
       feasibility.textContent = plan.feasible ? 'Model-supported' : 'Model-not-supported';
       feasibility.className = `metric-value ${plan.feasible ? 'ok' : 'warn'}`;
+      const defensibilityGap = interviewResult.teamScore < 70 && plan.feasible;
       feasibilityNote.textContent = plan.feasible
-        ? 'SLA target is supportable by the dependency model. Confirm non-platform risk and policy terms before publishing commitments.'
+        ? (defensibilityGap 
+          ? `SLA is mathematically supported but team readiness is ${interviewResult.teamScore}%. Improve on-call, incident response, and runbook depth before committing publicly.`
+          : 'SLA is supported by dependencies AND team capability. Validate failure scenarios and SLA exclusions before finalizing terms.')
         : 'SLA target is above the dependency model. Reduce commitment or improve architecture before finalizing terms.';
 
       const business = evaluateBusinessImpact(composite, interviewResult);

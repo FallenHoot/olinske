@@ -644,6 +644,53 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       return { maxDowntimeLoss, annualExpectedLoss, dataLossExposure, trustRisk, regulatoryImpact };
     };
 
+    const estimateScenarioRto = (posture, selections, teamScore) => {
+      const baseRto = {
+        'backup-only': 480,
+        'cold-standby': 180,
+        'warm-standby': 30,
+        'multi-zone': 5,
+        'active-active': 0,
+      }[posture] ?? 120;
+
+      const depCount = selections.length;
+      const depComplexity = Math.min(1, depCount / 8);
+      const depRtoAdder = depComplexity * 60;
+
+      const teamFactor = teamScore >= 80 ? 1 : teamScore >= 60 ? 1.25 : 1.5;
+      const operationalDelay = (baseRto * (teamFactor - 1));
+
+      return Math.round(baseRto + depRtoAdder + operationalDelay);
+    };
+
+    const estimateCalibratedCost = (posture, selections, teamScore, recordRate, rpo, mtd) => {
+      const baseCost = {
+        'backup-only': 500,
+        'cold-standby': 2000,
+        'warm-standby': 5000,
+        'multi-zone': 8000,
+        'active-active': 15000,
+      }[posture] ?? 3000;
+
+      const computeCount = selections.length;
+      const computeScale = 1 + (computeCount * 0.15);
+
+      const dataVolumeFactor = Math.max(1, recordRate / 100);
+      const rpoFactor = rpo < 15 ? 1.3 : rpo < 60 ? 1.1 : 1;
+      const mtdFactor = mtd < 60 ? 1.2 : 1;
+
+      const teamOverhead =
+        teamScore >= 80 ? 0.1 :
+        teamScore >= 60 ? 0.25 :
+        0.4;
+
+      const toolingAndDrill = 1500;
+
+      const monthlyTotal = baseCost * computeScale * dataVolumeFactor * rpoFactor * mtdFactor + (baseCost * teamOverhead) + toolingAndDrill;
+
+      return Math.round(monthlyTotal);
+    };
+
     const providerLabels = { azure: 'Azure', aws: 'AWS', gcp: 'GCP', oci: 'OCI', multi: 'Multi-cloud' };
     let currentProviderMode = providerScope.value;
     let nextRowId = 1;
@@ -1047,15 +1094,24 @@ const baselineEntries = Object.entries(SLA_BASELINES);
       postureComparison.innerHTML = '';
       const costHeader = document.createElement('li');
       costHeader.textContent = 'Posture tradeoff (monthly cost, annual cost, modeled RTO)';
-      postureComparison.appendChild(costHeader);
+      const recordRate = Number(recordRateInput.value) || 0;
+      const rpo = Number(interviewInputs.rpo.value) || 0;
+      const mtd = Number(interviewInputs.mtd.value) || 120;
+      const teamScore = interviewResult.teamScore;
+      
       for (const [postureId, posture] of Object.entries(postureData)) {
         const li = document.createElement('li');
-        const meetsRto = posture.rtoMinutes <= interviewResult.rto;
+        const calibratedCost = estimateCalibratedCost(postureId, selections, teamScore, recordRate, rpo, mtd);
+        const scenarioRto = estimateScenarioRto(postureId, selections, teamScore);
+        const meetsRto = scenarioRto <= interviewResult.rto;
         const marker = postureId === interviewInputs.recoveryPosture.value ? 'CURRENT' : (meetsRto ? 'MEETS RTO' : 'MISSES RTO');
-        li.textContent = `${postureLabel[postureId]}: $${posture.costMonthly.toLocaleString()}/month, $${(posture.costMonthly * 12).toLocaleString()}/year, ${posture.rtoMinutes} min (${marker})`;
+        li.textContent = `${postureLabel[postureId]}: $${calibratedCost.toLocaleString()}/month ($${(calibratedCost * 12).toLocaleString()}/year), modeled RTO ${scenarioRto} min (${marker})`;
         postureComparison.appendChild(li);
       }
-      costSimulatorNote.textContent = 'Cost estimates are directional and intended for option comparison, not billing forecasts.';
+      
+      const currentCost = estimateCalibratedCost(interviewInputs.recoveryPosture.value, selections, teamScore, recordRate, rpo, mtd);
+      const currentScenarioRto = estimateScenarioRto(interviewInputs.recoveryPosture.value, selections, teamScore);
+      costSimulatorNote.textContent = `Current posture: $${currentCost.toLocaleString()}/month ($${(currentCost * 12).toLocaleString()}/year), modeled RTO ${currentScenarioRto} min. Cost factors: compute (${selections.length} deps × 15%), data volume (${recordRate} rec/hr), RPO (${rpo} min), MTD (${mtd} min), team overhead (${teamScore}%), tooling/drills. Relative comparison.`;
 
       renderCriticalFlows();
 
@@ -1206,10 +1262,16 @@ const baselineEntries = Object.entries(SLA_BASELINES);
 
       updateWorkflowStatus(selections, plan, interviewResult, topImpacts.length);
 
-      scenarioDependency.textContent = `${Math.max(10, Math.round(Number(companySlaInput.value))) } min`;
-      scenarioRegional.textContent = `${Math.max(20, Math.round(Number(sloBufferInput.value) * 3)) } min`;
-      scenarioData.textContent = `${Math.max(15, Math.round(Number(sloBufferInput.value) * 2)) } min`;
-      scenarioNotes.textContent = `Scenario estimates are simplified and should be calibrated with drill data. Current readiness: ${interviewResult.score}% (${interviewResult.high} high, ${interviewResult.medium} medium).`;
+      const depRto = estimateScenarioRto(interviewInputs.recoveryPosture.value, selections, interviewResult.teamScore);
+      const depFactor = Math.max(1, Math.min(2, selections.length / 4));
+      const scenarioDep = Math.round(depRto * 0.9);
+      const scenarioReg = Math.round(depRto * 1.2);
+      const scenarioData = Math.round(depRto * 1.1);
+      
+      scenarioDependency.textContent = `${scenarioDep} min (dependency recovery, ${interviewInputs.recoveryPosture.value} posture)`;
+      scenarioRegional.textContent = `${scenarioReg} min (regional failover + propagation, ${selections.length} deps)`;
+      scenarioData.textContent = `${scenarioData} min (data recovery, RPO ${interviewInputs.rpo.value} min)`;
+      scenarioNotes.textContent = `Scenarios derive from selected posture (${postureLabel[interviewInputs.recoveryPosture.value]}) and ${selections.length} dependencies. Team readiness: ${interviewResult.teamScore}% (score ${interviewResult.score}%, ${interviewResult.high} high, ${interviewResult.medium} medium). Calibrate with drills.`;
 
       const snapshot = {
         generatedAt: new Date().toISOString(),

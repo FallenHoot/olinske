@@ -26,5 +26,16 @@ Latest export details are in EXPORT-METADATA.json.
 This repository enforces a local pre-push check to prevent accidental local-only changes.
 
 1. Install dependencies once (or run `npm run hooks:install`) to activate hooks.
-2. Use `npm run git:sync -- "your commit message"` to stage all changes, commit, and push to `origin/main`.
-3. If there are no changes, the sync command exits safely.
+2. Use `npm run git:sync -- "your commit message"` to stage all changes, commit, and push to `private/main` by default.
+3. Public updates are intentional and happen through export and publish flow, not day-to-day direct push.
+4. If there are no changes, the sync command exits safely.
+
+## Security isolation model
+
+1. Feature parity: code and product behavior are developed in private first.
+2. Isolation: drafts, internal notes, research, and operational artifacts stay private.
+3. Public promotion: only approved, sanitized, published content is exported to public.
+4. Enforcement:
+	- pre-push hook blocks direct public pushes unless explicitly overridden.
+	- `git:sync` defaults to the private remote.
+	- publish scripts perform explicit editorial-to-public promotion.

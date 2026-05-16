@@ -16,6 +16,8 @@ if (!message) {
   process.exit(1);
 }
 
+const targetRemote = process.env.GIT_SYNC_REMOTE || 'private';
+
 const branch = output('git branch --show-current');
 if (branch !== 'main') {
   console.error(`git:sync only runs on main. Current branch: ${branch}`);
@@ -31,6 +33,6 @@ if (!status) {
 }
 
 run(`git commit -m "${message.replace(/"/g, '\\"')}"`);
-run('git push origin main');
+run(`git push ${targetRemote} main`);
 
-console.log('Sync complete: committed and pushed to origin/main.');
+console.log(`Sync complete: committed and pushed to ${targetRemote}/main.`);

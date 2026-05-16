@@ -269,25 +269,9 @@ const baselineEntries = Object.entries(SLA_BASELINES);
           </details>
         </article>
 
-        <article class="bcdr-panel" id="workflow-critical-flows">
-          <details class="collapsible-section" open>
-            <summary class="section-header">0a. Critical Flow Mapping</summary>
-            <div class="section-content">
-              <p class="bcdr-muted">Map user journeys to services. Ensures services are selected for a reason.</p>
-              <div id="flow-config" class="flow-config"></div>
-              <div class="service-actions">
-                <button id="add-flow" type="button" class="add-service-btn">Add flow</button>
-                <p id="flow-note" class="bcdr-note"></p>
-              </div>
-              <p id="flow-coverage-note" class="bcdr-note"></p>
-              <div id="flow-service-coverage" class="upgrade-list"></div>
-            </div>
-          </details>
-        </article>
-
         <article class="bcdr-panel" id="workflow-services">
           <details class="collapsible-section" open>
-            <summary class="section-header">1. Critical Path Services</summary>
+            <summary class="section-header">0. Critical Path Services</summary>
             <div class="section-content">
               <p class="bcdr-muted">Add only services in the transaction path. Each service field is searchable inline.</p>
               <p id="service-search-note" class="bcdr-note">Catalog coverage: 689 services total (Azure 128, AWS 321, GCP 165, OCI 75).</p>
@@ -297,6 +281,22 @@ const baselineEntries = Object.entries(SLA_BASELINES);
                 <button id="add-service" type="button" class="add-service-btn">Add more</button>
                 <p id="service-limit-note" class="bcdr-note"></p>
               </div>
+            </div>
+          </details>
+        </article>
+
+        <article class="bcdr-panel" id="workflow-critical-flows">
+          <details class="collapsible-section" open>
+            <summary class="section-header">1. Critical Flow Mapping</summary>
+            <div class="section-content">
+              <p class="bcdr-muted">Map user journeys to services. Ensures services are selected for a reason.</p>
+              <div id="flow-config" class="flow-config"></div>
+              <div class="service-actions">
+                <button id="add-flow" type="button" class="add-service-btn">Add flow</button>
+                <p id="flow-note" class="bcdr-note"></p>
+              </div>
+              <p id="flow-coverage-note" class="bcdr-note"></p>
+              <div id="flow-service-coverage" class="upgrade-list"></div>
             </div>
           </details>
         </article>

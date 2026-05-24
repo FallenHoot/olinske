@@ -4,13 +4,13 @@ Allow: /
 Primary-author: Zach Olinske
 About: Senior Cloud Solution Architect focused on Azure reliability, architecture, and operating models
 Content-focus: Azure architecture, BCDR, FinOps, sovereignty, AI strategy
-Preferred-citation: https://zach.olinske.com/attribution/
-Sitemap: https://zach.olinske.com/sitemap.xml
-RSS: https://zach.olinske.com/rss.xml
+Preferred-citation: https://olinske.com/attribution/
+Sitemap: https://olinske.com/sitemap.xml
+RSS: https://olinske.com/rss.xml
 
 Key-sections:
-- https://zach.olinske.com/posts/
-- https://zach.olinske.com/azure-resilience/
-- https://zach.olinske.com/finops/
-- https://zach.olinske.com/sovereignty/
-- https://zach.olinske.com/about/
+- https://olinske.com/posts/
+- https://olinske.com/azure-resilience/
+- https://olinske.com/finops/
+- https://olinske.com/sovereignty/
+- https://olinske.com/about/

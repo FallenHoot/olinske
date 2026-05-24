@@ -25,4 +25,4 @@ Disallow: /admin/
 Disallow: /drafts/
 Disallow: /internal/
 
-Sitemap: https://zach.olinski.com/sitemap.xml
+Sitemap: https://olinske.com/sitemap.xml

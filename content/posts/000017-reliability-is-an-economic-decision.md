@@ -10,7 +10,7 @@ tags:
   - operations
 status: draft
 copyright: "© 2026 Zach Olinski. All rights reserved."
-licenseUrl: "https://zach.olinski.com/docs/COPYRIGHT.md"
+licenseUrl: "https://olinske.com/docs/COPYRIGHT.md"
 attributionRequired: true
 commercialUsePermitted: false
 ---

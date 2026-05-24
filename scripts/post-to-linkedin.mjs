@@ -27,7 +27,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
-const SITE_BASE_URL = (process.env.BLOG_BASE_URL || 'https://zach.olinske.com').replace(/\/$/, '');
+const SITE_BASE_URL = (process.env.BLOG_BASE_URL || 'https://olinske.com').replace(/\/$/, '');
 
 // ── Args ──────────────────────────────────────────────────────
 function argValue(flag, defaultValue = '') {

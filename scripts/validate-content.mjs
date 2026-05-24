@@ -16,7 +16,7 @@ function argValue(flag, defaultValue = '') {
 const gate = argValue('--gate', 'draft');
 const errors = [];
 const warnings = [];
-const SITE_BASE_URL = (process.env.BLOG_BASE_URL || 'https://zach.olinske.com').replace(/\/$/, '');
+const SITE_BASE_URL = (process.env.BLOG_BASE_URL || 'https://olinske.com').replace(/\/$/, '');
 
 function walkMarkdownFiles(dirPath) {
   if (!fs.existsSync(dirPath)) return [];

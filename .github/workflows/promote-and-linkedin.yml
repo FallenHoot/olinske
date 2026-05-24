@@ -24,6 +24,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: publish-and-linkedin-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -40,12 +44,17 @@ jobs:
           LOCAL_HOUR=$(TZ="Europe/Oslo" date +%H)
           LOCAL_WEEKDAY=$(TZ="Europe/Oslo" date +%u)
 
-          if [ "$LOCAL_HOUR" = "11" ] && { [ "$LOCAL_WEEKDAY" = "3" ] || [ "$LOCAL_WEEKDAY" = "6" ]; }; then
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "Scheduled publish window matched Europe/Oslo 11:00."
+          if [ "$LOCAL_WEEKDAY" = "3" ] || [ "$LOCAL_WEEKDAY" = "6" ]; then
+            if [ "$LOCAL_HOUR" -ge "11" ] && [ "$LOCAL_HOUR" -lt "15" ]; then
+              echo "should_run=true" >> "$GITHUB_OUTPUT"
+              echo "Scheduled publish window matched Europe/Oslo publish day within the allowed delay window."
+            else
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+              echo "Skipping run outside the Europe/Oslo scheduled publish window."
+            fi
           else
             echo "should_run=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping duplicate cron run outside Europe/Oslo 11:00 window."
+            echo "Skipping run outside the Europe/Oslo Wednesday/Saturday cadence."
           fi
 
       - name: Checkout editorial repo
@@ -69,6 +78,13 @@ jobs:
         id: detect
         if: steps.schedule_guard.outputs.should_run == 'true'
         run: |
+          TODAY_OSLO=$(TZ="Europe/Oslo" date +%F)
+
+          if [ "${{ github.event_name }}" = "schedule" ] && grep -RIl "^publishDate: ${TODAY_OSLO}$" content/published/ >/dev/null 2>&1; then
+            echo "A post is already published for ${TODAY_OSLO}. Skipping duplicate scheduled publish."
+            exit 0
+          fi
+
           if [ -n "${{ inputs.slug }}" ]; then
             SLUG="${{ inputs.slug }}"
           else

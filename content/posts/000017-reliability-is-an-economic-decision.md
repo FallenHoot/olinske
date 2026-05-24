@@ -8,7 +8,7 @@ tags:
   - sre
   - finops
   - operations
-status: published
+status: draft
 copyright: "© 2026 Zach Olinski. All rights reserved."
 licenseUrl: "https://zach.olinski.com/docs/COPYRIGHT.md"
 attributionRequired: true

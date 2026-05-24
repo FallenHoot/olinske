@@ -8,7 +8,7 @@ tags:
   - governance
   - compliance
   - geopolitics
-status: published
+status: draft
 ---
 
 Sovereign cloud strategies accelerated after Snowden in 2013.

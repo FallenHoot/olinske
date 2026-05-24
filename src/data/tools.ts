@@ -11,6 +11,20 @@ export interface ToolEntry {
 // Add future tools here. The Tools page renders this list automatically.
 export const toolsRegistry: ToolEntry[] = [
   {
+    slug: 'nek400-kursfortegnelse',
+    title: 'NEK 400 Kursfortegnelse',
+    description: 'Create a NEK 400-oriented kursfortegnelse with common load presets, local test cases, and Ib/In/Iz validation.',
+    href: '/tools/circuit_sheet/',
+    status: 'Live',
+  },
+  {
+    slug: 'us-panel-directory',
+    title: 'US Panel Directory',
+    description: 'Create an NEC-oriented panel directory with odd/even slot layout, SPARE and BLANK handling, and 2-pole checks.',
+    href: '/tools/circuit_sheet/panel-directory/',
+    status: 'Live',
+  },
+  {
     slug: 'bcdr-assessment',
     title: 'BCDR Assessment',
     description: 'Model composite availability, evaluate commitment feasibility, and export executive evidence packs for reliability planning.',

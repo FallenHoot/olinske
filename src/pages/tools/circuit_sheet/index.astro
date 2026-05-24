@@ -56,6 +56,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
         <div>
           <p class="section-kicker">Circuits</p>
           <h2>Kurs rows</h2>
+          <p id="row-summary" class="status-line">Rows: 0</p>
         </div>
         <p id="validation-summary" class="status-line">No active findings.</p>
       </div>
@@ -144,7 +145,6 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       { key: 'preset', label: 'Common load', type: 'select', options: presetOptions, width: '16ch', editorOnly: true },
       { key: 'description', label: 'Lastbeskrivelse / utstyr', width: '18ch' },
       { key: 'status', label: 'Status', type: 'select', options: [{ value: '', label: 'Active' }, { value: 'Active', label: 'Active' }, { value: 'Spare', label: 'Spare' }], width: '8ch' },
-      { key: 'phase', label: 'Fase', type: 'select', options: [{ value: '', label: 'Choose' }, { value: 'L1+L2+L3', label: 'L1+L2+L3' }, { value: 'L1+L2', label: 'L1+L2' }, { value: 'L1+L3', label: 'L1+L3' }, { value: 'L2+L3', label: 'L2+L3' }, { value: 'L1+N', label: 'L1+N' }, { value: 'L2+N', label: 'L2+N' }, { value: 'L3+N', label: 'L3+N' }], width: '8ch' },
       { key: 'ratingA', label: 'In [A]', width: '7ch' },
       { key: 'ib', label: 'Ib [A]', width: '7ch' },
       { key: 'iz', label: 'Iz [A]', width: '7ch' },
@@ -305,6 +305,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
     const tableBody = document.querySelector('#table-body');
     const validationList = document.querySelector('#validation-list');
     const validationSummary = document.querySelector('#validation-summary');
+    const rowSummary = document.querySelector('#row-summary');
     const sheetFrame = document.querySelector('#sheet-frame');
     const exampleSelect = document.querySelector('#example-select');
     const saveStatus = document.querySelector('#save-status');
@@ -379,7 +380,6 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
         if (cable !== null && cable <= 1.5 && inValue !== null && inValue > 13) findings.push({ severity: 'error', message: `Circuit ${rowNo}: 1.5 mm2 above 13A needs redesign or justification.` });
         if (cable !== null && cable === 2.5 && inValue !== null && inValue > 16) findings.push({ severity: 'warn', message: `Circuit ${rowNo}: 2.5 mm2 above 16A needs thermal review.` });
         if ((context.includes('pump') || context.includes('compressor') || context.includes('motor') || context.includes('refrigerator')) && String(row.curve ?? '').toUpperCase() === 'B') findings.push({ severity: 'warn', message: `Circuit ${rowNo}: consider C curve review for inrush loads.` });
-        if (!String(row.phase ?? '').trim()) findings.push({ severity: 'warn', message: `Circuit ${rowNo}: phase assignment is missing.` });
       });
       return findings.length ? findings : [{ severity: 'ok', message: 'No active findings.' }];
     }
@@ -403,10 +403,14 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
     }
 
     function renderTable() {
-      tableHead.innerHTML = columns.map((column) => `<th>${column.label}</th>`).join('');
+      tableHead.innerHTML = columns.map((column) => `<th>${column.label}</th>`).join('') + '<th>Rad</th>';
       tableBody.innerHTML = state.rows.map((row, rowIndex) => `
         <tr>
           ${columns.map((column) => `<td>${renderCell(row, rowIndex, column)}</td>`).join('')}
+          <td class="row-actions-cell">
+            <button type="button" class="row-insert-btn" data-insert-row-index="${rowIndex}" title="Insert blank row below">Insert</button>
+            <button type="button" class="row-delete-btn" data-delete-row-index="${rowIndex}" title="Delete this row">Delete</button>
+          </td>
         </tr>
       `).join('');
     }
@@ -422,6 +426,11 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       const findings = validateRows();
       validationList.innerHTML = findings.map((item) => `<li class="${item.severity}">${escapeHtml(item.message)}</li>`).join('');
       validationSummary.textContent = findings[0]?.severity === 'ok' ? 'No active findings.' : `${findings.length} active finding${findings.length === 1 ? '' : 's'}.`;
+    }
+
+    function renderRowSummary() {
+      if (!rowSummary) return;
+      rowSummary.textContent = `Rows: ${state.rows.length}`;
     }
 
     function renderPreview() {
@@ -564,55 +573,30 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       renderExamples();
       renderTable();
       renderValidation();
+      renderRowSummary();
       renderPreview();
     }
 
     function buildOfficialSheetHtml() {
-      const maxRows = 27;
-      const wrapDescription = (text, maxChars = 56) => {
-        const words = String(text ?? '').trim().split(/\s+/).filter(Boolean);
-        if (!words.length) return [''];
-        const lines = [];
-        let current = '';
-        for (const word of words) {
-          const candidate = current ? `${current} ${word}` : word;
-          if (candidate.length <= maxChars || !current) {
-            current = candidate;
-          } else {
-            lines.push(current);
-            current = word;
-          }
-        }
-        if (current) lines.push(current);
-        return lines;
+      const maxRows = Math.max(24, state.rows.length);
+      const truncateDescription = (text, maxChars = 64) => {
+        const value = String(text ?? '').trim();
+        if (value.length <= maxChars) return value;
+        return `${value.slice(0, maxChars - 1).trimEnd()}…`;
       };
 
-      const rows = [];
-      const flow = state.descriptionFlow || 'continue-row';
-      for (let index = 0; index < state.rows.length && rows.length < maxRows; index += 1) {
+      const rows = Array.from({ length: maxRows }, (_, index) => {
         const row = state.rows[index] ?? createEmptyRow(index);
-        const description = displayDescription(row) || '';
-        const lines = flow === 'continue-row'
-          ? wrapDescription(description)
-          : [flow === 'truncate' && description.length > 56 ? `${description.slice(0, 55).trimEnd()}…` : description];
-
-        for (let lineIndex = 0; lineIndex < lines.length && rows.length < maxRows; lineIndex += 1) {
-          const isFirst = lineIndex === 0 || flow !== 'continue-row';
-          rows.push({
-            no: isFirst ? String(index + 1) : '',
-            description: lines[lineIndex],
-            amp: isFirst ? String(row.ratingA ?? '').trim() : '',
-            curve: isFirst ? String(row.curve ?? '').trim() : '',
-            length: isFirst ? String(row.length ?? '').trim() : '',
-            mm2: isFirst ? String(row.cable ?? '').trim() : '',
-            mate: isFirst ? String(row.method ?? '').replace(/^Method\s*/i, '').trim() : '',
-          });
-        }
-      }
-
-      while (rows.length < maxRows) {
-        rows.push({ no: String(rows.length + 1), description: '', amp: '', curve: '', length: '', mm2: '', mate: '' });
-      }
+        return {
+          no: String(index + 1),
+          description: truncateDescription(displayDescription(row) || ''),
+          amp: String(row.ratingA ?? '').trim(),
+          curve: String(row.curve ?? '').trim(),
+          length: String(row.length ?? '').trim(),
+          mm2: String(row.cable ?? '').trim(),
+          mate: String(row.method ?? '').replace(/^Method\s*/i, '').trim(),
+        };
+      });
 
       const rowMarkup = rows.map((row) => `
         <tr>
@@ -632,36 +616,38 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
     <meta charset="utf-8" />
     <title>NEK 400 Kursfortegnelse</title>
     <style>
-      @page { size: A4 portrait; margin: 8mm; }
+      @page { size: A4 portrait; margin: 5mm; }
       html, body { margin: 0; padding: 0; background: #fff; color: #000; font-family: Arial, Helvetica, sans-serif; }
       .sheet {
         width: 190mm;
-        min-height: 277mm;
+        min-height: 287mm;
         margin: 0 auto;
         border: 1px solid #000;
         box-sizing: border-box;
-        padding: 2mm;
+        padding: 1.5mm;
+        display: flex;
+        flex-direction: column;
       }
       table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-      td, th { border: 1px solid #000; font-size: 10px; line-height: 1.15; padding: 1px 2px; vertical-align: middle; }
-      .head td { height: 10mm; }
-      .head-label { font-size: 10px; font-weight: 700; }
-      .head-value { display: block; margin-top: 2px; font-size: 10px; font-weight: 400; min-height: 10px; }
+      td, th { border: 1px solid #000; font-size: 9px; line-height: 1.05; padding: 0.5px 1.5px; vertical-align: middle; }
+      .head td { height: 8mm; }
+      .head-label { font-size: 9px; font-weight: 700; }
+      .head-value { display: block; margin-top: 1px; font-size: 9px; font-weight: 400; min-height: 7px; }
       .warn {
-        font-size: 9px;
-        line-height: 1.2;
+        font-size: 8px;
+        line-height: 1.1;
       }
       .warn strong {
         display: block;
-        font-size: 24px;
+        font-size: 19px;
         letter-spacing: 0.2em;
         text-align: center;
-        margin-bottom: 3px;
+        margin-bottom: 1px;
       }
       .subhead th { font-size: 10px; text-align: left; height: 6mm; }
-      .grouphead th { font-size: 10px; text-align: center; height: 5mm; }
-      .cols th { font-size: 9px; text-align: center; height: 5mm; }
-      .rows td { height: 5.65mm; }
+      .grouphead th { font-size: 9px; text-align: center; height: 4.2mm; }
+      .cols th { font-size: 8px; text-align: center; height: 4.2mm; }
+      .rows td { height: 5mm; }
       .c-no, .c-amp, .c-kar, .c-len, .c-mm2, .c-mate { text-align: center; }
       .c-no { width: 8%; }
       .c-desc { width: 56%; }
@@ -673,34 +659,27 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       .bottom-strip {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 4mm;
-        align-items: end;
-        margin-top: 3mm;
+        gap: 2mm;
+        align-items: stretch;
+        flex: 1 1 auto;
+        margin-top: auto;
+        padding-top: 1.5mm;
       }
       .note-box {
         border: 1px solid #000;
         min-height: 55mm;
-        padding: 2mm;
+        height: 100%;
+        padding: 1.4mm;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
       }
       .note-box .label {
         display: block;
         font-size: 9px;
         font-weight: 700;
-        margin-bottom: 1mm;
-      }
-      .note-box .placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 42mm;
-        border: 1px dashed #000;
-        font-size: 9px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
+        margin-bottom: 0;
       }
       .business-card {
         width: 85mm;
@@ -710,8 +689,9 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
         display: flex;
         align-items: center;
         justify-content: center;
+        align-self: end;
         text-align: center;
-        font-size: 9px;
+        font-size: 8px;
         letter-spacing: 0.06em;
         text-transform: uppercase;
       }
@@ -773,9 +753,8 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       <div class="bottom-strip">
         <div class="note-box">
           <span class="label">Merknad:</span>
-          <span class="placeholder"></span>
         </div>
-        <div class="business-card">Plass for visittkort 85 x 55 mm</div>
+        <div class="business-card">Plass for installator-sticker/signatur 85 x 55 mm</div>
       </div>
     </div>
   </body>
@@ -840,6 +819,27 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 
     tableBody.addEventListener('input', handleRowUpdate);
     tableBody.addEventListener('change', handleRowUpdate);
+    tableBody.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      const insertIndex = Number(target.dataset.insertRowIndex);
+      if (!Number.isNaN(insertIndex) && state.rows[insertIndex]) {
+        state.rows.splice(insertIndex + 1, 0, createEmptyRow(0));
+        state.rows = state.rows.map((row, index) => ({ ...row, circuit: String(index + 1) }));
+        renderAll();
+        saveState(`Inserted row after ${insertIndex + 1}.`);
+        return;
+      }
+
+      const rowIndex = Number(target.dataset.deleteRowIndex);
+      if (Number.isNaN(rowIndex) || !state.rows[rowIndex]) return;
+      const confirmed = window.confirm(`Delete row ${rowIndex + 1}?`);
+      if (!confirmed) return;
+      state.rows.splice(rowIndex, 1);
+      state.rows = state.rows.map((row, index) => ({ ...row, circuit: String(index + 1) }));
+      renderAll();
+      saveState(`Deleted row ${rowIndex + 1}.`);
+    });
 
     exampleSelect.addEventListener('change', (event) => {
       const target = event.target;
@@ -853,6 +853,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       renderAll();
       saveState('Added row.');
     });
+
     document.querySelector('#reset-sheet').addEventListener('click', () => {
       state = createInitialState();
       selectedExampleValue = '';
@@ -933,6 +934,9 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
   .toolbar-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
   .toolbar-actions button { border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); padding: 0.58rem 0.9rem; cursor: pointer; }
   .toolbar-actions .accent { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .row-actions-cell { white-space: nowrap; }
+  .row-insert-btn, .row-delete-btn { border: 1px solid var(--border); border-radius: 8px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); padding: 0.3rem 0.5rem; cursor: pointer; font-size: 0.78rem; }
+  .row-insert-btn { margin-right: 0.35rem; }
   .section-head { display: flex; justify-content: space-between; gap: 1rem; align-items: end; margin-bottom: 0.8rem; }
   .section-head h2, .info-card h2, .paper-title-row h3, .paper-block h4 { margin: 0; font-family: var(--font-display); }
   .meta-grid { display: grid; gap: 0.8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -1,13 +1,16 @@
 ---
-title: "Azure AI Foundry Agents + Container Apps: Building Scalable A2A Solutions"
-description: "Agent-to-Agent (A2A) patterns combine Azure AI Foundry agents with Container Apps for asynchronous, scalable multi-agent systems. Here is the reference architecture."
-publishDate: 2026-05-20
+title: 'Azure AI Foundry Agents + Container Apps: Building Scalable A2A Solutions'
+description: >-
+  Agent-to-Agent (A2A) patterns combine Azure AI Foundry agents with Container
+  Apps for asynchronous, scalable multi-agent systems. Here is the reference
+  architecture.
+publishDate: '2026-05-25'
 tags:
   - cloud-architecture
   - ai
   - agents
   - azure
-status: draft
+status: published
 ---
 
 Chaining agents synchronously works fine for a proof of concept.

@@ -1,13 +1,15 @@
 ---
-title: "BCDR for AKS: What Fails and What Doesn't"
-description: "Kubernetes BCDR is not the same as VM BCDR. Here are patterns that work across regions, zone failures, and cluster upgrades."
-publishDate: 2026-05-23
+title: 'BCDR for AKS: What Fails and What Doesn''t'
+description: >-
+  Kubernetes BCDR is not the same as VM BCDR. Here are patterns that work across
+  regions, zone failures, and cluster upgrades.
+publishDate: '2026-05-25'
 tags:
   - cloud-architecture
   - kubernetes
   - aks
   - reliability
-status: draft
+status: published
 ---
 
 AKS makes horizontal scaling easy.

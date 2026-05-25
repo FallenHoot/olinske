@@ -20,11 +20,11 @@ The tooling usually answers "what did we spend" faster than "why did we spend it
 How much did that service really cost per transaction?
 That answer usually depends on shared infrastructure, commitment discounts, and workload volume.
 
-Azure Data Explorer (Kusto) can.
+That is why Azure Data Explorer (Kusto) is a strong fit as the analytics layer.
 
-ADX lets you ingest, transform, and analyze large cost datasets with KQL.
+With Azure Data Factory (or another pipeline) ingesting and preparing the data, ADX lets you query and analyze large cost datasets with KQL.
 
-Combined with Azure Cost Management export, ADX becomes your cost brain.
+Combined with Azure Cost Management export and a reliable ingestion pipeline, ADX becomes the analytics core of your cost brain.
 
 A cost brain is not just storage. It is a system that continuously ingests cost data, enriches it with business context, and makes it queryable by engineers and finance.
 
@@ -34,9 +34,11 @@ FinOps requires data-driven decision-making about infrastructure spend.
 
 Most teams still do not have the infrastructure to answer questions like:
 
-- Which team's code change caused the 20% jump in compute spending?
-- What is the actual unit cost (per transaction, per user, per API call)?
-- How much of our cloud bill is due to inefficiency vs legitimate business need?
+- Which subscriptions, resource groups, or tags are driving the month-over-month spike in cost?
+- How much did we spend in actual cost versus amortized cost after reservations and savings plans are applied?
+- Where are we paying for unused savings plan or reservation capacity?
+- What is cost per business unit, cost per customer, or cost per transaction after shared-cost allocation?
+- Which services are trending abnormally this week compared with baseline usage and cost?
 
 Without those answers, FinOps stays tactical (cut waste) instead of strategic (optimize spend per business outcome).
 
@@ -44,9 +46,21 @@ Without those answers, FinOps stays tactical (cut waste) instead of strategic (o
 
 Azure Cost Management Exports supports scheduled delivery to Azure Storage.
 
-Azure Data Explorer supports both one-time and continuous ingestion from storage.
+Azure Data Factory and other ingestion pipelines can load that exported data into ADX on one-time or continuous schedules.
 
 Combined, you can build a repeatable cost analytics pipeline instead of manual CSV analysis.
+
+## Question-to-data map
+
+The fastest way to improve FinOps decisions is to map each business question to concrete fields and query patterns.
+
+| Question | Dataset and fields | Typical analysis pattern |
+| --- | --- | --- |
+| What is driving month-over-month increase? | Cost and usage details (Actual): `SubscriptionId`, `ResourceGroup`, tags, `Cost`/`PreTaxCost`, date | Group by scope and month, then compare month-over-month deltas |
+| What changed after commitment discounts? | Actual versus Amortized exports: `PricingModel`, `ChargeType`, `EffectivePrice`, `Cost` | Run side-by-side aggregation of Actual and Amortized totals |
+| Where are commitment benefits underused? | Amortized data: `ChargeType=UnusedSavingsPlan`, `PricingModel=SavingsPlan` | Filter for unused benefit and trend by day/week |
+| What is unit cost per business outcome? | Cost export joined with business telemetry (transactions, users, jobs) | Join on time and workload keys, then compute cost per unit |
+| Which services are abnormal this week? | Service/resource daily cost series | Build baseline and detect outliers using KQL time-series functions |
 
 ## Why Azure Data Explorer
 
@@ -62,13 +76,22 @@ ADX has specific strengths for this use case:
 
 That makes it especially useful for teams that need to investigate spend, not just publish dashboards.
 
+What I personally value most is flexibility. If you can build quickly, or vibe code fast prototypes, ADX lets you combine infrastructure telemetry with cost records in one query workflow.
+
+For example, you can pull VM Insights data to answer low-level questions such as:
+
+- What is the actual VM disk footprint by workload?
+- What are average CPU and memory utilization patterns over time?
+
+Then you can join those signals with FOCUS cost data to move from low-level cost signals to business-level, evidence-backed cost drivers.
+
 ## Framework or model
 
 Build this stack:
 
 1. **Export:** Cost Management data to Azure Blob Storage on a recurring schedule.
-2. **ADX ingestion:** Use queued ingestion patterns from storage (one-time or continuous based on your needs).
-3. **Transformations:** Tag-based grouping, showback or chargeback logic, shared-cost allocation, and handling for duplicate or late-arriving records during the billing cycle.
+2. **Pipeline ingestion:** Use Azure Data Factory (or another orchestration layer) to load exports into ADX with one-time backfill and continuous refresh.
+3. **Modeling and allocation:** Apply tag-based grouping, showback or chargeback logic, shared-cost allocation, and handling for duplicate or late-arriving records.
 4. **Queries:** Unit cost by business metric, resource-scoped spend trends, and anomaly triage.
 5. **Dashboards:** Azure Data Explorer dashboards or Power BI integration.
 
@@ -76,12 +99,13 @@ Build this stack:
 
 1. Enable Cost Management Exports to Blob Storage.
 2. Create an ADX cluster and database aligned to your retention and query requirements.
-3. Start with one-time ingestion for validation, then move to continuous ingestion if daily automation is needed.
-4. Run queries for:
-   - Spend per business unit (tag-based)
+3. Build a small ingestion pipeline (for example Azure Data Factory) that lands export partitions into ADX tables.
+4. Start with one-time backfill for schema validation, then move to continuous ingestion for daily operation.
+5. Run queries for:
+  - Spend per business unit (tag-based)
   - Unit cost per transaction by joining cost exports with API request volume or job counts
   - Outlier resource detection for review
-5. Add alerting and review workflows in your existing operations process.
+6. Add alerting and review workflows in your existing operations process.
 
 Example query:
 
@@ -102,6 +126,8 @@ The analytics platform itself becomes part of your FinOps cost base, so it needs
 
 The payoff is that teams can iterate faster on cost questions and build shared visibility across engineering, finance, and operations.
 
+Microsoft tooling gets you to a solid starting point. Teams that become heroes still do the heavy lifting: data contracts, allocation policy, telemetry joins, and disciplined operating reviews.
+
 ## What to do this week
 
 1. Enable Cost Management export to Blob Storage.
@@ -109,12 +135,6 @@ The payoff is that teams can iterate faster on cost questions and build shared v
 3. Import one day of cost data and validate schema.
 4. Write one query for your top cost driver.
 5. Schedule a weekly FinOps sync to review trends.
-
-## References
-
-- Microsoft Learn: Tutorial: Create and manage Cost Management exports
-- Microsoft Learn: Azure Data Explorer data ingestion overview
-- Microsoft Learn: Visualization integrations overview for Azure Data Explorer
 
 Cost analysis should be boring to run and powerful to query.
 

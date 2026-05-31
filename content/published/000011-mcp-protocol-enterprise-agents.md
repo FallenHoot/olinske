@@ -1,12 +1,12 @@
 ---
 title: "MCP: The Protocol That Might Actually Connect AI Agents to Enterprise Systems"
 description: "Model Context Protocol is the most important protocol in the AI agent ecosystem right now. What it does, what it does not do, and where enterprise adoption will hit friction."
-publishDate: 2026-05-27
+publishDate: 2026-05-31
 tags:
   - ai-strategy
   - cloud-architecture
   - agents
-status: draft
+status: published
 ---
 
 If you are building AI agents in 2026, you have heard of MCP.

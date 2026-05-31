@@ -8,8 +8,8 @@ tags:
 type: blog-linkedin-share
 linkedinPostId: "pending"
 variant: medium
-sourcePost: "content/posts/000012-spring-cleaning-cloud-finops.md"
-canonicalUrl: "https://zach.olinske.com/posts/000012-spring-cleaning-cloud-finops"
+sourcePost: "content/published/000012-spring-cleaning-cloud-finops.md"
+canonicalUrl: "https://olinske.com/posts/000012-spring-cleaning-cloud-finops"
 hashtags:
   - FinOps
   - CloudArchitecture

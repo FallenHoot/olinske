@@ -1,13 +1,13 @@
 ---
 title: "Spring Cleaning Your Cloud: Past the Quick Wins Into the Hard Questions"
 description: "Quick wins are table stakes. For mature cloud customers, the real question is not where is the waste. It is what are we choosing to spend money on, and is that choice still justified. Here are the hard questions that make people uncomfortable."
-publishDate: 2026-05-30
+publishDate: 2026-05-31
 tags:
   - cloud-architecture
   - finops
   - azure
   - governance
-status: draft
+status: published
 ---
 
 I have a multi-grafted apple tree in my yard. Three different varieties on one rootstock. I also have a plum tree and a few berries. Every spring I cut back the growth so the fruit does not bend the branches so far they touch the ground. Cut what grows straight up. Cut what crosses. Keep what grows outward where the fruit can hang without breaking the branch.

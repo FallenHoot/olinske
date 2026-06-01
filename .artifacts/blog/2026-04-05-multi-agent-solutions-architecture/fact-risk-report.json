@@ -1,0 +1,21 @@
+{
+  "facts_to_verify": [
+    {
+      "claim": "Hub-and-spoke routing reduces agent proliferation",
+      "risk": "high",
+      "evidence_status": "partially verified",
+      "note": "True in small systems; breaks down at 100+ agents"
+    },
+    {
+      "claim": "Decentralized routing improves fault tolerance",
+      "risk": "medium",
+      "evidence_status": "research needed",
+      "note": "Needs benchmark comparison with orchestrated model"
+    }
+  ],
+  "confidentiality_risks": [
+    "No internal Microsoft projects referenced",
+    "No customer-specific architectures mentioned"
+  ],
+  "unresolved": []
+}

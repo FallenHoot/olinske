@@ -1,0 +1,28 @@
+{
+  "facts_to_verify": [
+    {
+      "claim": "Public statements across hyperscalers and semiconductor vendors indicate sustained capacity pacing pressure",
+      "risk": "medium",
+      "evidence_status": "partially verified"
+    },
+    {
+      "claim": "Advanced packaging and HBM constraints can become binding limits for AI compute rollouts",
+      "risk": "medium",
+      "evidence_status": "partially verified"
+    },
+    {
+      "claim": "Power interconnection timelines are a first-order constraint for new data center capacity",
+      "risk": "low",
+      "evidence_status": "verified"
+    },
+    {
+      "claim": "Hoarding can be economically rational when expected reacquisition failure cost exceeds holding cost",
+      "risk": "low",
+      "evidence_status": "analytical model"
+    }
+  ],
+  "red_flags": [
+    "Avoid presenting vendor-specific numbers not directly cited in public references",
+    "Do not imply insider Microsoft operational details"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "facts_to_verify": [
+    {
+      "claim": "GitOps can redeploy AKS cluster in <10 minutes",
+      "risk": "medium",
+      "evidence_status": "needs test",
+      "note": "Depends on cluster size and image registry throughput"
+    }
+  ]
+}

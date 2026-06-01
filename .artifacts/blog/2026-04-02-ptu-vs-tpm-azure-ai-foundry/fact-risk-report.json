@@ -1,0 +1,35 @@
+{
+  "postSlug": "2026-04-02-ptu-vs-tpm-azure-ai-foundry",
+  "riskLevel": "Low",
+  "checkedOn": "2026-03-28",
+  "checks": [
+    {
+      "id": "FR-1",
+      "category": "Confidentiality",
+      "result": "Pass",
+      "notes": "No internal Microsoft pricing, forecasts, or customer data. All examples are hypothetical and based on public pricing."
+    },
+    {
+      "id": "FR-2",
+      "category": "Forward-looking statements",
+      "result": "Pass",
+      "notes": "No roadmap or future pricing claims. References current public Azure AI Foundry SKUs."
+    },
+    {
+      "id": "FR-3",
+      "category": "Source integrity",
+      "result": "Pass",
+      "notes": "Citations include public Learn docs and Forrester TEI (published with Microsoft permission)."
+    },
+    {
+      "id": "FR-4",
+      "category": "Claim accuracy",
+      "result": "Pass",
+      "notes": "Framework is based on general procurement economics (utilization planning), not product-specific claims."
+    }
+  ],
+  "requiredActions": [
+    "Verify Forrester TEI is still public at time of publish.",
+    "Include personal-view disclaimer."
+  ]
+}

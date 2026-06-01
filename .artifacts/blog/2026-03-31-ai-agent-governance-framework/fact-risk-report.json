@@ -1,0 +1,35 @@
+{
+  "postSlug": "2026-03-31-ai-agent-governance-framework",
+  "riskLevel": "Low",
+  "checkedOn": "2026-03-28",
+  "checks": [
+    {
+      "id": "FR-1",
+      "category": "Confidentiality",
+      "result": "Pass",
+      "notes": "No internal Microsoft agent governance examples or customer scenarios included. Framework is generic and principles-based."
+    },
+    {
+      "id": "FR-2",
+      "category": "Forward-looking statements",
+      "result": "Pass",
+      "notes": "No roadmap, ETA, or unreleased product claims. References current public announcements and general practice patterns."
+    },
+    {
+      "id": "FR-3",
+      "category": "Source integrity",
+      "result": "Pass",
+      "notes": "Framework sourced from public Microsoft Learn and blog content. All references are to published governance principles."
+    },
+    {
+      "id": "FR-4",
+      "category": "Claim confidence",
+      "result": "Pass",
+      "notes": "Core observation (no existing published framework) is well-supported by lack of industry standards. Implementation guidance is practice-based, not guaranteed."
+    }
+  ],
+  "requiredActions": [
+    "Maintain personal-view disclaimer in final post.",
+    "If specific customer examples are added post-draft, run confidentiality review again."
+  ]
+}

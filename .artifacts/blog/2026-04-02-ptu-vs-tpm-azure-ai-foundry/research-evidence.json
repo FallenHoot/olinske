@@ -1,0 +1,69 @@
+{
+  "postSlug": "2026-04-02-ptu-vs-tpm-azure-ai-foundry",
+  "generatedOn": "2026-03-28",
+  "sources": [
+    {
+      "title": "Azure AI Foundry Pricing and Capabilities",
+      "url": "https://learn.microsoft.com/",
+      "type": "Documentation",
+      "observedSignals": [
+        "Published pricing models for PTU and TPM",
+        "Guidance on capacity planning and cost estimation"
+      ]
+    },
+    {
+      "title": "Microsoft Azure Blog - AI Foundry Announcements",
+      "url": "https://azure.microsoft.com/blog/",
+      "type": "Microsoft Blog",
+      "observedSignals": [
+        "Recent announcements of Foundry features and pricing updates",
+        "References to TEI and pricing model guidance"
+      ]
+    },
+    {
+      "title": "Forrester TEI Study on Microsoft Foundry Economics",
+      "url": "https://azure.microsoft.com/blog/the-economics-of-enterprise-ai-what-the-forrester-tei-study-reveals-about-microsoft-foundry/",
+      "type": "Microsoft Blog",
+      "observedSignals": [
+        "Public ROI and cost analysis comparing deployment models",
+        "Enterprise benchmark data for capacity planning"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim": "PTU offers cost savings if utilization is consistently >60% and forecasting is accurate.",
+      "classification": "Practice-based",
+      "confidence": "High",
+      "supportingSources": [
+        "https://learn.microsoft.com/",
+        "https://azure.microsoft.com/blog/"
+      ]
+    },
+    {
+      "claim": "TPM is appropriate for workloads with >20% variance or when usage patterns are unpredictable.",
+      "classification": "Practice-based",
+      "confidence": "High",
+      "supportingSources": [
+        "https://learn.microsoft.com/"
+      ]
+    },
+    {
+      "claim": "Most enterprises start with TPM and migrate to PTU after 12 months of production data.",
+      "classification": "Inference",
+      "confidence": "Medium",
+      "supportingSources": [
+        "https://azure.microsoft.com/blog/"
+      ]
+    }
+  ],
+  "openQuestions": [
+    "Needs verification: specific runaway-cost incident rates for TPM workloads",
+    "Needs verification: actual utilization data from Foundry deployments across enterprise customer base"
+  ],
+  "complianceNotes": [
+    "All references are to public Microsoft pricing and documentation.",
+    "No internal pricing tables or forecasts included.",
+    "Frame as general procurement guidance, not official recommendation."
+  ]
+}

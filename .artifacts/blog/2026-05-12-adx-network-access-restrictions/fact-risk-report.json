@@ -1,0 +1,1 @@
+{"facts_to_verify":[{"claim":"Private endpoints fully isolate ADX","risk":"high","evidence_status":"needs testing","note":"Ingestion may still need public access"}]}

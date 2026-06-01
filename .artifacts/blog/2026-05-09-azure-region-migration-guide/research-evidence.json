@@ -1,0 +1,1 @@
+{"sources":[{"title":"Azure Region Migration Patterns","url":"https://learn.microsoft.com/azure/cloud-adoption-framework/","evidence":"Migration best practices across regions"}],"claims_to_verify":["Region migration takes 4-8 weeks for typical workloads","DNS cutover is the lowest-risk approach"]}

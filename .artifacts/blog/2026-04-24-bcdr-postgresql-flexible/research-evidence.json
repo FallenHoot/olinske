@@ -1,0 +1,1 @@
+{"sources":[{"title":"PostgreSQL Flexible Server BCDR","url":"https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/","evidence":"Backup and replication options"}],"claims_to_verify":["Built-in backups have 35-day retention","Read replicas have <1s replication lag","Geo-replication is async with potential data loss"]}

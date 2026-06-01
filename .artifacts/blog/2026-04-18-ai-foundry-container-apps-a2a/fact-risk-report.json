@@ -1,0 +1,1 @@
+{"facts_to_verify":[{"claim":"Service Bus provides <1s latency for A2A messaging","risk":"medium","evidence_status":"needs load test"}]}

@@ -1,0 +1,1 @@
+{"sources":[{"title":"Azure AI Foundry Agent Reference Architecture","url":"https://learn.microsoft.com/azure/ai-foundry","evidence":"Agent-to-agent communication patterns"}],"claims_to_verify":["Container Apps enables agent isolation","Service Bus provides async A2A messaging","Foundry agents support tool-based A2A calls"]}

@@ -1,0 +1,16 @@
+{
+  "canonicalUrl": "https://zach.olinske.com/posts/000011-mcp-protocol-enterprise-agents",
+  "postTitle": "MCP: The Protocol That Might Actually Connect AI Agents to Enterprise Systems",
+  "publishDate": "2026-05-27",
+  "hashtags": ["MCP", "AIAgents", "EnterpriseAI"],
+  "variants": {
+    "short": {
+      "wordCount": 60,
+      "text": "HTTP made the web. REST made APIs composable. OAuth made identity portable.\n\nModel Context Protocol might do the same for AI agent integrations. Or it might not.\n\nThe enterprise friction points are real. I wrote about what MCP does, what it does not do, and where adoption will hit walls.\n\nIs your team building MCP integrations yet?"
+    },
+    "medium": {
+      "wordCount": 110,
+      "text": "HTTP made the web possible. REST made APIs composable. OAuth made identity portable.\n\nModel Context Protocol might do the same for AI agent integrations. Or it might not. The enterprise friction points are real.\n\nEvery agent framework today invents its own tool-calling interface, its own auth model, its own error handling. MCP proposes a standard. Anthropic started it. The ecosystem is adopting it.\n\nThe question for enterprise teams is not whether MCP is good. It is whether it is ready for the security, compliance, and scale requirements you actually have.\n\nIs your team building MCP integrations yet, or waiting for the spec to stabilize?"
+    }
+  }
+}

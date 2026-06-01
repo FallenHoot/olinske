@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "agents": [
+    { "name": "blog-orchestrator", "file": "blog-orchestrator.agent.md" },
+    { "name": "microsoft-signals-scout", "file": "microsoft-signals-scout.agent.md" },
+    { "name": "watchlist-signals-scout", "file": "watchlist-signals-scout.agent.md" },
+    { "name": "audience-problem-miner", "file": "audience-problem-miner.agent.md" },
+    { "name": "topic-strategist", "file": "topic-strategist.agent.md" },
+    { "name": "research-analyst", "file": "research-analyst.agent.md" },
+    { "name": "outline-architect", "file": "outline-architect.agent.md" },
+    { "name": "draft-writer", "file": "draft-writer.agent.md" },
+    { "name": "contrarian-reviewer", "file": "contrarian-reviewer.agent.md" },
+    { "name": "framework-distiller", "file": "framework-distiller.agent.md" },
+    { "name": "fact-risk-reviewer", "file": "fact-risk-reviewer.agent.md" },
+    { "name": "voice-editor", "file": "voice-editor.agent.md" },
+    { "name": "seo-distribution-editor", "file": "seo-distribution-editor.agent.md" },
+    { "name": "design-ux-director", "file": "design-ux-director.agent.md" },
+    { "name": "image-director", "file": "image-director.agent.md" },
+    { "name": "freshness-maintainer", "file": "freshness-maintainer.agent.md" },
+    { "name": "platform-enhancement-scout", "file": "platform-enhancement-scout.agent.md" },
+    { "name": "template-optimizer", "file": "template-optimizer.agent.md" },
+    { "name": "publisher-agent", "file": "publisher-agent.agent.md" }
+  ]
+}

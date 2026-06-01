@@ -1,0 +1,24 @@
+{
+  "sources": [
+    {
+      "title": "Orchestrating Multi-Agent Systems: A Framework for Enterprise Coordination",
+      "url": "https://microsoft.com/en-us/research/",
+      "evidence": "Compare orchestrated vs decentralized coordination patterns"
+    },
+    {
+      "title": "Azure AI Foundry Multi-Agent Reference Architecture",
+      "url": "https://learn.microsoft.com/azure/ai-foundry",
+      "evidence": "Hub-and-spoke orchestration model for enterprise agents"
+    },
+    {
+      "title": "Decentralized Agent Routing Patterns",
+      "url": "https://devblogs.microsoft.com/azure-ai/",
+      "evidence": "Peer-to-peer agent coordination without central orchestration"
+    }
+  ],
+  "claims_to_verify": [
+    "Hub-and-spoke reduces agent proliferation",
+    "Decentralized routing improves fault tolerance",
+    "LangGraph supports both orchestration patterns"
+  ]
+}

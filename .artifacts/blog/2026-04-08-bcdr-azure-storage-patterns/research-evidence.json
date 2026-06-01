@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "title": "Azure Storage Redundancy Options",
+      "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy",
+      "evidence": "GRS vs RA-GRS vs GZRS trade-offs"
+    },
+    {
+      "title": "Azure Storage Failover",
+      "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-disaster-recovery-guidance",
+      "evidence": "RPO/RTO guarantees for each redundancy option"
+    }
+  ],
+  "claims_to_verify": [
+    "GRS has 15-minute RPO",
+    "RA-GRS provides read access during failover",
+    "Customer-initiated failover has no data loss guarantee"
+  ]
+}

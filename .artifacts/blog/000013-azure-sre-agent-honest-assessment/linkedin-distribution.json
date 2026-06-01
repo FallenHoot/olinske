@@ -1,0 +1,16 @@
+{
+  "canonicalUrl": "https://zach.olinske.com/posts/000013-azure-sre-agent-honest-assessment",
+  "postTitle": "FinOps and SRE Belong Together. I Built the Bridge.",
+  "publishDate": "2026-06-03",
+  "hashtags": ["FinOps", "SRE", "AzureSREAgent"],
+  "variants": {
+    "short": {
+      "wordCount": 65,
+      "text": "FinOps teams see the bill. SRE teams manage the resources. Neither has the full picture.\n\nI call the bridge FinSRE. Cost as a reliability metric.\n\n16,000 lines of PowerShell replaced with 200 lines of YAML. Open-sourced.\n\nWhere does the FinOps-to-SRE gap live in your organization?"
+    },
+    "medium": {
+      "wordCount": 120,
+      "text": "FinOps teams see the bill. SRE teams manage the resources. Neither has the full picture.\n\nI replaced 16,000 lines of PowerShell with 200 lines of YAML on the Azure SRE Agent platform. Six specialist subagents. AI-powered workload pattern detection. A FitScore system that validates whether a resize actually works, not just whether CPU is low.\n\nI call the bridge FinSRE. Cost as a reliability metric, just like latency or availability.\n\nI demoed it to the FinOps team at Microsoft. They went a different direction. I open-sourced it anyway.\n\nFinOps without operations is just a dashboard. SRE without cost visibility is just firefighting. Where does that gap live in your organization?"
+    }
+  }
+}

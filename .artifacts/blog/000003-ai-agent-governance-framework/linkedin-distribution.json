@@ -1,0 +1,20 @@
+{
+  "canonicalUrl": "https://zach.olinske.com/posts/000003-ai-agent-governance-framework",
+  "postTitle": "AI Agent Governance: A Starting Point Nobody Gave Me",
+  "publishDate": "2026-04-22",
+  "hashtags": ["AgenticAI", "AIGovernance", "CloudArchitecture", "AIAgents", "TechBlog"],
+  "variants": {
+    "short": {
+      "wordCount": 90,
+      "text": "My LinkedIn automation posted a draft before the blog did. Broken link. People commented. I had no idea.\n\n15 AI agents with quality gates, review loops, and approval workflows. None of them caught it.\n\nThe problem was not the agents. It was me bypassing my own gates.\n\nSo I built a governance model. Here is the starting point nobody gave me.\n\nhttps://zach.olinske.com/posts/000003-ai-agent-governance-framework"
+    },
+    "medium": {
+      "wordCount": 200,
+      "text": "My LinkedIn automation posted a draft with a broken link before I knew it happened. People commented. The blog had never published it.\n\nI had 15 AI agents with quality gates, review loops, and approval workflows. None of them caught this. The problem was not the agents. It was me adding new functionality that bypassed the gates I already had.\n\nThat is the same problem every enterprise deploying AI agents faces right now. The agents work. The governance does not exist yet.\n\nAfter that mistake, I built a practitioner governance model. Seven controls, each grounded in what actually went wrong in my own pipeline:\n\n- Decision Authority: which decisions are agent-eligible vs human-reserved?\n- Agent Identity and Scope: least-privilege, one purpose per agent\n- Audit and Logging: every decision recorded\n- Human Escalation: one flag means manual review, no silent passes\n- Testing: test what happens when agents introduce changes after the review gate\n- Monitoring: catch drift before it becomes a pattern\n- Rollback: know how to stop an agent and reverse its decisions\n\nI learned this from a broken LinkedIn link. You do not have to learn it that way.\n\nhttps://zach.olinske.com/posts/000003-ai-agent-governance-framework"
+    },
+    "long": {
+      "wordCount": 310,
+      "text": "My LinkedIn automation posted a draft with a broken link before I knew it happened. People started commenting. The blog had never actually published the draft. It was embarrassing, funny, and humbling all at once.\n\nI had built 15 AI agents with quality gates, review loops, and approval workflows for this blog. None of them caught what happened. The problem was not the agents. It was me adding new functionality that bypassed the gates I already had. I had a good system and I broke it by not governing my own changes.\n\nThat experience forced me to ask: what does practitioner-level agent governance actually look like? Not NIST frameworks or EU AI Act compliance. The practical stuff. What does an engineering team implement before letting an agent make business decisions?\n\nI built a 7-point model from my own mistakes and research:\n\n1. Decision Authority: define what agents can decide vs what requires a human\n2. Agent Identity and Scope: least-privilege, one purpose per agent\n3. Audit and Logging: every decision recorded and queryable\n4. Human Escalation: one flag blocks the pipeline until manual review\n5. Testing and Validation: test the gaps, not just the happy path\n6. Monitoring: track decision patterns to spot drift early\n7. Rollback: know how to stop an agent and reverse its decisions\n\nStart with three: Decision Authority, Audit, and Human Escalation. Those cover what your compliance team will ask first.\n\nI built this model for a personal blog. The governance questions were the same ones enterprise teams face at larger scale. The difference is that my blast radius is one bad blog post. Yours might be larger.\n\nI learned this from a broken LinkedIn link and some public comments. You do not have to learn it that way.\n\nhttps://zach.olinske.com/posts/000003-ai-agent-governance-framework"
+    }
+  }
+}

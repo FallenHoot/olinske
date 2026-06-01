@@ -1,0 +1,1 @@
+{"facts_to_verify":[{"claim":"NAP provides better cost efficiency than Karpenter on Azure","risk":"medium","evidence_status":"needs benchmark on same cluster"}]}

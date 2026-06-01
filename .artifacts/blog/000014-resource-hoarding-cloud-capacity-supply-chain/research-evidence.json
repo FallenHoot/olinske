@@ -1,0 +1,41 @@
+{
+  "sources": [
+    {
+      "title": "Microsoft FY26 Q3 earnings release",
+      "url": "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q3/press-release-webcast",
+      "evidence": "Cloud demand growth and infrastructure scaling context"
+    },
+    {
+      "title": "Intel Q1 2026 financial results",
+      "url": "https://www.intc.com/news-events/press-releases/detail/1767/intel-reports-first-quarter-2026-financial-results",
+      "evidence": "Data center and AI demand commentary"
+    },
+    {
+      "title": "ASML Q1 2026 results",
+      "url": "https://www.asml.com/en/news/press-releases/2026/q1-2026-financial-results",
+      "evidence": "Supply and demand pacing in semiconductor equipment"
+    },
+    {
+      "title": "TSMC Q1 2026 results",
+      "url": "https://pr.tsmc.com/english/news/3297",
+      "evidence": "Advanced node and demand outlook signals"
+    },
+    {
+      "title": "Applied Materials Q1 FY2026 results",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-first-quarter-2026-results",
+      "evidence": "AI-driven demand and packaging-related commentary"
+    },
+    {
+      "title": "U.S. DOE note on FERC large-load interconnection reform",
+      "url": "https://www.energy.gov/articles/energy-deputy-secretary-danly-commends-ferc-action-large-load-interconnection-reform",
+      "evidence": "Power and interconnection constraints for large loads"
+    }
+  ],
+  "claims_to_verify": [
+    "Resource hoarding in cloud is often a rational response to reacquisition risk",
+    "Capacity bottlenecks move between power, silicon, packaging, memory, and deployment layers",
+    "Cost-only utilization targets can increase reliability and incident risk under constrained supply",
+    "Cross-functional FinOps plus SRE governance reduces both stranded spend and outage risk"
+  ],
+  "notes": "Sources are public and non-confidential. Re-verify investor links at publish time."
+}

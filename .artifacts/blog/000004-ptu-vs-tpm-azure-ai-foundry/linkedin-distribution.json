@@ -1,0 +1,16 @@
+{
+  "canonicalUrl": "https://zach.olinske.com/posts/000004-ptu-vs-tpm-azure-ai-foundry",
+  "postTitle": "Azure AI Foundry: The PTU vs TPM Debate You Cannot Ignore",
+  "publishDate": "2026-05-20",
+  "hashtags": ["AzureAI", "FinOps", "CloudArchitecture"],
+  "variants": {
+    "short": {
+      "wordCount": 65,
+      "text": "PTU capacity sells out in 24 hours. Most customers use 6% of what they reserve. Pay-as-you-go has zero allocation in some regions.\n\nThe cloud promise of elasticity breaks when the allocation model creates artificial scarcity.\n\nI wrote about what is actually happening and what to do about it.\n\nHow is your team handling AI capacity planning?"
+    },
+    "medium": {
+      "wordCount": 115,
+      "text": "PTU capacity sells out in 24 hours. Most customers use 6% of what they reserve. The pay-as-you-go option has zero allocation in some regions.\n\nThe cloud was built on a promise: use what you need, give back the rest. That promise breaks when customers hoard GPU capacity at single-digit utilization because releasing it means losing it forever.\n\nI work with the largest companies in Norway. I have this conversation every month. The pattern is the same across regions and industries.\n\nThis is not a technical problem. It is an allocation model problem. The economics of AI infrastructure are diverging from everything we built FinOps practices around.\n\nHow is your organization handling AI capacity planning right now?"
+    }
+  }
+}

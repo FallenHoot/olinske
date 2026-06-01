@@ -1,0 +1,16 @@
+{
+  "facts_to_verify": [
+    {
+      "claim": "GRS failover is customer-initiated only",
+      "risk": "high",
+      "evidence_status": "needs confirmation",
+      "note": "Check if Microsoft auto-fails or requires manual trigger"
+    },
+    {
+      "claim": "RA-GRS adds ~20% cost vs GRS",
+      "risk": "medium",
+      "evidence_status": "partially verified",
+      "note": "Costs vary by region; need current pricing"
+    }
+  ]
+}

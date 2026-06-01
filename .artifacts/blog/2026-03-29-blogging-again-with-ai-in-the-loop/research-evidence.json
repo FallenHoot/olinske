@@ -1,0 +1,71 @@
+{
+  "postSlug": "2026-03-29-blogging-again-with-ai-in-the-loop",
+  "generatedOn": "2026-03-28",
+  "sources": [
+    {
+      "title": "Microsoft Azure Blog",
+      "url": "https://azure.microsoft.com/blog/",
+      "type": "Microsoft Blog",
+      "observedSignals": [
+        "High concentration of recent AI/agentic cloud posts",
+        "Recurring themes: modernization, enterprise AI, reliability"
+      ]
+    },
+    {
+      "title": "Microsoft Developer Blogs",
+      "url": "https://devblogs.microsoft.com/",
+      "type": "Microsoft Blog",
+      "observedSignals": [
+        "Frequent engineering workflow and platform updates",
+        "Recent posts include AI agent implementation patterns"
+      ]
+    },
+    {
+      "title": "Microsoft Learn",
+      "url": "https://learn.microsoft.com/",
+      "type": "Documentation",
+      "observedSignals": [
+        "Primary source for publicly documented technical guidance",
+        "Useful as evidence baseline for claim validation"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim": "AI can increase drafting speed but does not replace evidence validation and editorial judgment.",
+      "classification": "Interpretation",
+      "confidence": "Medium",
+      "supportingSources": [
+        "https://learn.microsoft.com/",
+        "https://devblogs.microsoft.com/"
+      ]
+    },
+    {
+      "claim": "Enterprise content quality improves when teams use explicit review gates and artifact-based workflows.",
+      "classification": "Practice-based",
+      "confidence": "Medium",
+      "supportingSources": [
+        "https://learn.microsoft.com/",
+        "https://azure.microsoft.com/blog/"
+      ]
+    },
+    {
+      "claim": "Agentic AI is currently a high-signal topic in public Microsoft channels.",
+      "classification": "Observed trend",
+      "confidence": "High",
+      "supportingSources": [
+        "https://azure.microsoft.com/blog/",
+        "https://devblogs.microsoft.com/"
+      ]
+    }
+  ],
+  "openQuestions": [
+    "Needs verification: precise productivity deltas for AI-assisted writing in enterprise contexts.",
+    "Needs verification: cross-industry benchmarks for editorial quality outcomes from agent-assisted pipelines."
+  ],
+  "complianceNotes": [
+    "Use public sources only.",
+    "Avoid internal roadmap or customer-specific references.",
+    "Include Microsoft employee personal-view disclaimer in final post."
+  ]
+}

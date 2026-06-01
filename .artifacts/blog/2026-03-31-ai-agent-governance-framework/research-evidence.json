@@ -1,0 +1,70 @@
+{
+  "postSlug": "2026-03-31-ai-agent-governance-framework",
+  "generatedOn": "2026-03-28",
+  "sources": [
+    {
+      "title": "Microsoft Azure Blog - Agentic AI Posts",
+      "url": "https://azure.microsoft.com/blog/",
+      "type": "Microsoft Blog",
+      "observedSignals": [
+        "Multiple recent posts on agentic AI and enterprise scaling",
+        "References to governance, compliance, and responsible AI patterns"
+      ]
+    },
+    {
+      "title": "Microsoft Learn - Responsible AI and Governance",
+      "url": "https://learn.microsoft.com/",
+      "type": "Documentation",
+      "observedSignals": [
+        "Published patterns for AI governance and audit logging",
+        "Reference frameworks for decision authority and compliance"
+      ]
+    },
+    {
+      "title": "Microsoft DevBlogs - AI and Security",
+      "url": "https://devblogs.microsoft.com/",
+      "type": "Microsoft Blog",
+      "observedSignals": [
+        "Emerging patterns for agentic application governance",
+        "Security and compliance considerations for autonomous systems"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim": "No published governance framework for enterprise agentic AI exists at scale.",
+      "classification": "Observation",
+      "confidence": "High",
+      "supportingSources": [
+        "https://azure.microsoft.com/blog/",
+        "https://learn.microsoft.com/"
+      ]
+    },
+    {
+      "claim": "Agent governance requires audit logging of decision reasoning, not just input/output.",
+      "classification": "Practice-based",
+      "confidence": "Medium",
+      "supportingSources": [
+        "https://learn.microsoft.com/"
+      ]
+    },
+    {
+      "claim": "Least-privilege scoping and human escalation thresholds are critical for compliant agents.",
+      "classification": "Inference",
+      "confidence": "Medium",
+      "supportingSources": [
+        "https://learn.microsoft.com/",
+        "https://azure.microsoft.com/blog/"
+      ]
+    }
+  ],
+  "openQuestions": [
+    "Needs verification: specific audit logging standards for agent decision-making in regulated industries.",
+    "Needs verification: cross-company benchmarks for escalation thresholds and false-positive rates in agent governance implementations."
+  ],
+  "complianceNotes": [
+    "No internal Microsoft governance examples used; all references are public patterns.",
+    "Framework design is based on general principles, not internal tooling or roadmaps.",
+    "Include personal-view disclaimer for enterprise context."
+  ]
+}

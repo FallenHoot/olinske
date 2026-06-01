@@ -1,0 +1,1 @@
+{"sources":[{"title":"ADX Network Security","url":"https://learn.microsoft.com/azure/data-explorer/","evidence":"Private endpoints and VNet integration options"}],"claims_to_verify":["Private endpoints don't fully isolate ADX ingestion","Some query features are disabled in isolated mode"]}

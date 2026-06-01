@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "title": "Azure Cost Management Export to ADX",
+      "url": "https://learn.microsoft.com/azure/cost-management-billing",
+      "evidence": "Export mechanisms and schema for cost data"
+    },
+    {
+      "title": "ADX Query Language (KQL) for Cost Analysis",
+      "url": "https://learn.microsoft.com/kusto/query/",
+      "evidence": "Time-series analysis patterns for cost trending"
+    }
+  ],
+  "claims_to_verify": [
+    "ADX is cheaper than BI tools for cost analytics",
+    "Real-time cost data is achievable (not just daily/monthly)",
+    "ADX setup for cost analytics takes <1 day"
+  ]
+}

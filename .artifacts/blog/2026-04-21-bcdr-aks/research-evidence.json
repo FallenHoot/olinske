@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "title": "Azure Kubernetes Service (AKS) Disaster Recovery",
+      "url": "https://learn.microsoft.com/en-us/azure/aks/disaster-recovery-best-practices",
+      "evidence": "BCDR patterns for AKS clusters"
+    },
+    {
+      "title": "GitOps Disaster Recovery",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gitops-ha",
+      "evidence": "Config-based recovery vs data recovery"
+    }
+  ],
+  "claims_to_verify": [
+    "GitOps enables fast cluster redeployment",
+    "PersistentVolumes require separate replication strategy",
+    "Multi-region AKS adds 30% cost"
+  ]
+}

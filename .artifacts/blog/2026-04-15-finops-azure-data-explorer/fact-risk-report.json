@@ -1,0 +1,16 @@
+{
+  "facts_to_verify": [
+    {
+      "claim": "ADX is cheaper than Power BI for cost analytics",
+      "risk": "high",
+      "evidence_status": "needs pricing",
+      "note": "Depends on data volume and query frequency"
+    },
+    {
+      "claim": "Cost data can be exported daily to ADX",
+      "risk": "low",
+      "evidence_status": "verified",
+      "note": "Azure Cost Management supports scheduled exports"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "canonicalUrl": "https://olinske.com/posts/000012-spring-cleaning-cloud-finops",
+  "postTitle": "Spring Cleaning Your Cloud: Past the Quick Wins Into the Hard Questions",
+  "publishDate": "2026-05-30",
+  "hashtags": ["FinOps", "CloudArchitecture", "CTO"],
+  "variants": {
+    "short": {
+      "wordCount": 75,
+      "text": "Cloud waste hit 29%. Trending up for the first time in five years.\n\nMost FinOps conversations stop at orphaned resources and oversized VMs. Necessary. Not sufficient.\n\nThe real question for mature customers: what are we choosing to spend money on, and is that choice still justified?\n\nI wrote about the four lenses that turn a FinOps review into an architecture conversation.\n\nWhich cost conversation is your team avoiding?"
+    },
+    "medium": {
+      "wordCount": 140,
+      "text": "Cloud waste hit 29% this year. Trending up for the first time in five years.\n\nMost FinOps conversations stop at the quick wins: orphaned resources, oversized VMs, dev/test running 24/7. Necessary. Not sufficient.\n\nFor mature customers, the real question is not \"where is the waste\". It is \"what are we choosing to spend money on, and is that choice still justified\".\n\nI structure the hard conversation around four lenses:\n\n1. Cost of architecture choices — what are we paying for because of design?\n2. Cost of product choices — what are we paying for because of what the business asked for?\n3. Cost of organizational choices — what are we paying for because ownership is unclear?\n4. Cost of inertia — what are we paying for because change is harder than overspend?\n\nWhich of those four would make the most uncomfortable conversation at your company?"
+    }
+  }
+}

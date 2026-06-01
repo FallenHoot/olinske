@@ -1,0 +1,340 @@
+---
+import { getCollection } from 'astro:content';
+
+const CATEGORIES = [
+  { slug: 'cloud-architecture',   label: 'Cloud Architecture',   theme: 'fjord' },
+  { slug: 'legacy-systems',       label: 'Legacy Systems',       theme: 'foundry' },
+  { slug: 'geospatial',           label: 'Geospatial & Maps',    theme: 'fjord' },
+  { slug: 'engineering-culture',  label: 'Engineering Culture',  theme: 'midnight' },
+  { slug: 'family-legacy',        label: 'Family Legacy',        theme: 'foundry' },
+  { slug: 'ai-strategy',          label: 'AI Strategy',          theme: 'midnight' },
+] as const;
+
+// Count posts per category by matching tags
+const allPosts = await getCollection('posts', ({ data }) =>
+  data.status === 'published' || data.status === 'scheduled'
+);
+
+const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+function countForCategory(slug: string): number {
+  const keyword = slug.replace(/-/g, ' ');
+  return allPosts.filter((p) =>
+    (p.data.tags ?? []).some((t) => t.toLowerCase().includes(keyword) || keyword.includes(t.toLowerCase()))
+  ).length;
+}
+---
+
+<!-- Full-screen overlay menu -->
+<div id="category-menu" class="cat-menu" aria-hidden="true" role="dialog" aria-label="Topics menu">
+  <button class="cat-close" data-menu-close type="button" aria-label="Close menu">✕</button>
+
+  <div class="cat-inner">
+    <div class="cat-columns">
+      <!-- Left column: Topics -->
+      <div class="cat-col-topics">
+        <p class="cat-heading">TOPICS</p>
+        <ul class="cat-list">
+          {CATEGORIES.map((cat) => (
+            <li class="cat-item" data-cat-theme={cat.theme}>
+              <a href={`/posts/?category=${cat.slug}`} class="cat-link">
+                <span class="cat-label">{cat.label}</span>
+                <span class="cat-count">[{countForCategory(cat.slug)}]</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/posts/" class="cat-all">View all articles →</a>
+      </div>
+
+      <!-- Right column: Recent articles with tags -->
+      <div class="cat-col-articles">
+        <p class="cat-heading">RECENT ARTICLES</p>
+        <ul class="cat-article-list">
+          {sortedPosts.slice(0, 6).map((post) => (
+            <li class="cat-article-item">
+              <a href={`/posts/${post.id.replace(/\.md$/, '')}/`} class="cat-article-link">
+                <span class="cat-article-title">{post.data.title}</span>
+                <span class="cat-article-date">{post.data.publishDate.toISOString().slice(0, 10)}</span>
+              </a>
+              <div class="cat-tag-row">
+                {(post.data.tags ?? []).slice(0, 4).map((tag) => (
+                  <a href={`/posts/?category=${tag}`} class="cat-tag">{tag}</a>
+                ))}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cat-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    background: rgba(4, 10, 22, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 320ms ease, visibility 320ms ease;
+  }
+
+  .cat-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .cat-close {
+    position: absolute;
+    top: clamp(1rem, 3vw, 2rem);
+    right: clamp(1rem, 3vw, 2rem);
+    background: none;
+    border: 1px solid rgba(200, 220, 255, 0.15);
+    color: #d0e2ff;
+    font-size: 1.2rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: border-color 160ms ease, transform 160ms ease;
+  }
+
+  .cat-close:hover {
+    border-color: var(--accent, #4da3ff);
+    transform: rotate(90deg);
+  }
+
+  .cat-inner {
+    padding-left: clamp(1.25rem, 8vw, 6rem);
+    padding-right: clamp(1.25rem, 4vw, 3rem);
+    max-width: 1100px;
+    width: 100%;
+  }
+
+  .cat-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .cat-heading {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: rgba(200, 220, 255, 0.5);
+    text-transform: uppercase;
+  }
+
+  .cat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .cat-item {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .cat-menu.is-open .cat-item {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 400ms ease, transform 400ms ease;
+  }
+
+  /* Stagger reveal */
+  .cat-item:nth-child(1) { transition-delay: 60ms; }
+  .cat-item:nth-child(2) { transition-delay: 120ms; }
+  .cat-item:nth-child(3) { transition-delay: 180ms; }
+  .cat-item:nth-child(4) { transition-delay: 240ms; }
+  .cat-item:nth-child(5) { transition-delay: 300ms; }
+  .cat-item:nth-child(6) { transition-delay: 360ms; }
+
+  .cat-link {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: color 180ms ease;
+  }
+
+  .cat-label {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #e0ecff;
+    transition: color 180ms ease;
+  }
+
+  .cat-link:hover .cat-label {
+    color: var(--accent, #4da3ff);
+  }
+
+  .cat-count {
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.78rem;
+    color: rgba(200, 220, 255, 0.4);
+    letter-spacing: 0.04em;
+  }
+
+  .cat-all {
+    display: inline-block;
+    margin-top: 2rem;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.78rem;
+    color: rgba(200, 220, 255, 0.5);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 180ms ease;
+  }
+
+  .cat-all:hover {
+    color: var(--accent, #4da3ff);
+  }
+
+  /* ═══ Right column: Recent articles ═══════════════════════════ */
+  .cat-article-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .cat-article-item {
+    opacity: 0;
+    transform: translateY(12px);
+    border-bottom: 1px solid rgba(200, 220, 255, 0.08);
+    padding-bottom: 0.8rem;
+  }
+
+  .cat-menu.is-open .cat-article-item {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 400ms ease, transform 400ms ease;
+  }
+
+  .cat-menu.is-open .cat-article-item:nth-child(1) { transition-delay: 100ms; }
+  .cat-menu.is-open .cat-article-item:nth-child(2) { transition-delay: 160ms; }
+  .cat-menu.is-open .cat-article-item:nth-child(3) { transition-delay: 220ms; }
+  .cat-menu.is-open .cat-article-item:nth-child(4) { transition-delay: 280ms; }
+  .cat-menu.is-open .cat-article-item:nth-child(5) { transition-delay: 340ms; }
+  .cat-menu.is-open .cat-article-item:nth-child(6) { transition-delay: 400ms; }
+
+  .cat-article-link {
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    transition: color 180ms ease;
+  }
+
+  .cat-article-title {
+    font-family: var(--font-display);
+    font-size: clamp(0.88rem, 1.5vw, 1.05rem);
+    font-weight: 600;
+    color: #d0e2ff;
+    line-height: 1.35;
+    transition: color 180ms ease;
+  }
+
+  .cat-article-link:hover .cat-article-title {
+    color: var(--accent, #4da3ff);
+  }
+
+  .cat-article-date {
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.65rem;
+    color: rgba(200, 220, 255, 0.35);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .cat-tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+  }
+
+  .cat-tag {
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+    color: rgba(200, 220, 255, 0.5);
+    border: 1px solid rgba(200, 220, 255, 0.12);
+    border-radius: 999px;
+    padding: 0.12rem 0.45rem;
+    text-decoration: none;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+
+  .cat-tag:hover {
+    color: var(--accent, #4da3ff);
+    border-color: var(--accent, #4da3ff);
+  }
+
+  /* ═══ Mobile: stack columns ═══════════════════════════════════ */
+  @media (max-width: 768px) {
+    .cat-columns {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .cat-col-articles {
+      border-top: 1px solid rgba(200, 220, 255, 0.1);
+      padding-top: 1.5rem;
+    }
+
+    .cat-label {
+      font-size: clamp(1.4rem, 6vw, 2rem);
+    }
+  }
+</style>
+
+<script>
+  const menu     = document.getElementById('category-menu')!;
+  const openBtn  = document.querySelector<HTMLElement>('[data-menu-btn]');
+  const closeBtn = document.querySelector<HTMLElement>('[data-menu-close]');
+
+  const open = () => {
+    menu.classList.add('is-open');
+    menu.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const close = () => {
+    menu.classList.remove('is-open');
+    menu.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  openBtn?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+  });
+
+  // Close when clicking backdrop (not inner content)
+  menu.addEventListener('click', (e) => {
+    if (e.target === menu) close();
+  });
+</script>

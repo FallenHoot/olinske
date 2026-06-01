@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Provider Risk Tier View</title>
+  <desc id="desc">Provider incident classes and expected customer planning response.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8f8f8; }
+      .t1 { fill: #f8d9d4; stroke: #8c2f23; stroke-width: 2; rx: 12; }
+      .t2 { fill: #fde9cf; stroke: #a0601a; stroke-width: 2; rx: 12; }
+      .t3 { fill: #e3f1de; stroke: #2a6a35; stroke-width: 2; rx: 12; }
+      .txtH { fill: #2f2f2f; font-family: Segoe UI, Arial, sans-serif; font-size: 28px; font-weight: 700; }
+      .txtT { fill: #1f1f1f; font-family: Segoe UI, Arial, sans-serif; font-size: 22px; font-weight: 700; }
+      .txtS { fill: #343434; font-family: Segoe UI, Arial, sans-serif; font-size: 18px; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="60" text-anchor="middle" class="txtH">Provider Incident Classes and Customer Impact</text>
+
+  <rect class="t1" x="120" y="150" width="960" height="150"/>
+  <text x="170" y="205" class="txtT">Tier 1 Event</text>
+  <text x="170" y="238" class="txtS">Rare, broad, strategic exposure. Test failover and concentration assumptions.</text>
+
+  <rect class="t2" x="120" y="330" width="960" height="150"/>
+  <text x="170" y="385" class="txtT">Tier 2 Event</text>
+  <text x="170" y="418" class="txtS">Regional or service-layer interruption. Plan yearly business-hour disruption scenarios.</text>
+
+  <rect class="t3" x="120" y="510" width="960" height="150"/>
+  <text x="170" y="565" class="txtT">Tier 3 Event</text>
+  <text x="170" y="598" class="txtS">Frequent minor impairment. Design default degraded behavior and absorb without crisis.</text>
+</svg>

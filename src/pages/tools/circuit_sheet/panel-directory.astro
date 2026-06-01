@@ -1,0 +1,463 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="US Panel Directory | Olinske"
+  description="NEC-oriented US panel directory builder with odd/even slot layout, SPARE and BLANK handling, and double-pole validation."
+>
+  <main class="container site-shell panel-shell">
+    <section class="hero-panel panel-hero">
+      <p class="eyebrow">Circuit Sheet</p>
+      <h1 class="hero-title">US Panel Directory</h1>
+      <p class="hero-subtitle">
+        Build an American panel directory with the correct alternating odd and even slot layout, NEC-style labeling, slot accounting, and double-pole checks.
+      </p>
+      <p class="hero-note">
+        Official source reference: <a href="https://www.nfpa.org/codes-and-standards/nfpa-70-standard-development/70" target="_blank" rel="noreferrer">NFPA 70 National Electrical Code</a>. Reviewed in this session with current edition shown there as 2026.
+      </p>
+    </section>
+
+    <section class="toolbar-card">
+      <div class="toolbar-row">
+        <label class="toolbar-field">
+          <span>Local test example</span>
+          <select id="example-select">
+            <option value="">Choose example</option>
+          </select>
+        </label>
+        <div class="toolbar-actions">
+          <button id="load-example" type="button">Load example</button>
+          <button id="reset-sheet" type="button">Reset</button>
+          <button id="download-json" type="button">Download JSON</button>
+          <button id="print-sheet" type="button" class="accent">Print</button>
+        </div>
+      </div>
+      <p id="save-status" class="status-line" aria-live="polite">Local autosave ready.</p>
+    </section>
+
+    <section class="layout-grid">
+      <section class="editor-card">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Header</p>
+            <h2>Panel details</h2>
+          </div>
+        </div>
+        <div id="meta-grid" class="meta-grid"></div>
+      </section>
+
+      <aside class="info-card">
+        <p class="section-kicker">Checks</p>
+        <h2>NEC directory rules</h2>
+        <ul class="rule-list">
+          <li>Descriptions must be specific and distinguishable under NEC 408.4(A).</li>
+          <li>Odd numbers run down the left side. Even numbers run down the right side.</li>
+          <li>Installed but unused breakers should read SPARE.</li>
+          <li>Unused physical slots should read BLANK or be crossed out.</li>
+          <li>Two-pole breakers should occupy matching consecutive rows on the same side.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="editor-card">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Slots</p>
+          <h2>Panel directory card</h2>
+        </div>
+        <p id="validation-summary" class="status-line">No active findings.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="editor-table">
+          <thead>
+            <tr>
+              <th>Left preset</th>
+              <th>Left description</th>
+              <th>Odd #</th>
+              <th>Odd status</th>
+              <th>Odd poles</th>
+              <th>Right preset</th>
+              <th>Right description</th>
+              <th>Even #</th>
+              <th>Even status</th>
+              <th>Even poles</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <ul id="validation-list" class="validation-list"></ul>
+    </section>
+
+    <section class="preview-card">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Preview</p>
+          <h2>Printable card</h2>
+        </div>
+      </div>
+      <article id="sheet-frame"></article>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'circuit-sheet-us-panel-directory-v1';
+    const metaFields = [
+      { key: 'panelName', label: 'Panel name', placeholder: 'LP-1' },
+      { key: 'location', label: 'Location', placeholder: 'Electrical room A' },
+      { key: 'service', label: 'Service', placeholder: '120/208V, 3P, 4W' },
+      { key: 'mainBreaker', label: 'Main breaker', placeholder: '225A MCB' },
+      { key: 'fedFrom', label: 'Fed from', placeholder: 'MDP-1' },
+      { key: 'spaces', label: 'Spaces', placeholder: '24' },
+      { key: 'projectName', label: 'Project', placeholder: 'Tenant improvement' },
+      { key: 'notes', label: 'Notes', placeholder: 'Verify field conditions before print' },
+    ];
+
+    const presetOptions = [
+      { value: '', label: 'Custom entry' },
+      { value: 'lighting', label: 'Lighting circuit', description: '1st Floor Living Room Outlets & Hallway Lights', status: 'Active', poles: '1' },
+      { value: 'kitchen-gfci', label: 'Kitchen GFCIs', description: 'Main Kitchen Counter GFCIs', status: 'Active', poles: '1' },
+      { value: 'refrigerator', label: 'Refrigerator', description: 'Refrigerator', status: 'Active', poles: '1' },
+      { value: 'dryer', label: 'Clothes dryer', description: 'Clothes Dryer', status: 'Active', poles: '2-start' },
+      { value: 'water-heater', label: 'Water heater', description: 'Water Heater', status: 'Active', poles: '2-start' },
+      { value: 'spare', label: 'Spare', description: 'SPARE', status: 'Spare', poles: '1' },
+      { value: 'blank', label: 'Blank slot', description: 'BLANK', status: 'Blank', poles: '1' },
+    ];
+
+    const poleOptions = [
+      { value: '1', label: '1-pole' },
+      { value: '2-start', label: '2-pole start' },
+      { value: '2-end', label: '2-pole end' },
+    ];
+
+    const stateOptions = [
+      { value: 'Active', label: 'Active' },
+      { value: 'Spare', label: 'SPARE' },
+      { value: 'Blank', label: 'BLANK' },
+    ];
+
+    const examples = [
+      {
+        value: 'residential',
+        label: 'Residential example',
+        meta: { panelName: 'Main Panel', location: 'Garage', service: '120/240V, 1P, 3W', mainBreaker: '200A', fedFrom: 'Service entrance', spaces: '24', projectName: 'Residence', notes: 'Example based on common residential layout' },
+        rows: [
+          { leftPreset: 'kitchen-gfci', leftDescription: 'Main Kitchen Counter GFCIs', leftStatus: 'Active', leftPoles: '1', rightPreset: 'lighting', rightDescription: 'Master Bedroom Plugs & Lights', rightStatus: 'Active', rightPoles: '1' },
+          { leftPreset: 'refrigerator', leftDescription: 'Microwave (Dedicated)', leftStatus: 'Active', leftPoles: '1', rightPreset: '', rightDescription: 'Guest Bedroom & Hallway Plugs', rightStatus: 'Active', rightPoles: '1' },
+          { leftPreset: 'refrigerator', leftDescription: 'Refrigerator', leftStatus: 'Active', leftPoles: '1', rightPreset: '', rightDescription: 'Bathroom Outlets (GFCI Protected)', rightStatus: 'Active', rightPoles: '1' },
+          { leftPreset: '', leftDescription: 'Smoke Detectors & Living Room Lights', leftStatus: 'Active', leftPoles: '1', rightPreset: '', rightDescription: 'Outdoor Deck & Garage Plugs', rightStatus: 'Active', rightPoles: '1' },
+          { leftPreset: 'water-heater', leftDescription: 'Water Heater', leftStatus: 'Active', leftPoles: '2-start', rightPreset: 'spare', rightDescription: 'SPARE', rightStatus: 'Spare', rightPoles: '1' },
+          { leftPreset: '', leftDescription: 'Water Heater', leftStatus: 'Active', leftPoles: '2-end', rightPreset: 'blank', rightDescription: 'BLANK', rightStatus: 'Blank', rightPoles: '1' },
+        ],
+      },
+      {
+        value: 'office',
+        label: 'Office panel example',
+        meta: { panelName: 'LP-1', location: 'Level 2 electrical room', service: '120/208V, 3P, 4W', mainBreaker: '225A', fedFrom: 'MDP-1', spaces: '24', projectName: 'Tenant improvement', notes: 'Office example' },
+        rows: [
+          { leftPreset: 'lighting', leftDescription: 'Reception Lighting', leftStatus: 'Active', leftPoles: '1', rightPreset: '', rightDescription: 'Open Office Receptacles', rightStatus: 'Active', rightPoles: '1' },
+          { leftPreset: '', leftDescription: 'Conference Room Receptacles', leftStatus: 'Active', leftPoles: '1', rightPreset: '', rightDescription: 'Copy Room Receptacles', rightStatus: 'Active', rightPoles: '1' },
+          { leftPreset: 'dryer', leftDescription: 'Breakroom Water Heater', leftStatus: 'Active', leftPoles: '2-start', rightPreset: 'blank', rightDescription: 'BLANK', rightStatus: 'Blank', rightPoles: '1' },
+          { leftPreset: '', leftDescription: 'Breakroom Water Heater', leftStatus: 'Active', leftPoles: '2-end', rightPreset: 'spare', rightDescription: 'SPARE', rightStatus: 'Spare', rightPoles: '1' },
+        ],
+      },
+    ];
+
+    function createEmptyPair(index) {
+      return {
+        pairIndex: index,
+        odd: String(index * 2 + 1),
+        even: String(index * 2 + 2),
+        leftPreset: '', leftDescription: '', leftStatus: 'Active', leftPoles: '1',
+        rightPreset: '', rightDescription: '', rightStatus: 'Active', rightPoles: '1',
+      };
+    }
+
+    function createInitialState() {
+      return {
+        meta: Object.fromEntries(metaFields.map((field) => [field.key, ''])),
+        rows: Array.from({ length: 12 }, (_, index) => createEmptyPair(index)),
+      };
+    }
+
+    function normalizeState(raw) {
+      const fallback = createInitialState();
+      if (!raw || typeof raw !== 'object') return fallback;
+      const meta = Object.fromEntries(metaFields.map((field) => [field.key, typeof raw.meta?.[field.key] === 'string' ? raw.meta[field.key] : '']));
+      const rows = Array.isArray(raw.rows) && raw.rows.length ? raw.rows.map((row, index) => ({ ...createEmptyPair(index), ...row, odd: String(index * 2 + 1), even: String(index * 2 + 2) })) : fallback.rows;
+      return { meta, rows };
+    }
+
+    function loadState() {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        return raw ? normalizeState(JSON.parse(raw)) : createInitialState();
+      } catch {
+        return createInitialState();
+      }
+    }
+
+    let state = loadState();
+    const metaGrid = document.querySelector('#meta-grid');
+    const tableBody = document.querySelector('#table-body');
+    const validationList = document.querySelector('#validation-list');
+    const validationSummary = document.querySelector('#validation-summary');
+    const sheetFrame = document.querySelector('#sheet-frame');
+    const exampleSelect = document.querySelector('#example-select');
+    const saveStatus = document.querySelector('#save-status');
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function saveState(message = 'Saved locally.') {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStatus.textContent = message;
+    }
+
+    function isVague(text) {
+      return ['light', 'lights', 'plug', 'plugs', 'misc', 'downstairs plugs'].includes(String(text ?? '').trim().toLowerCase());
+    }
+
+    function applyPreset(row, side, presetValue) {
+      const preset = presetOptions.find((item) => item.value === presetValue);
+      if (!preset) return;
+      row[`${side}Preset`] = presetValue;
+      row[`${side}Description`] = preset.description ?? row[`${side}Description`];
+      row[`${side}Status`] = preset.status ?? row[`${side}Status`];
+      row[`${side}Poles`] = preset.poles ?? row[`${side}Poles`];
+    }
+
+    function validateSide(rows, index, side) {
+      const row = rows[index];
+      const findings = [];
+      const description = String(row[`${side}Description`] ?? '').trim();
+      const status = String(row[`${side}Status`] ?? 'Active');
+      const poles = String(row[`${side}Poles`] ?? '1');
+      const slotNumber = side === 'left' ? row.odd : row.even;
+      const hasContent = description || status !== 'Active';
+      if (!hasContent) return findings;
+
+      if (!description) findings.push({ severity: 'error', message: `Slot ${slotNumber}: description is required.` });
+      else if (isVague(description)) findings.push({ severity: 'error', message: `Slot ${slotNumber}: description is too vague for NEC 408.4(A).` });
+
+      if (status === 'Spare' && description !== 'SPARE') findings.push({ severity: 'warn', message: `Slot ${slotNumber}: installed unused breakers should read SPARE.` });
+      if (status === 'Blank' && description !== 'BLANK') findings.push({ severity: 'warn', message: `Slot ${slotNumber}: empty slots should read BLANK or be crossed out.` });
+
+      if (poles === '2-start') {
+        const nextRow = rows[index + 1];
+        if (!nextRow) findings.push({ severity: 'error', message: `Slot ${slotNumber}: 2-pole start has no following slot on the same side.` });
+        else {
+          const nextDescription = String(nextRow[`${side}Description`] ?? '').trim();
+          const nextPoles = String(nextRow[`${side}Poles`] ?? '1');
+          const nextSlot = side === 'left' ? nextRow.odd : nextRow.even;
+          if (nextPoles !== '2-end') findings.push({ severity: 'error', message: `Slots ${slotNumber} and ${nextSlot}: second row must be marked 2-pole end.` });
+          if (description && nextDescription && description !== nextDescription) findings.push({ severity: 'error', message: `Slots ${slotNumber} and ${nextSlot}: 2-pole descriptions should match.` });
+        }
+      }
+      if (poles === '2-end') {
+        const prevRow = rows[index - 1];
+        if (!prevRow) findings.push({ severity: 'error', message: `Slot ${slotNumber}: 2-pole end has no matching start above it.` });
+        else {
+          const prevPoles = String(prevRow[`${side}Poles`] ?? '1');
+          const prevSlot = side === 'left' ? prevRow.odd : prevRow.even;
+          if (prevPoles !== '2-start') findings.push({ severity: 'error', message: `Slots ${prevSlot} and ${slotNumber}: first row must be marked 2-pole start.` });
+        }
+      }
+      return findings;
+    }
+
+    function validateRows() {
+      const findings = [];
+      state.rows.forEach((row, index) => {
+        findings.push(...validateSide(state.rows, index, 'left'));
+        findings.push(...validateSide(state.rows, index, 'right'));
+      });
+      return findings.length ? findings : [{ severity: 'ok', message: 'No active findings.' }];
+    }
+
+    function renderMeta() {
+      metaGrid.innerHTML = metaFields.map((field) => `
+        <label class="meta-field">
+          <span>${field.label}</span>
+          <input type="text" data-meta-key="${field.key}" value="${escapeHtml(state.meta[field.key] ?? '')}" placeholder="${escapeHtml(field.placeholder)}" />
+        </label>
+      `).join('');
+    }
+
+    function renderSelect(options, value, attrs) {
+      return `<select ${attrs}>${options.map((option) => `<option value="${escapeHtml(option.value)}" ${String(option.value) === String(value) ? 'selected' : ''}>${escapeHtml(option.label)}</option>`).join('')}</select>`;
+    }
+
+    function renderTable() {
+      tableBody.innerHTML = state.rows.map((row, index) => `
+        <tr>
+          <td>${renderSelect(presetOptions, row.leftPreset, `data-row-index="${index}" data-side="left" data-column="preset"`)}</td>
+          <td><input type="text" data-row-index="${index}" data-side="left" data-column="description" value="${escapeHtml(row.leftDescription)}" /></td>
+          <td class="slot-number">${row.odd}</td>
+          <td>${renderSelect(stateOptions, row.leftStatus, `data-row-index="${index}" data-side="left" data-column="status"`)}</td>
+          <td>${renderSelect(poleOptions, row.leftPoles, `data-row-index="${index}" data-side="left" data-column="poles"`)}</td>
+          <td>${renderSelect(presetOptions, row.rightPreset, `data-row-index="${index}" data-side="right" data-column="preset"`)}</td>
+          <td><input type="text" data-row-index="${index}" data-side="right" data-column="description" value="${escapeHtml(row.rightDescription)}" /></td>
+          <td class="slot-number">${row.even}</td>
+          <td>${renderSelect(stateOptions, row.rightStatus, `data-row-index="${index}" data-side="right" data-column="status"`)}</td>
+          <td>${renderSelect(poleOptions, row.rightPoles, `data-row-index="${index}" data-side="right" data-column="poles"`)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderExamples() {
+      exampleSelect.innerHTML = '<option value="">Choose example</option>' + examples.map((example) => `<option value="${example.value}">${example.label}</option>`).join('');
+    }
+
+    function renderValidation() {
+      const findings = validateRows();
+      validationList.innerHTML = findings.map((item) => `<li class="${item.severity}">${escapeHtml(item.message)}</li>`).join('');
+      validationSummary.textContent = findings[0]?.severity === 'ok' ? 'No active findings.' : `${findings.length} active finding${findings.length === 1 ? '' : 's'}.`;
+    }
+
+    function renderPreview() {
+      const findings = validateRows();
+      sheetFrame.innerHTML = `
+        <div class="paper-sheet">
+          <header class="paper-head">
+            <div>
+              <h3>US Panel Directory</h3>
+            </div>
+            <p class="paper-mini">${escapeHtml(state.meta.panelName || 'Panel')}</p>
+          </header>
+          <section class="paper-meta-grid">${metaFields.map((field) => `<div class="paper-meta-item"><span>${field.label}</span><strong>${escapeHtml(state.meta[field.key] || ' ')}</strong></div>`).join('')}</section>
+          <section class="table-scroll">
+            <table class="sheet-table">
+              <thead>
+                <tr><th>Left column (odds)</th><th>#</th><th>#</th><th>Right column (evens)</th></tr>
+              </thead>
+              <tbody>
+                ${state.rows.map((row) => `<tr><td>${escapeHtml(row.leftDescription || row.leftStatus || ' ')}</td><td class="slot-number">${row.odd}</td><td class="slot-number">${row.even}</td><td>${escapeHtml(row.rightDescription || row.rightStatus || ' ')}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </section>
+          <section class="paper-findings">
+            <h4>Validation summary</h4>
+            <ul>${findings.slice(0, 5).map((item) => `<li class="${item.severity}">${escapeHtml(item.message)}</li>`).join('')}</ul>
+          </section>
+        </div>
+      `;
+    }
+
+    function renderAll() {
+      renderMeta();
+      renderExamples();
+      renderTable();
+      renderValidation();
+      renderPreview();
+    }
+
+    function loadExample(value) {
+      const example = examples.find((item) => item.value === value);
+      if (!example) return;
+      state = {
+        meta: { ...Object.fromEntries(metaFields.map((field) => [field.key, ''])), ...example.meta },
+        rows: Array.from({ length: 12 }, (_, index) => ({ ...createEmptyPair(index), ...(example.rows[index] ?? {}), odd: String(index * 2 + 1), even: String(index * 2 + 2) })),
+      };
+      renderAll();
+      saveState(`Loaded example: ${example.label}.`);
+    }
+
+    metaGrid.addEventListener('input', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      state.meta[target.dataset.metaKey] = target.value;
+      renderPreview();
+      saveState();
+    });
+
+    function handleRowUpdate(event) {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return;
+      const rowIndex = Number(target.dataset.rowIndex);
+      const side = target.dataset.side;
+      const column = target.dataset.column;
+      if (Number.isNaN(rowIndex) || !side || !column || !state.rows[rowIndex]) return;
+      const row = state.rows[rowIndex];
+      if (column === 'preset') applyPreset(row, side, target.value);
+      else row[`${side}${column.charAt(0).toUpperCase()}${column.slice(1)}`] = target.value;
+      if (column === 'status' && target.value === 'Spare') row[`${side}Description`] = 'SPARE';
+      if (column === 'status' && target.value === 'Blank') row[`${side}Description`] = 'BLANK';
+      renderTable();
+      renderValidation();
+      renderPreview();
+      saveState();
+    }
+
+    tableBody.addEventListener('input', handleRowUpdate);
+    tableBody.addEventListener('change', handleRowUpdate);
+
+    document.querySelector('#load-example').addEventListener('click', () => loadExample(exampleSelect.value));
+    document.querySelector('#reset-sheet').addEventListener('click', () => {
+      state = createInitialState();
+      renderAll();
+      saveState('Sheet reset.');
+    });
+    document.querySelector('#download-json').addEventListener('click', () => {
+      const blob = new Blob([`${JSON.stringify(state, null, 2)}\n`], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'us-panel-directory.json';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      saveState('Downloaded JSON snapshot.');
+    });
+    document.querySelector('#print-sheet').addEventListener('click', () => window.print());
+
+    renderAll();
+  </script>
+</BaseLayout>
+
+<style>
+  .panel-shell { display: grid; gap: 1rem; }
+  .panel-hero { display: grid; gap: 0.7rem; }
+  .hero-note, .status-line { margin: 0; color: var(--muted); }
+  .toolbar-card, .editor-card, .info-card, .preview-card { border: 1px solid var(--border); border-radius: 18px; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 93%, transparent), color-mix(in srgb, var(--surface-2) 88%, transparent)); box-shadow: var(--shadow); padding: 1rem; }
+  .toolbar-row, .layout-grid { display: grid; gap: 1rem; }
+  .layout-grid { grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr); }
+  .toolbar-row { grid-template-columns: minmax(220px, 320px) 1fr; align-items: end; }
+  .toolbar-field, .meta-field { display: grid; gap: 0.35rem; }
+  .toolbar-field span, .section-kicker, .meta-field span { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  .toolbar-field select, .meta-field input, .editor-table input, .editor-table select { width: 100%; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 96%, transparent); color: var(--text); padding: 0.62rem 0.72rem; font: inherit; }
+  .toolbar-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .toolbar-actions button { border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); padding: 0.58rem 0.9rem; cursor: pointer; }
+  .toolbar-actions .accent { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .section-head { display: flex; justify-content: space-between; gap: 1rem; align-items: end; margin-bottom: 0.8rem; }
+  .section-head h2, .info-card h2, .paper-head h3, .paper-findings h4 { margin: 0; font-family: var(--font-display); }
+  .meta-grid { display: grid; gap: 0.8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rule-list, .validation-list { margin: 0; padding-left: 1rem; display: grid; gap: 0.5rem; }
+  .table-scroll { overflow: auto; }
+  .editor-table, .sheet-table { width: 100%; border-collapse: collapse; }
+  .editor-table th, .editor-table td, .sheet-table th, .sheet-table td { border: 1px solid var(--border); }
+  .editor-table th, .sheet-table th { padding: 0.55rem; text-align: left; background: color-mix(in srgb, var(--surface-2) 80%, transparent); font-family: var(--font-display); font-size: 0.78rem; }
+  .editor-table td, .sheet-table td { padding: 0.25rem; }
+  .slot-number { text-align: center; font-family: var(--font-display); }
+  .validation-list .error, .paper-findings .error { color: #8a2323; }
+  .validation-list .warn, .paper-findings .warn { color: #8a5b18; }
+  .validation-list .ok, .paper-findings .ok { color: #1d6b37; }
+  .paper-sheet { display: grid; gap: 1rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border)); border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(245,246,249,0.98)); color: #111827; }
+  .paper-head { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+  .paper-mini { margin: 0; color: #475569; }
+  .paper-meta-grid { display: grid; gap: 0.5rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .paper-meta-item { display: grid; gap: 0.2rem; border: 1px solid rgba(148,163,184,0.45); border-radius: 10px; padding: 0.5rem; background: rgba(255,255,255,0.78); }
+  .paper-meta-item span { font-size: 0.72rem; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
+  .paper-findings ul { margin: 0; padding-left: 1rem; }
+  @media (max-width: 1080px) { .layout-grid, .toolbar-row { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .meta-grid, .paper-meta-grid { grid-template-columns: 1fr; } .section-head, .paper-head { flex-direction: column; align-items: start; } }
+  @media print { .site-header, .site-footer, .panel-hero, .toolbar-card, .info-card, .editor-card { display: none !important; } .preview-card, .paper-sheet { border: none; box-shadow: none; padding: 0; margin: 0; } }
+</style>

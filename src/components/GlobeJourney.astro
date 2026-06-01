@@ -1,0 +1,339 @@
+---
+/**
+ * GlobeJourney — Separate scroll-driven globe flyover section.
+ * Uses Cobe for the globe (zero API keys, zero cost).
+ * Separated from HorizontalHero so each has its own ScrollTrigger.
+ */
+---
+
+<section class="globe-journey" data-globe-root>
+  <canvas class="globe-canvas" data-globe-canvas width="1000" height="1000"></canvas>
+
+  <!-- ═══ Globe marker labels ═══════════════════════════════════ -->
+  <div class="globe-labels" data-globe-labels>
+    <div class="globe-label" data-marker="kent">Kent · 1500s</div>
+    <div class="globe-label" data-marker="ri">Rhode Island · 1700s</div>
+    <div class="globe-label" data-marker="wi">Wisconsin · 1989</div>
+    <div class="globe-label" data-marker="prussia">Prussia · 1800s</div>
+    <div class="globe-label" data-marker="oslo">Oslo · 2024</div>
+  </div>
+
+  <!-- ═══ Globe text panels ═════════════════════════════════════ -->
+  <div class="globe-panel" data-globe-panel="0">
+    <div class="tray tray-left tray-globe">
+      <p class="kicker">LEG 1 · KENT → RHODE ISLAND · 1620s</p>
+      <h2>The Atlantic<br/>Crossing.</h2>
+      <p class="copy">The Clerkes leave England. A one-way migration across the North Atlantic to the Rhode Island colony.</p>
+    </div>
+  </div>
+
+  <div class="globe-panel" data-globe-panel="1">
+    <div class="tray tray-right tray-globe">
+      <p class="kicker">LEG 2 · RHODE ISLAND → WISCONSIN · 1800s</p>
+      <h2>Westward<br/>Expansion.</h2>
+      <p class="copy">The Clark branch pushes inland. From the coast of New England to the forests and farmland of the upper Midwest.</p>
+    </div>
+  </div>
+
+  <div class="globe-panel" data-globe-panel="2">
+    <div class="tray tray-left tray-globe">
+      <p class="kicker">LEG 3 · PRUSSIA → WISCONSIN · 1890s</p>
+      <h2>The Oliński<br/>Transfer.</h2>
+      <p class="copy">The other bloodline converges. From the Vistula River to Barron County — the Prussian-Polish branch meets the Kentish-American line in Wisconsin soil.</p>
+    </div>
+  </div>
+
+  <div class="globe-panel" data-globe-panel="3">
+    <div class="tray tray-right tray-globe">
+      <p class="kicker">LEG 4 · WISCONSIN → OSLO · 2014</p>
+      <h2>Return to<br/>Europe.</h2>
+      <p class="copy">Five centuries after leaving Kent, the line returns to Northern Europe. Full circle. High uptime.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .globe-journey {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+  }
+
+  .globe-canvas {
+    position: fixed;
+    top: 50%;
+    left: 35%;
+    transform: translate(-50%, -50%);
+    width: min(80vw, 80vh);
+    height: min(80vw, 80vh);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .globe-labels {
+    position: fixed; inset: 0; z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .globe-label {
+    position: absolute;
+    padding: 0.2rem 0.5rem;
+    background: rgba(6, 14, 28, 0.8);
+    border: 1px solid rgba(200, 220, 255, 0.18);
+    border-radius: 4px;
+    color: #d0e2ff;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+
+  .globe-panel {
+    position: absolute; inset: 0;
+    z-index: 2;
+    display: flex; align-items: center;
+    color: #f0f4ff;
+    opacity: 0;
+    pointer-events: none;
+    height: 100vh;
+  }
+
+  .tray {
+    max-width: 720px;
+    padding: clamp(1rem, 2.2vw, 1.8rem) clamp(1rem, 2.2vw, 1.6rem);
+    background: linear-gradient(90deg, rgba(8,14,24,0.34), rgba(8,14,24,0.08) 72%, transparent);
+    border-left: 2px solid rgba(212,225,242,0.45);
+    position: relative; z-index: 3;
+  }
+
+  .tray-left { margin-left: clamp(2rem,6vw,5rem); margin-right: auto; }
+  .tray-right { margin-left: auto; margin-right: clamp(2rem,6vw,5rem); }
+  .tray-globe { margin-bottom: auto; margin-top: clamp(4rem,12vh,8rem); }
+
+  .kicker {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; opacity: 0.75;
+  }
+
+  .globe-panel h2 {
+    margin: 0; font-family: var(--font-display);
+    font-size: clamp(2.1rem, 6.2vw, 6.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+
+  .copy {
+    margin: 1.1rem 0 0;
+    max-width: 54ch;
+    font-size: clamp(0.98rem, 1.2vw, 1.16rem);
+    line-height: 1.68;
+    color: rgba(231,238,248,0.92);
+  }
+
+  @media (max-width: 980px) {
+    .globe-canvas { left: 50%; width: min(90vw, 80vh); height: min(90vw, 80vh); }
+    .tray-left, .tray-right { margin-left: 1rem; margin-right: 1rem; max-width: 100%; }
+    .globe-panel h2 { font-size: clamp(2rem, 10vw, 4rem); }
+  }
+
+  @media (max-width: 480px) {
+    .globe-canvas { width: min(95vw, 70vh); height: min(95vw, 70vh); }
+    .tray-globe { margin-top: clamp(2rem, 8vh, 4rem); }
+    .globe-panel h2 { font-size: clamp(1.6rem, 12vw, 2.4rem); }
+    .copy { font-size: 0.92rem; }
+    .kicker { font-size: 0.6rem; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  const root = document.querySelector<HTMLElement>('[data-globe-root]');
+  const globeCanvas = document.querySelector<HTMLCanvasElement>('[data-globe-canvas]');
+  const globeLabelsEl = document.querySelector<HTMLElement>('[data-globe-labels]');
+  const globePanels = Array.from(document.querySelectorAll<HTMLElement>('[data-globe-panel]'));
+
+  if (root && globeCanvas) {
+    // Cobe globe camera stops.
+    // In Cobe: phi=0 faces the Prime Meridian (Europe/Africa).
+    //   phi = longitude_degrees * (PI/180)   (negative for west)
+    //   theta = latitude_degrees * (PI/180)
+    //
+    // Stop order matches the 4-panel narrative:
+    //   Leg 0 (stops 0→1): Kent → Rhode Island  (westward across Atlantic)
+    //   Leg 1 (stops 1→2): RI → Prussia         (eastward transition to second bloodline)
+    //   Leg 2 (stops 2→3): Prussia → Wisconsin   (westward, matches panel text)
+    //   Leg 3 (stops 3→4): Wisconsin → Oslo       (eastward return to Europe)
+    const GLOBE_STOPS = [
+      { phi:  0.009, theta: 0.894 },  // Kent, England (51.24°N, 0.51°E)
+      { phi: -1.246, theta: 0.730 },  // Rhode Island (41.82°N, 71.41°W)
+      { phi:  0.330, theta: 0.938 },  // Prussia (53.75°N, 18.93°E)
+      { phi: -1.594, theta: 0.792 },  // Wisconsin (45.36°N, 91.34°W)
+      { phi:  0.187, theta: 1.046 },  // Oslo (59.91°N, 10.75°E)
+    ];
+
+    let scrollProgress = 0;
+    let currentPhi = GLOBE_STOPS[0].phi;
+    let currentTheta = GLOBE_STOPS[0].theta;
+    let targetPhi = currentPhi;
+    let targetTheta = currentTheta;
+    let globeInstance: any = null;
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    const showGlobe = () => {
+      gsap.to(globeCanvas, { opacity: 1, visibility: 'visible', duration: 0.5 });
+      gsap.to(globeLabelsEl, { opacity: 1, visibility: 'visible', duration: 0.5 });
+    };
+    const hideGlobe = () => {
+      gsap.to(globeCanvas, { opacity: 0, duration: 0.3, onComplete: () => { globeCanvas.style.visibility = 'hidden'; } });
+      gsap.to(globeLabelsEl, { opacity: 0, duration: 0.3, onComplete: () => { if (globeLabelsEl) globeLabelsEl.style.visibility = 'hidden'; } });
+    };
+
+    // ── Wait for hero ScrollTrigger before creating ours ─────────
+    // The hero's pin spacer must exist first so our trigger position
+    // is calculated correctly (hero loads textures async).
+    const initGlobeScrollTrigger = () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: root,
+          start: 'top top',
+          end: '+=400%',
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+          onUpdate: (self) => { scrollProgress = self.progress; },
+          onEnter: showGlobe,
+          onEnterBack: showGlobe,
+          onLeave: hideGlobe,
+          onLeaveBack: hideGlobe,
+        },
+      });
+      return tl;
+    };
+
+    // Defer init until the hero's ScrollTrigger pin spacer is ready.
+    // The hero dispatches 'hero:ready' after its textures load and
+    // its ScrollTrigger (with pin) is created. We MUST wait for that
+    // because the pin spacer adds ~700vh of scroll space. If we create
+    // our ScrollTrigger before that, our trigger position is wrong
+    // and the globe overlaps the hero section.
+    const heroReady = new Promise<void>((resolve) => {
+      document.addEventListener('hero:ready', () => resolve(), { once: true });
+    });
+
+    let tl: gsap.core.Timeline;
+    heroReady.then(() => {
+      // Force a refresh so ScrollTrigger recalculates all positions
+      // now that the hero's pin spacer is in the DOM.
+      ScrollTrigger.refresh();
+      tl = initGlobeScrollTrigger();
+
+      // Panel fade in/out — 4 panels over 4 units
+      const panelDur = 1.0;
+      globePanels.forEach((panel, i) => {
+        const start = panelDur * i;
+        tl.fromTo(panel,
+          { opacity: 0, pointerEvents: 'none' },
+          { opacity: 1, pointerEvents: 'auto', duration: 0.25 },
+          start,
+        );
+        if (i < globePanels.length - 1) {
+          tl.to(panel,
+            { opacity: 0, pointerEvents: 'none', duration: 0.25 },
+            start + panelDur - 0.25,
+          );
+        }
+      });
+    });
+
+    // ── Globe ticker ─────────────────────────────────────────────
+    const tick = () => {
+      // Figure out which leg we're on (0–3)
+      const legIndex = Math.min(Math.floor(scrollProgress * 4), 3);
+      const legT = (scrollProgress * 4) - legIndex;
+
+      const fromStop = GLOBE_STOPS[legIndex];
+      const toStop = GLOBE_STOPS[legIndex + 1];
+      targetPhi = lerp(fromStop.phi, toStop.phi, legT);
+      targetTheta = lerp(fromStop.theta, toStop.theta, legT);
+
+      currentPhi = lerp(currentPhi, targetPhi, 0.08);
+      currentTheta = lerp(currentTheta, targetTheta, 0.08);
+
+      // Update arcs progressively (match stop order)
+      if (globeInstance) {
+        const allArcs = [
+          { from: [51.24, 0.51], to: [41.82, -71.41], color: [0.6, 0.7, 1.0] as [number,number,number] },    // Leg 0: Kent → RI
+          { from: [41.82, -71.41], to: [53.75, 18.93], color: [0.6, 0.7, 1.0] as [number,number,number] },   // Leg 1: RI → Prussia
+          { from: [53.75, 18.93], to: [45.36, -91.34], color: [1.0, 0.6, 0.3] as [number,number,number] },   // Leg 2: Prussia → WI
+          { from: [45.36, -91.34], to: [59.91, 10.75], color: [1, 0.42, 0.21] as [number,number,number] },   // Leg 3: WI → Oslo
+        ];
+        globeInstance.update({
+          phi: currentPhi,
+          theta: currentTheta,
+          arcs: allArcs.slice(0, legIndex + 1),
+        });
+      }
+    };
+    gsap.ticker.add(tick);
+
+    // ── Cobe init ────────────────────────────────────────────────
+    const initGlobe = async () => {
+      try {
+        const createGlobe = (await import('cobe')).default;
+        globeInstance = createGlobe(globeCanvas, {
+          devicePixelRatio: Math.min(window.devicePixelRatio, 2),
+          width: 1000,
+          height: 1000,
+          phi: currentPhi,
+          theta: currentTheta,
+          dark: 0,
+          diffuse: 1.2,
+          scale: 1,
+          mapSamples: 16000,
+          mapBrightness: 6,
+          mapBaseBrightness: 0.05,
+          baseColor: [0.3, 0.3, 0.3],
+          markerColor: [1, 0.42, 0.21],
+          glowColor: [0.15, 0.15, 0.2],
+          markers: [
+            { location: [51.24, 0.51], size: 0.05 },
+            { location: [41.82, -71.41], size: 0.05 },
+            { location: [45.36, -91.34], size: 0.06 },
+            { location: [53.75, 18.93], size: 0.05 },
+            { location: [59.91, 10.75], size: 0.06 },
+          ],
+          arcs: [],
+          arcColor: [1, 0.42, 0.21],
+          arcWidth: 0.5,
+          arcHeight: 0.3,
+        });
+      } catch (e) {
+        console.warn('Cobe globe failed to initialize:', e);
+      }
+    };
+    initGlobe();
+
+    // ── Cleanup ──────────────────────────────────────────────────
+    const cleanup = () => {
+      gsap.ticker.remove(tick);
+      if (globeInstance) { globeInstance.destroy(); globeInstance = null; }
+    };
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    window.addEventListener('pagehide', cleanup, { once: true });
+  }
+</script>

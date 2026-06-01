@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Shared Responsibility Boundary</title>
+  <desc id="desc">Provider and customer accountability boundary with failure classes that need customer-side controls.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f5faf7; }
+      .provider { fill: #d7ebff; stroke: #2a5c8a; stroke-width: 2; rx: 14; }
+      .customer { fill: #dff2e4; stroke: #2c6f44; stroke-width: 2; rx: 14; }
+      .gap { fill: #fff1d6; stroke: #b57b2a; stroke-width: 2; rx: 12; }
+      .txtP { fill: #1f4668; font-family: Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 700; }
+      .txtC { fill: #1f5635; font-family: Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 700; }
+      .txtG { fill: #7a531d; font-family: Segoe UI, Arial, sans-serif; font-size: 22px; font-weight: 700; }
+      .txtS { fill: #33576f; font-family: Segoe UI, Arial, sans-serif; font-size: 18px; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="56" text-anchor="middle" class="txtP">Shared Responsibility Needs Operational Ownership</text>
+
+  <rect class="provider" x="90" y="130" width="470" height="500"/>
+  <text x="325" y="180" text-anchor="middle" class="txtP">Provider Boundary</text>
+  <text x="125" y="230" class="txtS">- Baseline platform operation</text>
+  <text x="125" y="265" class="txtS">- Service durability primitives</text>
+  <text x="125" y="300" class="txtS">- Status communication</text>
+
+  <rect class="customer" x="640" y="130" width="470" height="500"/>
+  <text x="875" y="180" text-anchor="middle" class="txtC">Customer Boundary</text>
+  <text x="675" y="230" class="txtS">- Workload continuity design</text>
+  <text x="675" y="265" class="txtS">- Degraded mode behavior</text>
+  <text x="675" y="300" class="txtS">- Incident command and recovery</text>
+
+  <rect class="gap" x="485" y="350" width="230" height="140"/>
+  <text x="600" y="404" text-anchor="middle" class="txtG">Accountability Gap</text>
+  <text x="600" y="438" text-anchor="middle" class="txtS">Control-plane and identity</text>
+  <text x="600" y="466" text-anchor="middle" class="txtS">events often land here</text>
+</svg>

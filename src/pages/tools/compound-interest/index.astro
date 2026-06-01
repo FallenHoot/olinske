@@ -1,0 +1,1492 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Compound Interest Timeline Calculator | Olinske"
+  description="Timeline-based compound interest calculator with custom contribution periods and interactive view modes."
+>
+  <main class="container site-shell">
+    <section class="calc-hero">
+      <div class="hero-top">
+        <p class="eyebrow" data-i18n="eyebrow">Interaktivt verktoy</p>
+        <label class="language-switch" title="Switch language / Bytt sprak">
+          <span data-i18n="languageLabel">Sprak</span>
+          <select id="lang-select" aria-label="Language selector" title="Switch language / Bytt sprak">
+            <option value="no" selected>Norsk</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+      </div>
+      <h1 class="hero-title" data-i18n="title">Avansert kalkulator for sammensatt rente</h1>
+      <p class="hero-subtitle" data-i18n="subtitle">Historisk og fremtidig modellering med egendefinerte perioder.</p>
+    </section>
+
+    <section class="calc-grid">
+      <article class="panel input-panel">
+        <h2 data-i18n="setup">Oppsett</h2>
+
+        <form id="compound-form" class="calc-form" novalidate>
+          <label title="Switch between quick planning and advanced timeline modeling">
+            <span data-i18n="plannerMode">Modus</span>
+            <select id="planner-mode" title="Switch between quick planning and advanced timeline modeling">
+              <option value="quick" data-i18n="modeQuick" selected>Rask</option>
+              <option value="advanced" data-i18n="modeAdvanced">Avansert</option>
+            </select>
+          </label>
+
+          <p class="mode-note" data-i18n="quickModeHint">Rask modus bruker ett bidrag som gjentas gjennom hele perioden.</p>
+
+          <div class="row-2">
+            <label title="Currency used for all outputs">
+              <span data-i18n="currency">Valuta</span>
+              <select id="currency" title="Currency used for all outputs">
+                <option value="USD">USD ($)</option>
+                <option value="NOK" selected>NOK (kr)</option>
+                <option value="SEK">SEK (kr)</option>
+                <option value="EUR">EUR (EUR)</option>
+              </select>
+            </label>
+
+            <label title="Auto-fill annual return from Norway top funds baselines">
+              <span data-i18n="baseline">Baseline</span>
+              <select id="baseline-mode" title="Auto-fill annual return from Norway top funds baselines">
+                <option value="custom" data-i18n="baselineCustom">Egendefinert</option>
+                <option value="norwayConservative" data-i18n="baselineConservative">Konservativ</option>
+                <option value="norwayAum" selected data-i18n="baselineAum">Norge topp-10 (AUM-vektet)</option>
+                <option value="norwayEqual" data-i18n="baselineEqual">Norge topp-10 (uvektet)</option>
+                <option value="norwayAggressive" data-i18n="baselineAggressive">Aggressiv</option>
+              </select>
+            </label>
+
+            <details class="baseline-info">
+              <summary>📊 Om disse prosentene</summary>
+              <div class="info-body">
+                <p><strong>Metodologi:</strong> Norske aksjefondsklasser har verifiserbar historisk data tilgjengelig. Disse presets bruker faktiske 2010–2025 avkastninger som grunnlag for modellering. Andre investeringstyper (direkte aksjer, obligasjoner, krypto, eiendom) eksisterer, men mangler ofte lett tilgjengelig historisk data eller er vanskeligere å prognose. Aksjefondsdata gir et rimelig basiskasus.</p>
+                <p><strong>Data fra:</strong> Norges topp 10 aksjefondsløsninger (Storebrand, KLP, Sparinvest, DNB, Nordea)</p>
+                <p><strong>Periode:</strong> 2010–2025 (16 år historiske avkastninger)</p>
+                <p><strong>Konservativ:</strong> tidlige perioder eller mer defensive fond.</p>
+                <p><strong>AUM-vektet:</strong> storste fond vektet etter assets (standard).</p>
+                <p><strong>Uvektet:</strong> enkelt gjennomsnitt av de 10 fondene.</p>
+                <p><strong>Aggressiv:</strong> topperformere eller vekstfokuserte perioder.</p>
+                <p id="baseline-currency-note" class="baseline-currency-note"></p>
+              </div>
+            </details>
+          </div>
+
+          <div class="row-2">
+            <label title="Your existing invested balance at start month">
+              <span data-i18n="startingBalance">Startsaldo</span>
+              <input id="principal" type="number" min="0" step="100" value="0" title="Your existing invested balance at start month" />
+            </label>
+
+            <label title="Expected annual return percentage">
+              <span data-i18n="annualRate">Arlig avkastning</span>
+              <div class="input-wrap suffix">
+                <input id="annual-rate" type="number" min="-99" max="100" step="0.01" value="13.77" title="Expected annual return percentage" />
+                <span>%</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="row-3 quick-only">
+            <label title="Recurring contribution amount used in quick mode">
+              <span data-i18n="quickContributionAmount">Bidrag</span>
+              <input id="quick-contribution-amount" type="number" min="0" step="1" value="1000" title="Recurring contribution amount used in quick mode" />
+            </label>
+
+            <label title="How often your quick contribution is applied">
+              <span data-i18n="quickContributionFrequency">Bidragsfrekvens</span>
+              <select id="quick-contribution-frequency" title="How often your quick contribution is applied">
+                <option value="12" data-i18n="monthly" selected>Manedlig</option>
+                <option value="1" data-i18n="yearly">Arlig</option>
+              </select>
+            </label>
+
+            <label title="Apply quick contribution at start or end of each period">
+              <span data-i18n="quickContributionTiming">Bidragstidspunkt</span>
+              <select id="quick-contribution-timing" title="Apply quick contribution at start or end of each period">
+                <option value="end" data-i18n="timingEnd" selected>Slutt</option>
+                <option value="start" data-i18n="timingStart">Start</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row-3 advanced-only" data-advanced-block>
+            <label title="Month where timeline starts">
+              <span data-i18n="startMonth">Startmaned</span>
+              <input id="timeline-start" type="month" value="2016-01" title="Month where timeline starts" />
+            </label>
+
+            <label title="Preset horizon in years. Custom unlocks end month.">
+              <span data-i18n="horizonPreset">Tidsperiode</span>
+              <select id="horizon-years" title="Preset horizon in years. Custom unlocks end month.">
+                <option value="5">5 ar</option>
+                <option value="10" selected>10 ar</option>
+                <option value="15">15 ar</option>
+                <option value="20">20 ar</option>
+                <option value="25">25 ar</option>
+                <option value="30">30 ar</option>
+                <option value="40">40 ar</option>
+                <option value="custom" data-i18n="custom">Egendefinert</option>
+              </select>
+            </label>
+
+            <label title="Month where timeline ends">
+              <span data-i18n="endMonth">Sluttmaned</span>
+              <input id="timeline-end" type="month" value="2025-12" title="Month where timeline ends" />
+            </label>
+          </div>
+
+          <label class="advanced-only" data-advanced-block title="How often returns are compounded">
+            <span data-i18n="compoundingFrequency">Rentes rente-frekvens</span>
+            <select id="compound-frequency" title="How often returns are compounded">
+              <option value="1" data-i18n="yearly">Arlig</option>
+              <option value="2" data-i18n="semiannual">Halvarlig</option>
+              <option value="4" data-i18n="quarterly">Kvartalsvis</option>
+              <option value="12" selected data-i18n="monthly">Manedlig</option>
+              <option value="365" data-i18n="daily">Daglig</option>
+            </select>
+          </label>
+
+          <fieldset class="advanced-only" data-advanced-block>
+            <legend data-i18n="phaseLegend">Egendefinerte bidragsperioder</legend>
+            <div id="phase-list" class="phase-list"></div>
+            <button type="button" id="add-phase" class="ghost-btn" data-i18n="addPhase">Legg til periode</button>
+          </fieldset>
+
+          <p id="form-error" class="form-error" aria-live="polite"></p>
+          <button class="run-btn" type="submit" data-i18n="calculate">Beregn</button>
+        </form>
+      </article>
+
+      <article class="panel output-panel">
+        <div class="output-head">
+          <h2 data-i18n="results">Resultater</h2>
+          <div class="output-controls">
+            <label title="Choose chart, table, or milestones view">
+              <span data-i18n="viewMode">Visning</span>
+              <select id="view-mode" title="Choose chart, table, or milestones view">
+                <option value="bar" data-i18n="viewBar">Stolpediagram</option>
+                <option value="table" data-i18n="viewTable">Tabell</option>
+                <option value="milestones" data-i18n="viewMilestones">Milesteiner</option>
+              </select>
+            </label>
+            <button type="button" id="download-csv" class="ghost-btn inline-btn" data-i18n="downloadCsv">Last ned CSV</button>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><p class="metric-label" data-i18n="endingBalance">Sluttsaldo</p><p id="ending-balance" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="netContributions">Netto bidrag</p><p id="total-contributions" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="totalDeposits">Totale innskudd</p><p id="total-deposits" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="totalWithdrawals">Totale uttak</p><p id="total-withdrawals" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="totalGrowth">Total vekst</p><p id="interest-earned" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="ror">Rate of Return</p><p id="ror-value" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="bowlingPoint">Bowling point</p><p id="bowling-point" class="metric-value">-</p></div>
+          <div class="metric"><p class="metric-label" data-i18n="monthsModeled">Maneder modellert</p><p id="period-count" class="metric-value">-</p></div>
+        </div>
+
+        <section class="math-basis" aria-live="polite">
+          <h3 data-i18n="mathBasisTitle">Matematisk grunnlag</h3>
+          <div class="math-basis-grid">
+            <div><p class="math-label" data-i18n="nominalAnnualRate">Nominell arlig rente</p><p id="math-nominal-rate" class="math-value">-</p></div>
+            <div><p class="math-label" data-i18n="effectiveAnnualRate">Effektiv arlig rente</p><p id="math-effective-rate" class="math-value">-</p></div>
+            <div><p class="math-label" data-i18n="monthlyEquivalentRate">Maanedlig ekvivalent rente</p><p id="math-monthly-rate" class="math-value">-</p></div>
+            <div><p class="math-label" data-i18n="compoundingBasis">Rentes rente-basis</p><p id="math-compounding-basis" class="math-value">-</p></div>
+            <div><p class="math-label" data-i18n="contributionBasis">Bidragsmodell</p><p id="math-contribution-basis" class="math-value">-</p></div>
+          </div>
+        </section>
+
+        <section id="view-bar" class="view-panel">
+          <div class="chart-head">
+            <h3 data-i18n="chartTitle">Bidrag + vekst per ar</h3>
+            <p class="legend">
+              <span class="chip chip-contrib" data-i18n="legendContrib">Bidrag</span>
+              <span class="chip chip-growth" data-i18n="legendGrowth">Vekst</span>
+            </p>
+          </div>
+          <div id="bar-chart" class="bar-chart" aria-label="Stacked bar chart"></div>
+        </section>
+
+        <section id="view-table" class="view-panel" hidden>
+          <h3 data-i18n="tableTitle">Arlig oversikt</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="yearCol">Ar</th>
+                  <th data-i18n="depositCol">Innskudd</th>
+                  <th data-i18n="withdrawalCol">Uttak</th>
+                  <th data-i18n="netFlowCol">Netto</th>
+                  <th data-i18n="growthCol">Vekst</th>
+                  <th data-i18n="balanceCol">Saldo</th>
+                </tr>
+              </thead>
+              <tbody id="breakdown-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="view-milestones" class="view-panel" hidden>
+          <h3 data-i18n="milestoneTitle">Milesteiner</h3>
+          <div id="milestone-grid" class="milestone-grid"></div>
+        </section>
+      </article>
+    </section>
+  </main>
+
+  <template id="phase-row-template">
+    <div class="phase-row">
+      <label title="Phase start month">
+        <span data-i18n="phaseStart">Start</span>
+        <input data-field="start" type="month" title="Phase start month" />
+      </label>
+      <label title="Phase end month">
+        <span data-i18n="phaseEnd">Slutt</span>
+        <input data-field="end" type="month" title="Phase end month" />
+      </label>
+      <label title="Deposit adds cash. Withdrawal removes cash.">
+        <span data-i18n="phaseType">Type</span>
+        <select data-field="type" title="Deposit adds cash. Withdrawal removes cash.">
+          <option value="deposit" data-i18n="typeDeposit">Innskudd</option>
+          <option value="withdrawal" data-i18n="typeWithdrawal">Uttak</option>
+        </select>
+      </label>
+      <label title="Amount for this period action">
+        <span data-i18n="phaseAmount">Belop</span>
+        <input data-field="amount" type="number" min="0" step="1" title="Amount for this period action" />
+      </label>
+      <label title="How often this period amount is applied">
+        <span data-i18n="phaseFrequency">Frekvens</span>
+        <select data-field="frequency" title="How often this period amount is applied">
+          <option value="12" data-i18n="monthly">Manedlig</option>
+          <option value="1" data-i18n="yearly">Arlig</option>
+        </select>
+      </label>
+      <label title="Apply at start or end of period">
+        <span data-i18n="phaseTiming">Tidspunkt</span>
+        <select data-field="timing" title="Apply at start or end of period">
+          <option value="end" data-i18n="timingEnd">Slutt</option>
+          <option value="start" data-i18n="timingStart">Start</option>
+        </select>
+      </label>
+      <button type="button" class="remove-phase" data-i18n="remove">Fjern</button>
+    </div>
+  </template>
+
+  <script is:inline>
+    // Historical returns: Norway's top 10 largest funds (2010-2025)
+    // AUM-weighted: Storebrand Global, KLP, Sparinvest, DNB, Nordea funds
+    // Source: Oslo Stock Exchange, fund registries, annual reports
+    const BASELINES = {
+      custom: null,
+      norwayConservative: { annualByCurrency: { NOK: 10.98, USD: 8.63 } },
+      norwayAum: { annualByCurrency: { NOK: 13.77, USD: 11.42 } },
+      norwayEqual: { annualByCurrency: { NOK: 12.27, USD: 9.92 } },
+      norwayAggressive: { annualByCurrency: { NOK: 16.52, USD: 14.17 } },
+    };
+
+    const I18N = {
+      no: {
+        eyebrow: 'Interaktivt verktoy', languageLabel: 'Sprak', title: 'Avansert kalkulator for sammensatt rente', subtitle: 'Historisk og fremtidig modellering med egendefinerte perioder.',
+        setup: 'Oppsett', currency: 'Valuta', baseline: 'Baseline', baselineCustom: 'Egendefinert', baselineConservative: 'Konservativ', baselineAum: 'Norge topp-10 (AUM-vektet)', baselineEqual: 'Norge topp-10 (uvektet)', baselineAggressive: 'Aggressiv',
+        startingBalance: 'Startsaldo', annualRate: 'Arlig avkastning', startMonth: 'Startmaned', endMonth: 'Sluttmaned', horizonPreset: 'Tidsperiode', custom: 'Egendefinert',
+        compoundingFrequency: 'Rentes rente-frekvens', yearly: 'Arlig', semiannual: 'Halvarlig', quarterly: 'Kvartalsvis', monthly: 'Manedlig', daily: 'Daglig',
+        plannerMode: 'Modus', modeQuick: 'Rask', modeAdvanced: 'Avansert', quickModeHint: 'Rask modus bruker ett bidrag som gjentas gjennom hele perioden.',
+        quickContributionAmount: 'Bidrag', quickContributionFrequency: 'Bidragsfrekvens', quickContributionTiming: 'Bidragstidspunkt',
+        phaseLegend: 'Egendefinerte bidragsperioder', addPhase: 'Legg til periode',
+        phaseStart: 'Start', phaseEnd: 'Slutt', phaseType: 'Type', typeDeposit: 'Innskudd', typeWithdrawal: 'Uttak', phaseAmount: 'Belop', phaseFrequency: 'Frekvens', phaseTiming: 'Tidspunkt', timingEnd: 'Slutt', timingStart: 'Start', remove: 'Fjern',
+        calculate: 'Beregn', results: 'Resultater', viewMode: 'Visning', viewBar: 'Stolpediagram', viewTable: 'Tabell', viewMilestones: 'Milesteiner',
+        downloadCsv: 'Last ned CSV',
+        endingBalance: 'Sluttsaldo', totalContributions: 'Totale bidrag', netContributions: 'Netto bidrag', totalDeposits: 'Totale innskudd', totalWithdrawals: 'Totale uttak', totalGrowth: 'Total vekst', ror: 'Rate of Return', bowlingPoint: 'Bowling point', monthsModeled: 'Maneder modellert',
+        chartTitle: 'Bidrag + vekst per ar', legendContrib: 'Bidrag', legendGrowth: 'Vekst', hoverHint: 'Hold musepekeren over en stolpe for detaljer.',
+        tableTitle: 'Arlig oversikt', yearCol: 'Ar', contribCol: 'Bidrag', depositCol: 'Innskudd', withdrawalCol: 'Uttak', netFlowCol: 'Netto', growthCol: 'Vekst', balanceCol: 'Saldo', milestoneTitle: 'Milesteiner',
+        mathBasisTitle: 'Matematisk grunnlag', nominalAnnualRate: 'Nominell arlig rente', effectiveAnnualRate: 'Effektiv arlig rente', monthlyEquivalentRate: 'Maanedlig ekvivalent rente', compoundingBasis: 'Rentes rente-basis', contributionBasis: 'Bidragsmodell',
+        basisCustomPhases: 'Egendefinerte perioder', basisQuickEndMonthly: 'Rask: maanedlig bidrag (slutt)', basisQuickStartMonthly: 'Rask: maanedlig bidrag (start)', basisQuickEndYearly: 'Rask: arlig bidrag (slutt)', basisQuickStartYearly: 'Rask: arlig bidrag (start)',
+        basisCompoundYearly: 'Arlig', basisCompoundSemiannual: 'Halvarlig', basisCompoundQuarterly: 'Kvartalsvis', basisCompoundMonthly: 'Manedlig', basisCompoundDaily: 'Daglig',
+        errStartBal: 'Startsaldo ma vaere 0 eller hoyere.', errRate: 'Arlig avkastning ma vaere storre enn -100 og mindre enn eller lik 100.', errMonths: 'Start og sluttmaned ma vaere gyldige.', errOrder: 'Sluttmaned ma vaere lik eller etter startmaned.',
+        errPhaseMonth: 'Periode {{i}} ma ha gyldig start/slutt.', errPhaseOrder: 'Periode {{i}} har slutt for start.', errPhaseAmount: 'Periode {{i}} ma ha belop 0 eller hoyere.', errPhaseFreq: 'Periode {{i}} har ugyldig frekvens.',
+        notReached: 'Ikke naadd'
+      },
+      en: {
+        eyebrow: 'Interactive tool', languageLabel: 'Language', title: 'Advanced compound interest calculator', subtitle: 'Historical and future modeling with custom contribution periods.',
+        setup: 'Setup', currency: 'Currency', baseline: 'Baseline', baselineCustom: 'Custom', baselineConservative: 'Conservative', baselineAum: 'Norway top-10 (AUM-weighted)', baselineEqual: 'Norway top-10 (equal-weighted)', baselineAggressive: 'Aggressive',
+        startingBalance: 'Starting balance', annualRate: 'Annual return', startMonth: 'Start month', endMonth: 'End month', horizonPreset: 'Horizon', custom: 'Custom',
+        compoundingFrequency: 'Compounding frequency', yearly: 'Yearly', semiannual: 'Semiannual', quarterly: 'Quarterly', monthly: 'Monthly', daily: 'Daily',
+        plannerMode: 'Mode', modeQuick: 'Quick', modeAdvanced: 'Advanced', quickModeHint: 'Quick mode uses one repeating contribution across the full timeline.',
+        quickContributionAmount: 'Contribution', quickContributionFrequency: 'Contribution frequency', quickContributionTiming: 'Contribution timing',
+        phaseLegend: 'Custom contribution periods', addPhase: 'Add period',
+        phaseStart: 'Start', phaseEnd: 'End', phaseType: 'Type', typeDeposit: 'Deposit', typeWithdrawal: 'Withdrawal', phaseAmount: 'Amount', phaseFrequency: 'Frequency', phaseTiming: 'Timing', timingEnd: 'End', timingStart: 'Start', remove: 'Remove',
+        calculate: 'Calculate', results: 'Results', viewMode: 'View mode', viewBar: 'Bar chart', viewTable: 'Table', viewMilestones: 'Milestones',
+        downloadCsv: 'Download CSV',
+        endingBalance: 'Ending balance', totalContributions: 'Total contributions', netContributions: 'Net contributions', totalDeposits: 'Total deposits', totalWithdrawals: 'Total withdrawals', totalGrowth: 'Total growth', ror: 'Rate of Return', bowlingPoint: 'Bowling point', monthsModeled: 'Months modeled',
+        chartTitle: 'Contributions + growth by year', legendContrib: 'Contributions', legendGrowth: 'Growth', hoverHint: 'Hover a bar for details.',
+        tableTitle: 'Yearly breakdown', yearCol: 'Year', contribCol: 'Contributions', depositCol: 'Deposits', withdrawalCol: 'Withdrawals', netFlowCol: 'Net flow', growthCol: 'Growth', balanceCol: 'Balance', milestoneTitle: 'Milestones',
+        mathBasisTitle: 'Math basis', nominalAnnualRate: 'Nominal annual rate', effectiveAnnualRate: 'Effective annual rate', monthlyEquivalentRate: 'Monthly equivalent rate', compoundingBasis: 'Compounding basis', contributionBasis: 'Contribution model',
+        basisCustomPhases: 'Custom phases', basisQuickEndMonthly: 'Quick: monthly contribution (end)', basisQuickStartMonthly: 'Quick: monthly contribution (start)', basisQuickEndYearly: 'Quick: yearly contribution (end)', basisQuickStartYearly: 'Quick: yearly contribution (start)',
+        basisCompoundYearly: 'Yearly', basisCompoundSemiannual: 'Semiannual', basisCompoundQuarterly: 'Quarterly', basisCompoundMonthly: 'Monthly', basisCompoundDaily: 'Daily',
+        errStartBal: 'Starting balance must be zero or greater.', errRate: 'Annual return must be greater than -100 and less than or equal to 100.', errMonths: 'Start and end month must be valid.', errOrder: 'End month must be the same as or after start month.',
+        errPhaseMonth: 'Period {{i}} must have valid start/end.', errPhaseOrder: 'Period {{i}} has end before start.', errPhaseAmount: 'Period {{i}} amount must be zero or greater.', errPhaseFreq: 'Period {{i}} has invalid frequency.',
+        notReached: 'Not reached'
+      }
+    };
+
+    let currentLang = 'no';
+
+    function tr(key, vars) {
+      const dict = I18N[currentLang] || I18N.no;
+      let text = dict[key] || key;
+      if (vars) {
+        for (const [k, v] of Object.entries(vars)) {
+          text = text.replaceAll(`{{${k}}}`, String(v));
+        }
+      }
+      return text;
+    }
+
+    function parseMonth(value) {
+      if (!/^\d{4}-\d{2}$/.test(value)) return null;
+      const [yy, mm] = value.split('-');
+      const y = Number(yy);
+      const m = Number(mm);
+      if (!Number.isInteger(y) || !Number.isInteger(m) || m < 1 || m > 12) return null;
+      return { year: y, month: m, key: y * 12 + (m - 1) };
+    }
+
+    function formatMonthKey(key) {
+      const year = Math.floor(key / 12);
+      const month = String((key % 12) + 1).padStart(2, '0');
+      return `${year}-${month}`;
+    }
+
+    function endMonthFromStartAndYears(startMonth, years) {
+      const start = parseMonth(startMonth);
+      if (!start) return '';
+      const endKey = start.key + Number(years) * 12 - 1;
+      return formatMonthKey(endKey);
+    }
+
+    function parseNumber(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    function toCurrency(value, currencyCode) {
+      const locale = currentLang === 'no' ? 'nb-NO' : 'en-US';
+      return new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode, maximumFractionDigits: 0 }).format(value);
+    }
+
+    function toPercent(value) {
+      return `${value.toFixed(2)}%`;
+    }
+
+    function formatRate(value) {
+      const locale = currentLang === 'no' ? 'nb-NO' : 'en-US';
+      return Number(value).toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+    }
+
+    function getBaselineAnnual(mode, currencyCode) {
+      const baseline = BASELINES[mode];
+      if (!baseline || !baseline.annualByCurrency) return null;
+      return baseline.annualByCurrency[currencyCode] ?? baseline.annualByCurrency.NOK;
+    }
+
+    function shouldApplyContribution(offset, frequency) {
+      if (frequency === 12) return true;
+      if (frequency === 1) return offset % 12 === 0;
+      return false;
+    }
+
+    function getCompoundingLabel(frequency) {
+      const map = {
+        1: 'basisCompoundYearly',
+        2: 'basisCompoundSemiannual',
+        4: 'basisCompoundQuarterly',
+        12: 'basisCompoundMonthly',
+        365: 'basisCompoundDaily',
+      };
+      return tr(map[frequency] || 'basisCompoundMonthly');
+    }
+
+    function getContributionBasisLabel(config) {
+      if (config.isAdvanced) return tr('basisCustomPhases');
+      const freq = Number(config.quickContributionFrequency);
+      const timing = config.quickContributionTiming;
+      if (freq === 1 && timing === 'start') return tr('basisQuickStartYearly');
+      if (freq === 1 && timing === 'end') return tr('basisQuickEndYearly');
+      if (freq === 12 && timing === 'start') return tr('basisQuickStartMonthly');
+      return tr('basisQuickEndMonthly');
+    }
+
+    const els = {
+      form: document.getElementById('compound-form'),
+      lang: document.getElementById('lang-select'),
+      plannerMode: document.getElementById('planner-mode'),
+      currency: document.getElementById('currency'),
+      baselineMode: document.getElementById('baseline-mode'),
+      principal: document.getElementById('principal'),
+      annualRate: document.getElementById('annual-rate'),
+      quickContributionAmount: document.getElementById('quick-contribution-amount'),
+      quickContributionFrequency: document.getElementById('quick-contribution-frequency'),
+      quickContributionTiming: document.getElementById('quick-contribution-timing'),
+      timelineStart: document.getElementById('timeline-start'),
+      horizonYears: document.getElementById('horizon-years'),
+      timelineEnd: document.getElementById('timeline-end'),
+      compoundFrequency: document.getElementById('compound-frequency'),
+      phaseList: document.getElementById('phase-list'),
+      phaseTemplate: document.getElementById('phase-row-template'),
+      addPhase: document.getElementById('add-phase'),
+      error: document.getElementById('form-error'),
+      endingBalance: document.getElementById('ending-balance'),
+      totalContributions: document.getElementById('total-contributions'),
+      totalDeposits: document.getElementById('total-deposits'),
+      totalWithdrawals: document.getElementById('total-withdrawals'),
+      interestEarned: document.getElementById('interest-earned'),
+      rorValue: document.getElementById('ror-value'),
+      bowlingPoint: document.getElementById('bowling-point'),
+      periodCount: document.getElementById('period-count'),
+      mathNominalRate: document.getElementById('math-nominal-rate'),
+      mathEffectiveRate: document.getElementById('math-effective-rate'),
+      mathMonthlyRate: document.getElementById('math-monthly-rate'),
+      mathCompoundingBasis: document.getElementById('math-compounding-basis'),
+      mathContributionBasis: document.getElementById('math-contribution-basis'),
+      viewMode: document.getElementById('view-mode'),
+      viewBar: document.getElementById('view-bar'),
+      viewTable: document.getElementById('view-table'),
+      viewMilestones: document.getElementById('view-milestones'),
+      barChart: document.getElementById('bar-chart'),
+      breakdownBody: document.getElementById('breakdown-body'),
+      milestoneGrid: document.getElementById('milestone-grid'),
+      downloadCsv: document.getElementById('download-csv'),
+      baselineCurrencyNote: document.getElementById('baseline-currency-note'),
+      baselineInfoBody: document.querySelector('.baseline-info .info-body'),
+    };
+
+    let lastResult = null;
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+      renderBaselineInfo();
+      for (const node of document.querySelectorAll('[data-i18n]')) {
+        const key = node.getAttribute('data-i18n');
+        node.textContent = tr(key);
+      }
+      updateSelectOptionLabels();
+      if (lastResult) render(lastResult);
+    }
+
+    function updateBaselineCurrencyNote() {
+      if (!els.baselineCurrencyNote) return;
+      const ccy = els.currency.value;
+      const conservative = getBaselineAnnual('norwayConservative', ccy);
+      const aum = getBaselineAnnual('norwayAum', ccy);
+      const equal = getBaselineAnnual('norwayEqual', ccy);
+      const aggressive = getBaselineAnnual('norwayAggressive', ccy);
+
+      if (currentLang === 'no') {
+        els.baselineCurrencyNote.textContent = `Valutajusterte baseline-rater (${ccy}): Konservativ ${formatRate(conservative)}%, AUM-vektet ${formatRate(aum)}%, Uvektet ${formatRate(equal)}%, Aggressiv ${formatRate(aggressive)}%.`;
+      } else {
+        els.baselineCurrencyNote.textContent = `Currency-adjusted baseline rates (${ccy}): Conservative ${formatRate(conservative)}%, AUM-weighted ${formatRate(aum)}%, Equal-weighted ${formatRate(equal)}%, Aggressive ${formatRate(aggressive)}%.`;
+      }
+    }
+
+    function renderBaselineInfo() {
+      if (!els.baselineInfoBody) return;
+      if (currentLang === 'en') {
+        els.baselineInfoBody.innerHTML = `
+          <p><strong>Method:</strong> We use a historical equity-fund baseline to model long-term compound growth scenarios. These are planning assumptions, not guarantees.</p>
+          <p><strong>Data universe:</strong> Large Norwegian equity fund classes with long and observable return history.</p>
+          <p><strong>Window:</strong> 2010-2025 historical returns.</p>
+          <p><strong>Conservative:</strong> Defensive periods or lower-volatility fund profile.</p>
+          <p><strong>AUM-weighted:</strong> Asset-weighted blend across larger funds (default).</p>
+          <p><strong>Equal-weighted:</strong> Simple average across the top fund set.</p>
+          <p><strong>Aggressive:</strong> Higher-growth profile based on top-performing periods.</p>
+          <p id="baseline-currency-note" class="baseline-currency-note"></p>
+        `;
+      } else {
+        els.baselineInfoBody.innerHTML = `
+          <p><strong>Metodologi:</strong> Norske aksjefondsklasser har verifiserbar historisk data tilgjengelig. Disse presets bruker faktiske 2010-2025 avkastninger som grunnlag for modellering. Andre investeringstyper eksisterer, men mangler ofte lett tilgjengelig historisk data eller er vanskeligere a prognose.</p>
+          <p><strong>Data fra:</strong> Norges topp 10 aksjefondslosninger (Storebrand, KLP, Sparinvest, DNB, Nordea).</p>
+          <p><strong>Periode:</strong> 2010-2025 (16 ar historiske avkastninger).</p>
+          <p><strong>Konservativ:</strong> tidlige perioder eller mer defensive fond.</p>
+          <p><strong>AUM-vektet:</strong> storste fond vektet etter assets (standard).</p>
+          <p><strong>Uvektet:</strong> enkelt gjennomsnitt av de 10 fondene.</p>
+          <p><strong>Aggressiv:</strong> topperformere eller vekstfokuserte perioder.</p>
+          <p id="baseline-currency-note" class="baseline-currency-note"></p>
+        `;
+      }
+      els.baselineCurrencyNote = document.getElementById('baseline-currency-note');
+    }
+
+    function updateSelectOptionLabels() {
+      for (const option of els.plannerMode.options) {
+        const key = option.getAttribute('data-i18n');
+        if (key) option.textContent = tr(key);
+      }
+      for (const option of els.baselineMode.options) {
+        const key = option.getAttribute('data-i18n');
+        if (!key) continue;
+        if (option.value === 'custom') {
+          option.textContent = tr(key);
+          continue;
+        }
+        const annual = getBaselineAnnual(option.value, els.currency.value);
+        option.textContent = `${tr(key)} (${formatRate(annual)}%)`;
+      }
+      for (const option of els.compoundFrequency.options) {
+        const key = option.getAttribute('data-i18n');
+        if (key) option.textContent = tr(key);
+      }
+      for (const option of els.viewMode.options) {
+        const key = option.getAttribute('data-i18n');
+        if (key) option.textContent = tr(key);
+      }
+      for (const option of els.horizonYears.options) {
+        if (option.value === 'custom') option.textContent = tr('custom');
+        else option.textContent = `${option.value} ${tr('yearly').toLowerCase()}`;
+      }
+      for (const row of els.phaseList.querySelectorAll('.phase-row')) {
+        for (const option of row.querySelectorAll('option[data-i18n]')) {
+          option.textContent = tr(option.getAttribute('data-i18n'));
+        }
+      }
+
+      for (const option of els.quickContributionFrequency.options) {
+        const key = option.getAttribute('data-i18n');
+        if (key) option.textContent = tr(key);
+      }
+
+      for (const option of els.quickContributionTiming.options) {
+        const key = option.getAttribute('data-i18n');
+        if (key) option.textContent = tr(key);
+      }
+
+      updateBaselineCurrencyNote();
+    }
+
+    function setAdvancedVisibility(isAdvanced) {
+      const blocks = document.querySelectorAll('[data-advanced-block]');
+      blocks.forEach((block) => {
+        block.hidden = !isAdvanced;
+        block.querySelectorAll('input, select, button, textarea').forEach((control) => {
+          if (control.id === 'add-phase') {
+            control.disabled = !isAdvanced;
+            return;
+          }
+          control.disabled = !isAdvanced;
+        });
+      });
+
+      document.querySelectorAll('.quick-only').forEach((block) => {
+        block.hidden = isAdvanced;
+        block.querySelectorAll('input, select').forEach((control) => {
+          control.disabled = isAdvanced;
+        });
+      });
+    }
+
+    function getQuickModePhases() {
+      const amount = parseNumber(els.quickContributionAmount.value);
+      if (!Number.isFinite(amount) || amount <= 0) return [];
+      return [{
+        index: 0,
+        start: els.timelineStart.value,
+        end: els.timelineEnd.value,
+        type: 'deposit',
+        amount,
+        frequency: parseNumber(els.quickContributionFrequency.value),
+        timing: els.quickContributionTiming.value,
+      }];
+    }
+
+    function updateBaselineMode() {
+      const mode = els.baselineMode.value;
+      const annual = getBaselineAnnual(mode, els.currency.value);
+      if (!Number.isFinite(annual)) {
+        els.annualRate.readOnly = false;
+        return;
+      }
+      els.annualRate.readOnly = true;
+      els.annualRate.value = annual.toFixed(2);
+    }
+
+    function syncEndMonthFromPreset() {
+      if (els.horizonYears.value === 'custom') {
+        els.timelineEnd.disabled = false;
+        return;
+      }
+      const computed = endMonthFromStartAndYears(els.timelineStart.value, els.horizonYears.value);
+      if (computed) {
+        els.timelineEnd.value = computed;
+        els.timelineEnd.disabled = true;
+      }
+    }
+
+    function createPhaseRow(values) {
+      const fragment = els.phaseTemplate.content.cloneNode(true);
+      const row = fragment.querySelector('.phase-row');
+      row.querySelector('[data-field="start"]').value = values.start;
+      row.querySelector('[data-field="end"]').value = values.end;
+      row.querySelector('[data-field="type"]').value = values.type;
+      row.querySelector('[data-field="amount"]').value = String(values.amount);
+      row.querySelector('[data-field="frequency"]').value = String(values.frequency);
+      row.querySelector('[data-field="timing"]').value = values.timing;
+      row.querySelector('.remove-phase').addEventListener('click', () => row.remove());
+      els.phaseList.appendChild(fragment);
+      applyLanguage();
+    }
+
+    function getPhaseRows() {
+      return Array.from(els.phaseList.querySelectorAll('.phase-row')).map((row, index) => ({
+        index,
+        start: row.querySelector('[data-field="start"]').value,
+        end: row.querySelector('[data-field="end"]').value,
+        type: row.querySelector('[data-field="type"]').value,
+        amount: parseNumber(row.querySelector('[data-field="amount"]').value),
+        frequency: parseNumber(row.querySelector('[data-field="frequency"]').value),
+        timing: row.querySelector('[data-field="timing"]').value,
+      }));
+    }
+
+    function validate(config) {
+      if (!Number.isFinite(config.principal) || config.principal < 0) return tr('errStartBal');
+      if (!Number.isFinite(config.annualRate) || config.annualRate <= -100 || config.annualRate > 100) return tr('errRate');
+      if (!config.start || !config.end) return tr('errMonths');
+      if (config.end.key < config.start.key) return tr('errOrder');
+      for (const phase of config.phases) {
+        const ps = parseMonth(phase.start);
+        const pe = parseMonth(phase.end);
+        if (!ps || !pe) return tr('errPhaseMonth', { i: phase.index + 1 });
+        if (pe.key < ps.key) return tr('errPhaseOrder', { i: phase.index + 1 });
+        if (!Number.isFinite(phase.amount) || phase.amount < 0) return tr('errPhaseAmount', { i: phase.index + 1 });
+        if (![1, 12].includes(phase.frequency)) return tr('errPhaseFreq', { i: phase.index + 1 });
+      }
+      return '';
+    }
+
+    function calculate(config) {
+      const totalMonths = config.end.key - config.start.key + 1;
+      const annualRateDecimal = config.annualRate / 100;
+      const monthlyRate = Math.pow(1 + annualRateDecimal / config.compoundFrequency, config.compoundFrequency / 12) - 1;
+      const effectiveAnnualRate = (Math.pow(1 + annualRateDecimal / config.compoundFrequency, config.compoundFrequency) - 1) * 100;
+
+      const phases = config.phases.map((phase) => {
+        const ps = parseMonth(phase.start);
+        const pe = parseMonth(phase.end);
+        return { ...phase, startKey: ps.key, endKey: pe.key, sign: phase.type === 'withdrawal' ? -1 : 1 };
+      });
+
+      let balance = config.principal;
+      let contributionsTotal = config.principal;
+      let depositsTotal = config.principal;
+      let withdrawalsTotal = 0;
+      let growthTotal = 0;
+      let yearlyNetFlow = 0;
+      let yearlyDeposits = 0;
+      let yearlyWithdrawals = 0;
+      let yearlyGrowth = 0;
+      let currentYear = config.start.year;
+      let bowlingPointYear = null;
+      const yearly = [];
+
+      for (let i = 0; i < totalMonths; i += 1) {
+        const monthKey = config.start.key + i;
+        const monthYear = Math.floor(monthKey / 12);
+        const active = phases.filter((phase) => monthKey >= phase.startKey && monthKey <= phase.endKey);
+
+        for (const phase of active) {
+          const offset = monthKey - phase.startKey;
+          if (!shouldApplyContribution(offset, phase.frequency) || phase.timing !== 'start') continue;
+          const delta = phase.amount * phase.sign;
+          balance += delta;
+          contributionsTotal += delta;
+          yearlyNetFlow += delta;
+          if (delta >= 0) {
+            yearlyDeposits += delta;
+            depositsTotal += delta;
+          } else {
+            yearlyWithdrawals += Math.abs(delta);
+            withdrawalsTotal += Math.abs(delta);
+          }
+        }
+
+        const growth = balance * monthlyRate;
+        balance += growth;
+        growthTotal += growth;
+        yearlyGrowth += growth;
+
+        for (const phase of active) {
+          const offset = monthKey - phase.startKey;
+          if (!shouldApplyContribution(offset, phase.frequency) || phase.timing !== 'end') continue;
+          const delta = phase.amount * phase.sign;
+          balance += delta;
+          contributionsTotal += delta;
+          yearlyNetFlow += delta;
+          if (delta >= 0) {
+            yearlyDeposits += delta;
+            depositsTotal += delta;
+          } else {
+            yearlyWithdrawals += Math.abs(delta);
+            withdrawalsTotal += Math.abs(delta);
+          }
+        }
+
+        const boundary = monthYear !== currentYear || i === totalMonths - 1;
+        if (boundary) {
+          const labelYear = monthYear !== currentYear ? currentYear : monthYear;
+          if (bowlingPointYear === null && yearlyDeposits > 0 && yearlyGrowth >= yearlyDeposits) {
+            bowlingPointYear = labelYear;
+          }
+          yearly.push({
+            year: labelYear,
+            netContributions: contributionsTotal,
+            growth: growthTotal,
+            balance,
+            yearlyNetFlow,
+            yearlyDeposits,
+            yearlyWithdrawals,
+            yearlyGrowth,
+          });
+          yearlyNetFlow = 0;
+          yearlyDeposits = 0;
+          yearlyWithdrawals = 0;
+          yearlyGrowth = 0;
+          currentYear = monthYear;
+        }
+      }
+
+      const ror = depositsTotal > 0 ? ((balance + withdrawalsTotal - depositsTotal) / depositsTotal) * 100 : 0;
+      return {
+        totalMonths,
+        balance,
+        contributionsTotal,
+        depositsTotal,
+        withdrawalsTotal,
+        growthTotal,
+        ror,
+        yearly,
+        bowlingPointYear,
+        nominalAnnualRate: config.annualRate,
+        effectiveAnnualRate,
+        monthlyEquivalentRate: monthlyRate * 100,
+        compoundingLabel: getCompoundingLabel(config.compoundFrequency),
+        contributionBasisLabel: getContributionBasisLabel(config),
+      };
+    }
+
+    function renderBar(result) {
+      els.barChart.innerHTML = '';
+      if (!result.yearly.length) return;
+      const normalized = result.yearly.map((d) => {
+        const deposits = Number.isFinite(d.yearlyDeposits) ? Math.max(d.yearlyDeposits, 0) : 0;
+        const growth = Number.isFinite(d.yearlyGrowth) ? Math.max(d.yearlyGrowth, 0) : 0;
+        return { deposits, growth };
+      });
+      const maxYearTotal = Math.max(...normalized.map((d) => d.deposits + d.growth), 1);
+      result.yearly.forEach((point, idx) => {
+        const item = document.createElement('div');
+        item.className = 'bar-item';
+
+        const yearLabel = document.createElement('p');
+        yearLabel.className = 'bar-year';
+        yearLabel.textContent = String(point.year);
+
+        const stack = document.createElement('div');
+        stack.className = 'bar-stack';
+        const contribHeight = Math.max((normalized[idx].deposits / maxYearTotal) * 100, normalized[idx].deposits > 0 ? 2 : 0);
+        const growthHeight = Math.max((normalized[idx].growth / maxYearTotal) * 100, normalized[idx].growth > 0 ? 2 : 0);
+
+        const contrib = document.createElement('div');
+        contrib.className = 'bar-contrib';
+        contrib.style.height = `${contribHeight}%`;
+        contrib.style.minHeight = '2px';
+
+        const growth = document.createElement('div');
+        growth.className = 'bar-growth';
+        growth.style.height = `${growthHeight}%`;
+        growth.style.minHeight = '2px';
+
+        if (contribHeight === 0 && growthHeight === 0) {
+          const zero = document.createElement('div');
+          zero.className = 'bar-zero';
+          stack.appendChild(zero);
+        }
+
+        stack.title = `${point.year}\n${tr('depositCol')}: ${toCurrency(point.yearlyDeposits, els.currency.value)}\n${tr('withdrawalCol')}: ${toCurrency(point.yearlyWithdrawals, els.currency.value)}\n${tr('netFlowCol')}: ${toCurrency(point.yearlyNetFlow, els.currency.value)}\n${tr('growthCol')}: ${toCurrency(point.yearlyGrowth, els.currency.value)}\n${tr('balanceCol')}: ${toCurrency(point.balance, els.currency.value)}`;
+
+        stack.appendChild(contrib);
+        stack.appendChild(growth);
+        item.appendChild(yearLabel);
+        item.appendChild(stack);
+        els.barChart.appendChild(item);
+      });
+
+      const existingHint = els.barChart.nextElementSibling;
+      if (existingHint && existingHint.classList.contains('chart-hint')) existingHint.remove();
+      const hint = document.createElement('p');
+      hint.className = 'chart-hint';
+      hint.setAttribute('data-i18n', 'hoverHint');
+      hint.textContent = tr('hoverHint');
+      els.barChart.after(hint);
+    }
+
+    function renderTable(result) {
+      els.breakdownBody.innerHTML = result.yearly.map((row, idx) => `
+        <tr>
+          <td>${row.year}</td>
+          <td>${toCurrency(row.yearlyDeposits, els.currency.value)}</td>
+          <td>${toCurrency(row.yearlyWithdrawals, els.currency.value)}</td>
+          <td>${toCurrency(row.yearlyNetFlow, els.currency.value)}</td>
+          <td>${toCurrency(row.yearlyGrowth, els.currency.value)}</td>
+          <td>${toCurrency(row.balance, els.currency.value)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function firstYearOver(result, threshold) {
+      const hit = result.yearly.find((d) => d.balance >= threshold);
+      if (!hit) return tr('notReached');
+      return `${hit.year}`;
+    }
+
+    function downloadCsv(result) {
+      if (!result || !result.yearly.length) return;
+      const rows = [
+        ['Year', 'Deposits', 'Withdrawals', 'NetFlow', 'Growth', 'Balance'],
+        ...result.yearly.map((row) => [row.year, row.yearlyDeposits.toFixed(2), row.yearlyWithdrawals.toFixed(2), row.yearlyNetFlow.toFixed(2), row.yearlyGrowth.toFixed(2), row.balance.toFixed(2)]),
+      ];
+      const csv = rows.map((r) => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'compound-interest-breakdown.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function renderMilestones(result) {
+      const items = [
+        { label: '100k', value: firstYearOver(result, 100000) },
+        { label: '500k', value: firstYearOver(result, 500000) },
+        { label: '1M', value: firstYearOver(result, 1000000) },
+      ];
+      els.milestoneGrid.innerHTML = items.map((item) => `
+        <article class="milestone-card">
+          <p>${item.label}</p>
+          <h4>${item.value}</h4>
+        </article>
+      `).join('');
+    }
+
+    function setViewMode() {
+      const mode = els.viewMode.value;
+      els.viewBar.hidden = mode !== 'bar';
+      els.viewTable.hidden = mode !== 'table';
+      els.viewMilestones.hidden = mode !== 'milestones';
+    }
+
+    function render(result) {
+      els.endingBalance.textContent = toCurrency(result.balance, els.currency.value);
+      els.totalContributions.textContent = toCurrency(result.contributionsTotal, els.currency.value);
+      els.totalDeposits.textContent = toCurrency(result.depositsTotal, els.currency.value);
+      els.totalWithdrawals.textContent = toCurrency(result.withdrawalsTotal, els.currency.value);
+      els.interestEarned.textContent = toCurrency(result.growthTotal, els.currency.value);
+      els.rorValue.textContent = toPercent(result.ror);
+      els.periodCount.textContent = String(result.totalMonths);
+      els.bowlingPoint.textContent = result.bowlingPointYear ? `${result.bowlingPointYear}` : tr('notReached');
+      els.mathNominalRate.textContent = toPercent(result.nominalAnnualRate);
+      els.mathEffectiveRate.textContent = toPercent(result.effectiveAnnualRate);
+      els.mathMonthlyRate.textContent = toPercent(result.monthlyEquivalentRate);
+      els.mathCompoundingBasis.textContent = result.compoundingLabel;
+      els.mathContributionBasis.textContent = result.contributionBasisLabel;
+
+      renderBar(result);
+      renderTable(result);
+      renderMilestones(result);
+      lastResult = result;
+    }
+
+    function runCalculation() {
+      syncEndMonthFromPreset();
+      const isAdvanced = els.plannerMode.value === 'advanced';
+      const config = {
+        isAdvanced,
+        principal: parseNumber(els.principal.value),
+        annualRate: parseNumber(els.annualRate.value),
+        compoundFrequency: parseNumber(isAdvanced ? els.compoundFrequency.value : '12'),
+        start: parseMonth(els.timelineStart.value),
+        end: parseMonth(els.timelineEnd.value),
+        quickContributionFrequency: parseNumber(els.quickContributionFrequency.value),
+        quickContributionTiming: els.quickContributionTiming.value,
+        phases: isAdvanced ? getPhaseRows() : getQuickModePhases(),
+      };
+
+      const error = validate(config);
+      if (error) {
+        els.error.textContent = error;
+        return;
+      }
+      els.error.textContent = '';
+      const result = calculate(config);
+      render(result);
+      setViewMode();
+    }
+
+    els.lang.addEventListener('change', () => {
+      currentLang = els.lang.value === 'en' ? 'en' : 'no';
+      applyLanguage();
+      runCalculation();
+    });
+
+    els.baselineMode.addEventListener('change', () => {
+      updateBaselineMode();
+      runCalculation();
+    });
+
+    els.currency.addEventListener('change', () => {
+      updateBaselineMode();
+      applyLanguage();
+      runCalculation();
+    });
+
+    els.plannerMode.addEventListener('change', () => {
+      setAdvancedVisibility(els.plannerMode.value === 'advanced');
+      runCalculation();
+    });
+
+    els.annualRate.addEventListener('input', () => {
+      if (els.baselineMode.value !== 'custom') {
+        els.baselineMode.value = 'custom';
+        updateBaselineMode();
+      }
+    });
+
+    els.horizonYears.addEventListener('change', () => {
+      syncEndMonthFromPreset();
+      runCalculation();
+    });
+
+    els.timelineStart.addEventListener('change', () => {
+      syncEndMonthFromPreset();
+      runCalculation();
+    });
+
+    els.timelineEnd.addEventListener('change', () => {
+      if (els.horizonYears.value !== 'custom') {
+        els.horizonYears.value = 'custom';
+      }
+      syncEndMonthFromPreset();
+      runCalculation();
+    });
+
+    els.viewMode.addEventListener('change', setViewMode);
+
+    els.downloadCsv.addEventListener('click', () => {
+      downloadCsv(lastResult);
+    });
+
+    els.addPhase.addEventListener('click', () => {
+      createPhaseRow({
+        start: els.timelineStart.value,
+        end: els.timelineEnd.value,
+        type: 'deposit',
+        amount: 100,
+        frequency: 12,
+        timing: 'end',
+      });
+    });
+
+    els.form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      runCalculation();
+    });
+
+    createPhaseRow({ start: '2016-01', end: '2019-12', type: 'deposit', amount: 100, frequency: 12, timing: 'end' });
+    createPhaseRow({ start: '2020-01', end: '2025-12', type: 'deposit', amount: 1000, frequency: 12, timing: 'end' });
+
+    updateBaselineMode();
+    setAdvancedVisibility(false);
+    syncEndMonthFromPreset();
+    applyLanguage();
+    runCalculation();
+  </script>
+</BaseLayout>
+
+<style>
+  .calc-hero {
+    border: 1px solid var(--border);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-2) 86%, transparent));
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 2.2vw, 1.8rem);
+    margin-bottom: 1rem;
+  }
+
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .language-switch {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    font-family: var(--font-display);
+    color: var(--muted);
+  }
+
+  .language-switch select {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--surface-2) 82%, transparent);
+    color: var(--text);
+    padding: 0.35rem 0.5rem;
+    font: inherit;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: minmax(340px, 480px) 1fr;
+    gap: 1rem;
+  }
+
+  .panel {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+  }
+
+  .calc-form { display: grid; gap: 0.82rem; }
+
+  .mode-note {
+    margin: -0.18rem 0 0;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-family: var(--font-display);
+  }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+  .row-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; }
+
+  .calc-form label,
+  .calc-form legend {
+    font-family: var(--font-display);
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .calc-form input,
+  .calc-form select,
+  .run-btn,
+  .ghost-btn {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    background: color-mix(in srgb, var(--surface-2) 80%, transparent);
+    padding: 0.56rem 0.68rem;
+    margin-top: 0.3rem;
+    font: inherit;
+  }
+
+  .calc-form input:focus-visible,
+  .calc-form select:focus-visible,
+  .run-btn:focus-visible,
+  .ghost-btn:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .input-wrap { position: relative; }
+  .input-wrap span {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+  }
+  .input-wrap input { padding-right: 1.45rem; }
+
+  fieldset {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.72rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .baseline-info {
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    margin-top: 0.4rem;
+  }
+
+  .baseline-info summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.82rem;
+    user-select: none;
+  }
+
+  .baseline-info summary:hover {
+    color: var(--accent);
+  }
+
+  .baseline-info .info-body {
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .baseline-info .info-body p {
+    margin: 0.35rem 0;
+  }
+
+  .baseline-info .info-body strong {
+    color: var(--text);
+    font-family: var(--font-display);
+  }
+
+  .baseline-currency-note {
+    margin-top: 0.55rem;
+    padding-top: 0.55rem;
+    border-top: 1px dashed var(--border);
+    color: var(--muted);
+    font-size: 0.76rem;
+  }
+
+  .phase-list {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .phase-row {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    padding: 0.55rem;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) auto;
+    gap: 0.45rem;
+    align-items: end;
+  }
+
+  .remove-phase { margin-top: 1.45rem; }
+
+  .run-btn,
+  .ghost-btn { cursor: pointer; }
+  .run-btn {
+    background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 38%, transparent), color-mix(in srgb, var(--accent-2) 28%, transparent));
+    font-weight: 700;
+  }
+
+  .form-error {
+    margin: 0;
+    min-height: 1rem;
+    color: color-mix(in srgb, #b42318 75%, var(--text));
+    font-size: 0.82rem;
+  }
+
+  .output-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .output-controls {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: end;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .inline-btn {
+    width: auto;
+    margin-top: 0;
+    padding-inline: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .math-basis {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.72rem;
+    margin-bottom: 0.82rem;
+    background: color-mix(in srgb, var(--surface) 93%, transparent);
+  }
+
+  .math-basis h3 {
+    margin: 0 0 0.55rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-family: var(--font-display);
+  }
+
+  .math-basis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .math-label {
+    margin: 0;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .math-value {
+    margin: 0.2rem 0 0;
+    font-size: 0.9rem;
+    font-family: var(--font-display);
+  }
+
+  .metric {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.62rem;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 90%, transparent), color-mix(in srgb, var(--surface-2) 80%, transparent));
+  }
+
+  .metric-label {
+    margin: 0;
+    font-size: 0.74rem;
+    font-family: var(--font-display);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .metric-value {
+    margin: 0.26rem 0 0;
+    font-size: clamp(0.95rem, 1.8vw, 1.22rem);
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  .chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .legend {
+    margin: 0;
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .chip {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.16rem 0.48rem;
+    font-size: 0.72rem;
+    font-family: var(--font-display);
+  }
+
+  .chip-contrib {
+    color: #3b82f6;
+    background: rgba(30, 58, 138, 0.12);
+    border-color: rgba(30, 58, 138, 0.3);
+  }
+  .chip-growth {
+    color: #14b8a6;
+    background: rgba(15, 118, 110, 0.12);
+    border-color: rgba(15, 118, 110, 0.3);
+  }
+
+  .bar-chart {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--surface) 95%, transparent);
+    min-height: 280px;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 0.85rem 0.75rem 0.65rem;
+    overflow-x: auto;
+  }
+
+  .bar-item {
+    min-width: 52px;
+    display: grid;
+    gap: 0.35rem;
+    justify-items: center;
+  }
+
+  .bar-year {
+    margin: 0;
+    font-size: 0.7rem;
+    line-height: 1;
+    color: var(--muted);
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+  }
+
+  .bar-stack {
+    width: 32px;
+    height: 230px;
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    border: 1px solid rgba(30, 58, 138, 0.16);
+    background: linear-gradient(180deg, rgba(30, 58, 138, 0.05), rgba(15, 118, 110, 0.05));
+    cursor: help;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .bar-contrib {
+    background: linear-gradient(180deg, #1e3a8a, #3b82f6);
+  }
+
+  .bar-growth {
+    background: linear-gradient(180deg, #0f766e, #2dd4bf);
+  }
+
+  .bar-zero {
+    height: 2px;
+    width: 100%;
+    background: color-mix(in srgb, var(--muted) 65%, transparent);
+  }
+
+  .chart-hint {
+    margin: 0.45rem 0 0;
+    font-size: 0.74rem;
+    color: var(--muted);
+    text-align: center;
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+
+  .table-wrap {
+    overflow: auto;
+    max-height: min(52vh, 420px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 460px;
+  }
+
+  th,
+  td {
+    text-align: right;
+    padding: 0.46rem 0.55rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    background: color-mix(in srgb, var(--surface) 95%, transparent);
+    color: var(--muted);
+    font-family: var(--font-display);
+  }
+
+  th:first-child,
+  td:first-child { text-align: left; }
+
+  .milestone-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .milestone-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.8rem;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+  }
+
+  .milestone-card p { margin: 0; color: var(--muted); font-size: 0.8rem; }
+  .milestone-card h4 { margin: 0.35rem 0 0; font-family: var(--font-display); font-size: 1.08rem; }
+
+  @media (max-width: 1180px) {
+    .phase-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .remove-phase { margin-top: 0.3rem; }
+  }
+
+  @media (max-width: 980px) {
+    .calc-grid { grid-template-columns: 1fr; }
+    .metric-grid,
+    .milestone-grid,
+    .math-basis-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bar-item { min-width: 44px; }
+    .bar-stack { width: 28px; }
+  }
+
+  @media (max-width: 700px) {
+    .row-2,
+    .row-3,
+    .metric-grid,
+    .milestone-grid,
+    .math-basis-grid,
+    .phase-row { grid-template-columns: 1fr; }
+
+    .chart-head {
+      align-items: flex-start;
+    }
+
+    .output-controls {
+      justify-content: flex-start;
+    }
+
+    .legend {
+      justify-content: flex-start;
+    }
+
+    .bar-chart {
+      gap: 0.35rem;
+      padding-inline: 0.55rem;
+    }
+
+    .bar-item {
+      min-width: 40px;
+    }
+
+    .bar-stack {
+      width: 24px;
+    }
+  }
+</style>

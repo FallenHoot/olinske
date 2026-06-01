@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HorizontalHero from '../components/HorizontalHero.astro';
+import GlobeJourney from '../components/GlobeJourney.astro';
+import { getCollection } from 'astro:content';
+
+// ── The three anchors ──────────────────────────────────────────────
+const img_farm = '/images/1_wisconsin-farm.jpg';         // Origin: Wisconsin farm
+const img_oslo = '/images/7_oslo-skyline.jpg';           // Destination: Oslo skyline
+
+// ── The voyage montage (transition images between farm and Oslo) ──
+const voyage = [
+  '/images/2_1500s-colonial-ship.jpg',    // Colonial ship
+  '/images/3_1700s-sailing-ships.jpg',    // Sailing warship sketch
+  '/images/4_1800s-clipper-ship.jpg',     // Clipper under full sail
+  '/images/5_1900s-steamship.jpg',        // Steamship with gold funnels
+  '/images/6_2014-sas-flight.jpg',        // SAS 737 to Norway
+];
+
+const posts = (
+  await getCollection('posts', ({ data }) =>
+    data.status === 'published' || data.status === 'scheduled'
+  )
+)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 3)
+  .map((post) => ({
+    title: post.data.title,
+    description: post.data.description,
+    href: `/posts/${post.id.replace(/\.md$/, '')}/`
+  }));
+---
+
+<BaseLayout title="Olinske | Signal Over Hype">
+  <HorizontalHero
+    img_farm={img_farm}
+    img_oslo={img_oslo}
+    voyage={voyage}
+    cards={posts}
+  />
+  <GlobeJourney />
+</BaseLayout>

@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-06-01T19:52:44.179Z",
+  "output": "public-repo",
+  "publishedCount": 11,
+  "publishedFiles": [
+    "content/published/000001-welcome.md",
+    "content/published/000002-blogging-again-with-ai-in-the-loop.md",
+    "content/published/000003-ai-agent-governance-framework.md",
+    "content/published/000004-ptu-vs-tpm-azure-ai-foundry.md",
+    "content/published/000005-multi-agent-solutions-architecture.md",
+    "content/published/000006-bcdr-azure-storage-patterns.md",
+    "content/published/000007-finops-azure-data-explorer.md",
+    "content/published/000008-architecture-decision-records-cto.md",
+    "content/published/000009-ai-foundry-container-apps-a2a.md",
+    "content/published/000010-bcdr-for-aks-what-fails-and-what-does-not.md",
+    "content/published/000037-ani-agi-asi-access-model-risk.md"
+  ]
+}

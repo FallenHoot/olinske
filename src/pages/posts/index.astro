@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (
+  await getCollection('posts', ({ data }) =>
+    data.status === 'published' || data.status === 'scheduled'
+  )
+).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+// Category filter from URL param (resolved at build time for static, client-side for dynamic)
+const category = Astro.url.searchParams.get('category') ?? '';
+const categoryKeyword = category.replace(/-/g, ' ');
+
+const posts = category
+  ? allPosts.filter((p) =>
+      (p.data.tags ?? []).some((t) =>
+        t.toLowerCase().includes(categoryKeyword) || categoryKeyword.includes(t.toLowerCase())
+      )
+    )
+  : allPosts;
+
+const estimateReadTime = (body?: string) => {
+  const words = (body ?? '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 220));
+};
+
+const activeLabel = category
+  ? categoryKeyword.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+  : 'All Topics';
+---
+
+<BaseLayout title="Articles | Olinske" description="Technical architecture, AI strategy, and cloud leadership essays.">
+  <main class="container site-shell">
+
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">{activeLabel}</p>
+      <h1 class="hero-title">Technical<br>Articles</h1>
+      <p class="hero-subtitle">
+        {category
+          ? `Filtered to ${activeLabel}. ${posts.length} post${posts.length !== 1 ? 's' : ''} found.`
+          : 'Engineering notes, cloud architecture patterns, and AI operating guidance.'}
+      </p>
+      {category && <a class="btn-link" href="/posts/" style="margin-top:0.75rem;display:inline-block;">Clear filter ✕</a>}
+    </section>
+
+    <section aria-label="Post grid" class="v-grid">
+      {
+        posts.length === 0 ? (
+          <a class="v-card" href="#">
+            <div class="v-card-thumb" aria-hidden="true"></div>
+            <div class="v-card-body">
+              <p class="v-card-meta">
+                <span>REGION: —</span>
+                <span>READ: —</span>
+              </p>
+              <h3>No published posts yet.</h3>
+              <p>Run the editorial workflow to publish your first entry.</p>
+            </div>
+          </a>
+        ) : (
+          posts.map((post) => (
+            <a
+              class="v-card scroll-reveal"
+              href={`/posts/${post.id.replace(/\.md$/, '')}/`}
+            >
+              <div class="v-card-thumb" aria-hidden="true"></div>
+              <div class="v-card-body">
+                <p class="v-card-meta">
+                  <span>{post.data.publishDate.toISOString().slice(0, 10)}</span>
+                  <span>READ: {estimateReadTime(post.body)} MIN</span>
+                </p>
+                <div class="tag-row">
+                  {(post.data.tags ?? []).slice(0, 3).map((tag) => (
+                    <span class="tag-chip">{tag}</span>
+                  ))}
+                </div>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+              </div>
+            </a>
+          ))
+        )
+      }
+    </section>
+
+  </main>
+
+  <!-- Scroll-reveal via IntersectionObserver — no external dep needed -->
+  <script>
+    const items = Array.from(document.querySelectorAll<HTMLElement>('.scroll-reveal'));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    items.forEach((el, i) => {
+      // Stagger each card's transition delay
+      (el as HTMLElement).style.transitionDelay = `${i * 55}ms`;
+      observer.observe(el);
+    });
+  </script>
+</BaseLayout>

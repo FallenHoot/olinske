@@ -1,0 +1,1178 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="NEK 400 Kursfortegnelse | Olinske"
+  description="NEK 400-oriented kursfortegnelse builder with common circuit presets, local test examples, and core Ib/In/Iz validation."
+>
+  <main class="sheet-only-shell">
+    <section class="toolbar-card">
+      <div class="toolbar-row">
+        <label class="toolbar-field">
+          <span>Example</span>
+          <select id="example-select">
+            <option value="">Choose example</option>
+          </select>
+        </label>
+        <label class="toolbar-field">
+          <span>Sheet mode</span>
+          <select id="sheet-mode">
+            <option value="basic">Basic</option>
+            <option value="advanced">Advanced (DSB-style)</option>
+          </select>
+        </label>
+        <label class="toolbar-field">
+          <span>Long text</span>
+          <select id="description-flow">
+            <option value="continue-row">Continue row (blank NR)</option>
+            <option value="wrap">Wrap in same row</option>
+            <option value="truncate">Truncate with ellipsis</option>
+          </select>
+        </label>
+        <div class="toolbar-actions">
+          <button id="load-example" type="button">Load example</button>
+          <button id="add-row" type="button">Add row</button>
+          <button id="reset-sheet" type="button">Reset</button>
+          <button id="download-sheet" type="button">Download Sheet</button>
+          <button id="print-sheet" type="button" class="accent">Print</button>
+        </div>
+      </div>
+      <p id="save-status" class="status-line" aria-live="polite">Local autosave ready.</p>
+    </section>
+
+    <section class="editor-card">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Header</p>
+          <h2>Project details</h2>
+        </div>
+      </div>
+      <div id="meta-grid" class="meta-grid"></div>
+    </section>
+
+    <section class="editor-card">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Circuits</p>
+          <h2>Kurs rows</h2>
+          <p id="row-summary" class="status-line">Rows: 0</p>
+        </div>
+        <p id="validation-summary" class="status-line">No active findings.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="editor-table">
+          <thead>
+            <tr id="table-head"></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <ul id="validation-list" class="validation-list"></ul>
+    </section>
+
+  </main>
+
+  <article id="sheet-frame" class="print-sheet-host" aria-hidden="true"></article>
+
+  <script>
+    const STORAGE_KEY = 'circuit-sheet-nek400-v1';
+    const ROW_COUNT = 24;
+    const metaFields = [
+      { key: 'projectName', label: 'Project', placeholder: 'Apartment renovation' },
+      { key: 'boardName', label: 'Board / Fordeling', placeholder: 'UF-1' },
+      { key: 'projectAddress', label: 'Address', placeholder: 'Storgata 14, Oslo' },
+      { key: 'installer', label: 'Installer / Firma', placeholder: 'Nord Elektro AS' },
+      { key: 'installerPhone', label: 'Phone', placeholder: '+47 21 00 00 00' },
+      { key: 'customer', label: 'Customer', placeholder: 'Customer name' },
+      { key: 'customerNumber', label: 'Customer number', placeholder: '10451' },
+      { key: 'workOrder', label: 'Order / Ref', placeholder: 'WO-260524' },
+      { key: 'supply', label: 'Supply', placeholder: '230 V IT / 400 V TN' },
+      { key: 'location', label: 'Location', placeholder: 'Entry cabinet' },
+      { key: 'contactPerson', label: 'Kontaktperson', placeholder: 'Navn', advanced: true },
+      { key: 'installerAddress', label: 'Installator adresse', placeholder: 'Firmaadresse', advanced: true },
+      { key: 'postPlace', label: 'Postnr/sted', placeholder: '0123 Oslo', advanced: true },
+      { key: 'malerNr', label: 'Maler nr.', placeholder: 'Maler / malernr.', advanced: true },
+      { key: 'anleggsFirma', label: 'Anleggsadresse firmanavn', placeholder: 'Firmanavn', advanced: true },
+      { key: 'anleggsAdresse', label: 'Anleggsadresse gate', placeholder: 'Adresse', advanced: true },
+      { key: 'husNr', label: 'Hus nr', placeholder: '12', advanced: true },
+      { key: 'bokstav', label: 'Bokstav', placeholder: 'A', advanced: true },
+      { key: 'ssbNummer', label: 'SSB-nummer', placeholder: 'SSB-nummer', advanced: true },
+      { key: 'ikMax', label: 'Ik maks [kA]', placeholder: '6', advanced: true },
+      { key: 'ikMin', label: 'Ik min [kA]', placeholder: '1.5', advanced: true },
+      { key: 'ijMin', label: 'Ij min [kA]', placeholder: '0.8', advanced: true },
+      { key: 'kortslutningKilde', label: 'Kortslutningsverdier', placeholder: 'Malt / Oppgitt / Beregnet', advanced: true },
+      { key: 'systemspenning', label: 'Systemspenning [V]', placeholder: '230', advanced: true },
+      { key: 'fordelingssystem', label: 'Fordelingssystem', placeholder: 'IT / TN', advanced: true },
+      { key: 'jordelektrode', label: 'Type jordelektrode', placeholder: 'Ringjord / Fundamentjord', advanced: true },
+      { key: 'tilforsel', label: 'Tilforsel [mm2]', placeholder: '16', advanced: true },
+      { key: 'notes', label: 'Header notes', placeholder: 'Spesielle forhold', advanced: true },
+    ];
+
+    const presetOptions = [
+      { value: '', label: 'Custom entry' },
+      { value: 'platetopp', label: 'Platetopp', description: 'Platetopp', phase: 'L1+L2', ratingA: '25', ib: '20', iz: '32', cable: '4', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'kjokken', label: 'Kjokken', description: 'Kjokken stikk', phase: 'L1+L2', ratingA: '16', ib: '11', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'stekeovn', label: 'Stekeovn', description: 'Stekeovn', phase: 'L2+L3', ratingA: '16', ib: '10', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'oppvaskmaskin', label: 'Oppvaskmaskin', description: 'Oppvaskmaskin', phase: 'L1+L3', ratingA: '16', ib: '10', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'kjoleskap-fryser', label: 'Kjoleskap/fryser', description: 'Kjoleskap og fryser', phase: 'L1+L2', ratingA: '16', ib: '6', iz: '20', cable: '2.5', method: 'Method C', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'kjokken-vifte', label: 'Kjokkenvifte', description: 'Kjokkenventilator', phase: 'L2+L3', ratingA: '10', ib: '3', iz: '13', cable: '1.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'soverom', label: 'Soverom', description: 'Soverom stikk', phase: 'L1+L2', ratingA: '16', ib: '8', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'stue', label: 'Stue', description: 'Stue stikk', phase: 'L2+L3', ratingA: '16', ib: '10', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'varmepumpe', label: 'Varmepumpe', description: 'Varmepumpe', phase: 'L1+L3', ratingA: '16', ib: '12', iz: '20', cable: '2.5', method: 'Method C', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'bad', label: 'Bad', description: 'Bad stikk og lys', phase: 'L1+L2', ratingA: '16', ib: '9', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'vk-bad', label: 'VK-Bad', description: 'Varmekabel bad', phase: 'L2+L3', ratingA: '16', ib: '12', iz: '20', cable: '2.5', method: 'Method A', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'vask-tork', label: 'Vask/Tork', description: 'Vaskemaskin og torketrommel', phase: 'L1+L3', ratingA: '16', ib: '13', iz: '20', cable: '2.5', method: 'Method C', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'vk-vaskerom', label: 'VK Vaskerom', description: 'Varmekabel vaskerom', phase: 'L1+L2', ratingA: '16', ib: '11', iz: '20', cable: '2.5', method: 'Method A', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'vvb', label: 'VVB', description: 'Varmtvannsbereder', phase: 'L2+L3', ratingA: '16', ib: '10', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'vk-gang', label: 'VK-Gang', description: 'Varmekabel gang', phase: 'L1+L3', ratingA: '16', ib: '10', iz: '20', cable: '2.5', method: 'Method A', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'lys', label: 'Lys', description: 'Lys', phase: 'L1+L2', ratingA: '10', ib: '4', iz: '13', cable: '1.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'stikk', label: 'Stikk', description: 'Stikk', phase: 'L2+L3', ratingA: '16', ib: '8', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'lys-stikk', label: 'Lys + stikk', description: 'Lys og stikk', phase: 'L1+L3', ratingA: '16', ib: '10', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'utestikk', label: 'Utestikk', description: 'Utestikk', phase: 'L1+L2', ratingA: '16', ib: '8', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'elbil-lader', label: 'EL-Bil lader', description: 'EL-Bil lader', phase: 'L1+N', ratingA: '32', ib: '28', iz: '40', cable: '6', method: 'Method C', curve: 'C', poles: '2', rcd: 'Type B', status: 'Active' },
+      { value: 'gang', label: 'Gang', description: 'Gang stikk og lys', phase: 'L2+L3', ratingA: '16', ib: '7', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'bod', label: 'Bod', description: 'Bod lys og stikk', phase: 'L1+L3', ratingA: '10', ib: '4', iz: '13', cable: '1.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'teknisk-rom', label: 'Teknisk rom', description: 'Teknisk rom', phase: 'L1+L2', ratingA: '16', ib: '9', iz: '20', cable: '2.5', method: 'Method C', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'ute-belysning', label: 'Utebelysning', description: 'Utebelysning', phase: 'L2+L3', ratingA: '10', ib: '3', iz: '13', cable: '1.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'garasje', label: 'Garasje', description: 'Garasje stikk og lys', phase: 'L1+L3', ratingA: '16', ib: '9', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'fryser-bod', label: 'Fryser i bod', description: 'Fryser i bod', phase: 'L1+L2', ratingA: '10', ib: '3', iz: '13', cable: '1.5', method: 'Method C', curve: 'C', poles: '2', rcd: '30 mA', status: 'Active' },
+      { value: 'spare', label: 'Spare breaker', description: 'SPARE', status: 'Spare' },
+    ];
+
+    const columns = [
+      { key: 'circuit', label: 'Kurs', readonly: true, width: '5ch' },
+      { key: 'preset', label: 'Common load', type: 'select', options: presetOptions, width: '16ch', editorOnly: true },
+      { key: 'description', label: 'Lastbeskrivelse / utstyr', width: '18ch' },
+      { key: 'status', label: 'Status', type: 'select', options: [{ value: '', label: 'Active' }, { value: 'Active', label: 'Active' }, { value: 'Spare', label: 'Spare' }], width: '8ch' },
+      { key: 'ratingA', label: 'In [A]', width: '7ch' },
+      { key: 'ib', label: 'Ib [A]', width: '7ch' },
+      { key: 'iz', label: 'Iz [A]', width: '7ch' },
+      { key: 'length', label: 'Lengde [m]', width: '9ch' },
+      { key: 'cable', label: 'S [mm2]', width: '7ch' },
+      { key: 'method', label: 'MÅTE', width: '12ch' },
+      { key: 'curve', label: 'Kar.', type: 'select', options: [{ value: '', label: 'Choose' }, { value: 'B', label: 'B' }, { value: 'C', label: 'C' }], width: '7ch' },
+      { key: 'poles', label: 'Pol', width: '5ch' },
+      { key: 'rcd', label: 'JFB', width: '8ch' },
+      { key: 'remarks', label: 'Merknad', width: '14ch' },
+    ];
+
+    const examples = [
+      {
+        value: 'apartment',
+        label: 'Apartment board example',
+        mode: 'basic',
+        meta: {
+          projectName: 'Apartment renovation',
+          boardName: 'UF-1',
+          projectAddress: 'Storgata 14, Oslo',
+          installer: 'Nord Elektro AS',
+          installerPhone: '+47 21 00 00 00',
+          customer: 'Zach Olinske',
+          customerNumber: '10451',
+          workOrder: 'WO-260524',
+          supply: '230 V IT',
+          location: 'Entry cabinet',
+        },
+        rows: [
+          { preset: 'kitchen', description: 'Kitchen outlets north wall', status: 'Active', phase: 'L1+L2', ratingA: '16', ib: '11', iz: '20', cable: '2.5', method: 'Method C', curve: 'B', poles: '2', rcd: '30 mA', remarks: '' },
+          { preset: 'heat-pump', description: 'Heat pump outdoor unit', status: 'Active', phase: 'L2+L3', ratingA: '16', ib: '12', iz: '20', cable: '2.5', method: 'Method C', curve: 'C', poles: '2', rcd: '30 mA', remarks: '' },
+          { preset: 'spare', description: 'SPARE', status: 'Spare' },
+        ],
+      },
+      {
+        value: 'garage',
+        label: 'Garage / EV example',
+        mode: 'advanced',
+        meta: {
+          projectName: 'Detached garage',
+          boardName: 'GAR-1',
+          projectAddress: 'Kongsbergveien 8',
+          installer: 'Vest Elektro',
+          installerPhone: '+47 32 10 10 10',
+          customer: 'Example customer',
+          customerNumber: '22011',
+          workOrder: 'GAR-009',
+          supply: '400 V TN',
+          location: 'Garage board',
+          contactPerson: 'Serviceleder',
+          installerAddress: 'Drammen Elektropark 2',
+          postPlace: '3044 Drammen',
+          malerNr: 'M-102',
+          anleggsFirma: 'Privat bolig',
+          anleggsAdresse: 'Kongsbergveien 8',
+          husNr: '8',
+          bokstav: '',
+          ssbNummer: '0301',
+          ikMax: '6',
+          ikMin: '1.5',
+          ijMin: '0.9',
+          kortslutningKilde: 'Beregnet',
+          systemspenning: '400',
+          fordelingssystem: 'TN',
+          jordelektrode: 'Fundamentjord',
+          tilforsel: '16',
+          notes: 'Avansert eksempel basert pa DSB-inspirert layout',
+        },
+        rows: [
+          { preset: 'ev', description: 'EV charger garage wall', status: 'Active', phase: 'L1+N', ratingA: '32', ib: '28', iz: '40', cable: '6', method: 'Method C', curve: 'C', poles: '2', rcd: 'Type B', remarks: '' },
+          { preset: 'spare', description: 'SPARE', status: 'Spare' },
+        ],
+      },
+      {
+        value: 'my-house',
+        label: 'My House',
+        mode: 'basic',
+        meta: {
+          projectName: 'My House',
+          boardName: 'HUS-1',
+          projectAddress: 'Lokal testadresse',
+          installer: '',
+          installerPhone: '',
+          customer: 'Zach Olinske',
+          customerNumber: '',
+          workOrder: 'LOCAL-TEST',
+          supply: '3 (16 mm2) x 230 V, 50 Hz (Aidon 6525)',
+          location: 'Hovedfordeling / sikringsskap',
+        },
+        rows: [
+          { preset: '', description: 'Hovedbryter + overspenningsvern SPCT2', status: 'Active', phase: 'L1+L2+L3', ratingA: '50', ib: '45', iz: '80', length: '', cable: '16', method: '', curve: '', poles: '3', rcd: '', remarks: 'OV + SPD' },
+          { preset: 'platetopp', description: 'Platetopp - 2. etg', status: 'Active', phase: 'L1+L2', ratingA: '25', ib: '20', iz: '32', length: '15', cable: '4', method: 'TFXP', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: '', description: 'Kjøkken/Kjøleskap/Lys/Stikk - 2. etg', status: 'Active', phase: 'L2+L3', ratingA: '16', ib: '11', iz: '20', length: '20', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'stekeovn', description: 'Stekeovn/Komfyr - 2. etg', status: 'Active', phase: 'L1+L3', ratingA: '16', ib: '12', iz: '20', length: '15', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: '', description: 'Soverom vest/Lys/Stikk - 2. etg', status: 'Active', phase: 'L1+L2', ratingA: '16', ib: '10', iz: '20', length: '20', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'stue', description: 'Stue/Lys/Stikk - 2. etg', status: 'Active', phase: 'L2+L3', ratingA: '16', ib: '10', iz: '20', length: '30', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'varmepumpe', description: 'Varmepumpe/Utestikk sør', status: 'Active', phase: 'L1+L3', ratingA: '16', ib: '12', iz: '20', length: '10', cable: '2.5', method: 'PFXP', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: '', description: 'Hovedsoverom/Lys/Stikk - 2. etg', status: 'Active', phase: 'L1+L2', ratingA: '16', ib: '10', iz: '20', length: '15', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'teknisk-rom', description: 'Teknisk rom/Router/Internett/IoT - 1. etg', status: 'Active', phase: 'L2+L3', ratingA: '13', ib: '8', iz: '20', length: '10', cable: '2.5', method: '', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: '', description: '', status: '', phase: '', ratingA: '', ib: '', iz: '', cable: '', method: '', curve: '', poles: '', rcd: '', remarks: '' },
+          { preset: '', description: '', status: '', phase: '', ratingA: '', ib: '', iz: '', cable: '', method: '', curve: '', poles: '', rcd: '', remarks: '' },
+          { preset: 'bad', description: 'Bad/Lys/Stikk - 1. etg', status: 'Active', phase: 'L1+L2', ratingA: '16', ib: '10', iz: '20', length: '20', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'vk-bad', description: 'VK-Bad (varmekabler) - 1. etg', status: 'Active', phase: 'L2+L3', ratingA: '16', ib: '7', iz: '20', length: '15', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'vask-tork', description: 'Vask/Tørk vaskerom (vaskemaskin/tørketrommel) - 1. etg', status: 'Active', phase: 'L1+L3', ratingA: '16', ib: '15', iz: '32', length: '15', cable: '4', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'vk-vaskerom', description: 'VK vaskerom - 1. etg', status: 'Active', phase: 'L1+L2', ratingA: '16', ib: '7', iz: '20', length: '10', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'vvb', description: 'VVB (varmtvannsbereder) - 1. etg', status: 'Active', phase: 'L2+L3', ratingA: '16', ib: '10', iz: '20', length: '10', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'vk-gang', description: 'VK-Gang/Lys/Stikk - 1. etg', status: 'Active', phase: 'L1+L3', ratingA: '16', ib: '10', iz: '20', length: '10', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: '', description: 'VK Entré/Lys, gang lys, teknisk rom lys/stikk, bod lys/stikk, soverom sør stikk - 1. etg', status: 'Active', phase: 'L1+L2', ratingA: '16', ib: '8', iz: '20', length: '30', cable: '2.5', method: 'K-Ror 16/PN 3G2,5', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: '', description: 'Eldre elektrisk anlegg - garasje/soverom sør/lys/stikk - 1. etg', status: 'Active', phase: 'L2+L3', ratingA: '13', ib: '9', iz: '20', length: 'Ukjent', cable: '2.5', method: '', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'utestikk', description: 'Utestikk øst - dørklokke', status: 'Active', phase: 'L1+L3', ratingA: '16', ib: '6', iz: '20', length: '5', cable: '2.5', method: 'PFXP', curve: 'C', poles: '2', rcd: 'F 30 mA', remarks: '' },
+          { preset: 'elbil-lader', description: 'EL-bil lader', status: 'Active', phase: 'L1+L2', ratingA: '32', ib: '28', iz: '40', length: '10', cable: '6', method: 'TFXP', curve: 'C', poles: '2', rcd: 'B', remarks: '' },
+          { preset: '', description: '', status: '', phase: '', ratingA: '', ib: '', iz: '', cable: '', method: '', curve: '', poles: '', rcd: '', remarks: '' },
+          { preset: '', description: '', status: '', phase: '', ratingA: '', ib: '', iz: '', cable: '', method: '', curve: '', poles: '', rcd: '', remarks: '' },
+          { preset: '', description: 'Ringertrafo stepdown 0-24 V (tilkoblet kurs 20)', status: 'Active', phase: 'L2+L3', ratingA: '2', ib: '0.5', iz: '13', cable: '1.5', method: '', curve: '', poles: '', rcd: '', remarks: 'Fra kurs 20' },
+        ],
+      },
+    ];
+
+    function createEmptyRow(index) {
+      const row = {};
+      for (const column of columns) row[column.key] = column.key === 'circuit' ? String(index + 1) : '';
+      return row;
+    }
+
+    function createInitialState() {
+      return {
+        mode: 'basic',
+        descriptionFlow: 'continue-row',
+        meta: Object.fromEntries(metaFields.map((field) => [field.key, ''])),
+        rows: Array.from({ length: ROW_COUNT }, (_, index) => createEmptyRow(index)),
+      };
+    }
+
+    function normalizeState(raw) {
+      const fallback = createInitialState();
+      if (!raw || typeof raw !== 'object') return fallback;
+      const meta = Object.fromEntries(metaFields.map((field) => [field.key, typeof raw.meta?.[field.key] === 'string' ? raw.meta[field.key] : '']));
+      const rows = Array.isArray(raw.rows) && raw.rows.length
+        ? raw.rows.map((row, index) => ({ ...createEmptyRow(index), ...row, circuit: String(index + 1) }))
+        : fallback.rows;
+      const descriptionFlow = ['continue-row', 'wrap', 'truncate'].includes(raw.descriptionFlow) ? raw.descriptionFlow : 'continue-row';
+      return { mode: raw.mode === 'advanced' ? 'advanced' : 'basic', descriptionFlow, meta, rows };
+    }
+
+    function loadState() {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        return raw ? normalizeState(JSON.parse(raw)) : createInitialState();
+      } catch {
+        return createInitialState();
+      }
+    }
+
+    let state = loadState();
+    const metaGrid = document.querySelector('#meta-grid');
+    const tableHead = document.querySelector('#table-head');
+    const tableBody = document.querySelector('#table-body');
+    const validationList = document.querySelector('#validation-list');
+    const validationSummary = document.querySelector('#validation-summary');
+    const rowSummary = document.querySelector('#row-summary');
+    const sheetFrame = document.querySelector('#sheet-frame');
+    const exampleSelect = document.querySelector('#example-select');
+    const saveStatus = document.querySelector('#save-status');
+    const sheetMode = document.querySelector('#sheet-mode');
+    const descriptionFlow = document.querySelector('#description-flow');
+    let selectedExampleValue = '';
+
+    function isAdvancedMode() {
+      return state.mode === 'advanced';
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function saveState(message = 'Saved locally.') {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStatus.textContent = message;
+    }
+
+    function numericValue(value) {
+      const normalized = String(value ?? '').replace(',', '.').trim();
+      if (!normalized) return null;
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    function isVague(text) {
+      return ['light', 'lights', 'plug', 'plugs', 'misc', 'outlet', 'outlets'].includes(String(text ?? '').trim().toLowerCase());
+    }
+
+    function applyPreset(row, value) {
+      const preset = presetOptions.find((item) => item.value === value);
+      if (!preset) return;
+      row.preset = value;
+      for (const [key, presetValue] of Object.entries(preset)) {
+        if (key === 'value' || key === 'label') continue;
+        row[key] = presetValue;
+      }
+    }
+
+    function displayDescription(row) {
+      const description = String(row?.description ?? '').trim();
+      if (description) return description;
+      return String(row?.status ?? '').toLowerCase() === 'spare' ? 'SPARE' : '';
+    }
+
+    function validateRows() {
+      const findings = [];
+      state.rows.forEach((row, index) => {
+        const rowNo = row.circuit || String(index + 1);
+        const description = String(row.description ?? '').trim();
+        const hasContent = columns.some((column) => !column.editorOnly && column.key !== 'circuit' && String(row[column.key] ?? '').trim() !== '');
+        if (!hasContent) return;
+
+        if (!description) findings.push({ severity: 'error', message: `Circuit ${rowNo}: description is required.` });
+        else if (isVague(description)) findings.push({ severity: 'error', message: `Circuit ${rowNo}: description is too vague.` });
+        if (String(row.status ?? '').toLowerCase() === 'spare' && description !== 'SPARE') findings.push({ severity: 'warn', message: `Circuit ${rowNo}: spare breakers should be labeled SPARE.` });
+
+        const ib = numericValue(row.ib);
+        const inValue = numericValue(row.ratingA);
+        const iz = numericValue(row.iz);
+        const cable = numericValue(row.cable);
+        const context = `${description} ${row.remarks ?? ''}`.toLowerCase();
+
+        if (ib !== null && inValue !== null && iz !== null && !(ib <= inValue && inValue <= iz)) findings.push({ severity: 'error', message: `Circuit ${rowNo}: I_b <= I_n <= I_z failed.` });
+        if (cable !== null && cable <= 1.5 && inValue !== null && inValue > 13) findings.push({ severity: 'error', message: `Circuit ${rowNo}: 1.5 mm2 above 13A needs redesign or justification.` });
+        if (cable !== null && cable === 2.5 && inValue !== null && inValue > 16) findings.push({ severity: 'warn', message: `Circuit ${rowNo}: 2.5 mm2 above 16A needs thermal review.` });
+        if ((context.includes('pump') || context.includes('compressor') || context.includes('motor') || context.includes('refrigerator')) && String(row.curve ?? '').toUpperCase() === 'B') findings.push({ severity: 'warn', message: `Circuit ${rowNo}: consider C curve review for inrush loads.` });
+      });
+      return findings.length ? findings : [{ severity: 'ok', message: 'No active findings.' }];
+    }
+
+    function renderMeta() {
+      const visibleFields = metaFields.filter((field) => !field.advanced || isAdvancedMode());
+      metaGrid.innerHTML = visibleFields.map((field) => `
+        <label class="meta-field">
+          <span>${field.label}</span>
+          <input type="text" data-meta-key="${field.key}" value="${escapeHtml(state.meta[field.key] ?? '')}" placeholder="${escapeHtml(field.placeholder)}" />
+        </label>
+      `).join('');
+    }
+
+    function renderCell(row, rowIndex, column) {
+      const value = row[column.key] ?? '';
+      if (column.type === 'select') {
+        return `<select data-row-index="${rowIndex}" data-column-key="${column.key}" style="width:${column.width}; min-width:${column.width};">${column.options.map((option) => `<option value="${escapeHtml(option.value)}" ${String(option.value) === String(value) ? 'selected' : ''}>${escapeHtml(option.label)}</option>`).join('')}</select>`;
+      }
+      return `<input type="text" data-row-index="${rowIndex}" data-column-key="${column.key}" value="${escapeHtml(value)}" style="width:${column.width}; min-width:${column.width};" ${column.readonly ? 'readonly' : ''} />`;
+    }
+
+    function renderTable() {
+      tableHead.innerHTML = columns.map((column) => `<th>${column.label}</th>`).join('') + '<th>Rad</th>';
+      tableBody.innerHTML = state.rows.map((row, rowIndex) => `
+        <tr>
+          ${columns.map((column) => `<td>${renderCell(row, rowIndex, column)}</td>`).join('')}
+          <td class="row-actions-cell">
+            <button type="button" class="row-insert-btn" data-insert-row-index="${rowIndex}" title="Insert blank row below">Insert</button>
+            <button type="button" class="row-delete-btn" data-delete-row-index="${rowIndex}" title="Delete this row">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderExamples() {
+      exampleSelect.innerHTML = '<option value="">Choose example</option>' + examples.map((example) => `<option value="${example.value}">${example.label}</option>`).join('');
+      exampleSelect.value = examples.some((example) => example.value === selectedExampleValue) ? selectedExampleValue : '';
+      if (sheetMode) sheetMode.value = state.mode;
+      if (descriptionFlow) descriptionFlow.value = state.descriptionFlow || 'continue-row';
+    }
+
+    function renderValidation() {
+      const findings = validateRows();
+      validationList.innerHTML = findings.map((item) => `<li class="${item.severity}">${escapeHtml(item.message)}</li>`).join('');
+      validationSummary.textContent = findings[0]?.severity === 'ok' ? 'No active findings.' : `${findings.length} active finding${findings.length === 1 ? '' : 's'}.`;
+    }
+
+    function renderRowSummary() {
+      if (!rowSummary) return;
+      rowSummary.textContent = `Rows: ${state.rows.length}`;
+    }
+
+    function renderPreview() {
+      const previewColumns = columns.filter((column) => !column.editorOnly);
+      const findings = validateRows();
+      const rowsUsed = state.rows.filter((row) => String(row.description ?? '').trim() !== '').length;
+      const installerMarkup = [
+        ['Elektroinstallator', state.meta.installer],
+        ['Telefon', state.meta.installerPhone],
+        ['Prosjekt', state.meta.projectName],
+        ['Ordre', state.meta.workOrder],
+      ].map(([label, value]) => `<div class="paper-field-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value || '\u00A0')}</span></div>`).join('');
+
+      const installationMarkup = [
+        ['Fordeling', state.meta.boardName],
+        ['Anleggsadresse', state.meta.projectAddress],
+        ['Lokasjon', state.meta.location],
+        ['Forsyning', state.meta.supply],
+      ].map(([label, value]) => `<div class="paper-field-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value || '\u00A0')}</span></div>`).join('');
+
+      const customerMarkup = [
+        ['Kunde', state.meta.customer],
+        ['Kundenummer', state.meta.customerNumber],
+      ].map(([label, value]) => `<div class="paper-field-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value || '\u00A0')}</span></div>`).join('');
+
+      const noteMarkup = [
+        ['Viktig', 'Eier eller bruker er ansvarlig for at den elektriske installasjonen og det elektriske utstyret er i henhold til gjeldende regelverk.'],
+      ].map(([label, value]) => `<div class="paper-field-row note-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value)}</span></div>`).join('');
+
+      const advancedAddressMarkup = [
+        ['Firmanavn', state.meta.anleggsFirma],
+        ['Adresse', state.meta.anleggsAdresse],
+        ['Hus nr', state.meta.husNr],
+        ['Bokstav', state.meta.bokstav],
+        ['SSB-nummer', state.meta.ssbNummer],
+      ].map(([label, value]) => `<div class="paper-field-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value || '\u00A0')}</span></div>`).join('');
+
+      const advancedShortCircuitMarkup = [
+        ['Ik maks', state.meta.ikMax],
+        ['Ik min', state.meta.ikMin],
+        ['Ij min', state.meta.ijMin],
+        ['Kilde', state.meta.kortslutningKilde],
+      ].map(([label, value]) => `<div class="paper-field-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value || '\u00A0')}</span></div>`).join('');
+
+      const advancedSystemMarkup = [
+        ['Systemspenning', state.meta.systemspenning],
+        ['Fordelingssystem', state.meta.fordelingssystem],
+        ['Type jordelektrode', state.meta.jordelektrode],
+        ['Tilforsel', state.meta.tilforsel],
+        ['Maler nr.', state.meta.malerNr],
+      ].map(([label, value]) => `<div class="paper-field-row"><span class="paper-field-label">${label}</span><span class="paper-field-value">${escapeHtml(value || '\u00A0')}</span></div>`).join('');
+
+      const headMarkup = previewColumns.map((column) => `<th>${column.label}</th>`).join('');
+      const rowMarkup = state.rows.map((row) => `<tr>${previewColumns.map((column) => {
+        if (column.key === 'description') return `<td>${escapeHtml(displayDescription(row) || '\u00A0')}</td>`;
+        if (column.key === 'status' && !row.status) return '<td>Active</td>';
+        return `<td>${escapeHtml(row[column.key] || '\u00A0')}</td>`;
+      }).join('')}</tr>`).join('');
+
+      const findingMarkup = findings[0]?.severity === 'ok'
+        ? '<li class="ok">Ingen aktive merknader.</li>'
+        : findings.slice(0, 4).map((item) => `<li class="${item.severity}">${escapeHtml(item.message)}</li>`).join('');
+
+      const advancedBlocks = isAdvancedMode() ? `
+          <section class="paper-form-grid advanced-grid">
+            <article class="paper-block wide-block">
+              <h4>Anleggsadresse</h4>
+              ${advancedAddressMarkup}
+            </article>
+            <article class="paper-block">
+              <h4>Kortslutningsverdier</h4>
+              ${advancedShortCircuitMarkup}
+            </article>
+            <article class="paper-block">
+              <h4>Anleggsdata</h4>
+              ${advancedSystemMarkup}
+            </article>
+          </section>
+      ` : '';
+
+      sheetFrame.innerHTML = `
+        <div class="paper-sheet nek-sheet">
+          <header class="paper-title-row">
+            <div>
+              <p class="paper-title-kicker">NEK 400 / FEL</p>
+              <h3>Kursfortegnelse</h3>
+            </div>
+            <div class="paper-title-side">
+              <div class="paper-warning-block">
+                <span class="paper-warning-title">ADVARSEL</span>
+                <p>Eier og bruker skal sorge for drift og vedlikehold slik at anlegget til enhver tid oppfyller gjeldende forskrifter.</p>
+              </div>
+              <div class="paper-mini-block">
+                <span>Utfylte kurser</span>
+                <strong>${rowsUsed}</strong>
+              </div>
+            </div>
+          </header>
+
+          <section class="paper-form-grid top-grid">
+            <article class="paper-block">
+              <h4>Elektroinstallator</h4>
+              ${installerMarkup}
+            </article>
+            <article class="paper-block">
+              <h4>Installasjon</h4>
+              ${installationMarkup}
+            </article>
+          </section>
+
+          <section class="paper-form-grid secondary-grid">
+            <article class="paper-block wide-block">
+              <h4>Kunde</h4>
+              ${customerMarkup}
+            </article>
+            <article class="paper-block note-block">
+              ${noteMarkup}
+            </article>
+          </section>
+
+          ${advancedBlocks}
+
+          <section class="table-scroll paper-table-shell">
+            <table class="sheet-table nek-table">
+              <thead><tr>${headMarkup}</tr></thead>
+              <tbody>${rowMarkup}</tbody>
+            </table>
+          </section>
+
+          <section class="paper-findings paper-block">
+            <h4>Kontroll og merknader</h4>
+            <ul>${findingMarkup}</ul>
+          </section>
+        </div>
+      `;
+    }
+
+    function renderAll() {
+      renderMeta();
+      renderExamples();
+      renderTable();
+      renderValidation();
+      renderRowSummary();
+      renderPreview();
+    }
+
+    function buildOfficialSheetHtml() {
+      const maxRows = Math.max(24, state.rows.length);
+      const truncateDescription = (text, maxChars = 64) => {
+        const value = String(text ?? '').trim();
+        if (value.length <= maxChars) return value;
+        return `${value.slice(0, maxChars - 1).trimEnd()}…`;
+      };
+
+      const rows = Array.from({ length: maxRows }, (_, index) => {
+        const row = state.rows[index] ?? createEmptyRow(index);
+        return {
+          no: String(index + 1),
+          description: truncateDescription(displayDescription(row) || ''),
+          amp: String(row.ratingA ?? '').trim(),
+          curve: String(row.curve ?? '').trim(),
+          length: String(row.length ?? '').trim(),
+          mm2: String(row.cable ?? '').trim(),
+          mate: String(row.method ?? '').replace(/^Method\s*/i, '').trim(),
+        };
+      });
+
+      const rowMarkup = rows.map((row) => `
+        <tr>
+          <td class="c-no">${escapeHtml(row.no)}</td>
+          <td class="c-desc">${escapeHtml(row.description || '\u00A0')}</td>
+          <td class="c-amp">${escapeHtml(row.amp || '\u00A0')}</td>
+          <td class="c-kar">${escapeHtml(row.curve || '\u00A0')}</td>
+          <td class="c-len">${escapeHtml(row.length || '\u00A0')}</td>
+          <td class="c-mm2">${escapeHtml(row.mm2 || '\u00A0')}</td>
+          <td class="c-mate">${escapeHtml(row.mate || '\u00A0')}</td>
+        </tr>
+      `).join('');
+
+      return `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>NEK 400 Kursfortegnelse</title>
+    <style>
+      @page { size: A4 portrait; margin: 5mm; }
+      html, body { margin: 0; padding: 0; background: #fff; color: #000; font-family: Arial, Helvetica, sans-serif; }
+      .sheet {
+        width: 190mm;
+        min-height: 287mm;
+        margin: 0 auto;
+        border: 1px solid #000;
+        box-sizing: border-box;
+        padding: 1.5mm;
+        display: flex;
+        flex-direction: column;
+      }
+      table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+      td, th { border: 1px solid #000; font-size: 9px; line-height: 1.05; padding: 0.5px 1.5px; vertical-align: middle; }
+      .head td { height: 8mm; }
+      .head-label { font-size: 9px; font-weight: 700; }
+      .head-value { display: block; margin-top: 1px; font-size: 9px; font-weight: 400; min-height: 7px; }
+      .warn {
+        font-size: 8px;
+        line-height: 1.1;
+      }
+      .warn strong {
+        display: block;
+        font-size: 19px;
+        letter-spacing: 0.2em;
+        text-align: center;
+        margin-bottom: 1px;
+      }
+      .subhead th { font-size: 10px; text-align: left; height: 6mm; }
+      .grouphead th { font-size: 9px; text-align: center; height: 4.2mm; }
+      .cols th { font-size: 8px; text-align: center; height: 4.2mm; }
+      .rows td { height: 5mm; }
+      .c-no, .c-amp, .c-kar, .c-len, .c-mm2, .c-mate { text-align: center; }
+      .c-no { width: 8%; }
+      .c-desc { width: 56%; }
+      .c-amp { width: 7%; }
+      .c-kar { width: 7%; }
+      .c-len { width: 8%; }
+      .c-mm2 { width: 7%; }
+      .c-mate { width: 7%; }
+      .bottom-strip {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 2mm;
+        align-items: stretch;
+        flex: 1 1 auto;
+        margin-top: auto;
+        padding-top: 1.5mm;
+      }
+      .note-box {
+        border: 1px solid #000;
+        min-height: 55mm;
+        height: 100%;
+        padding: 1.4mm;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      .note-box .label {
+        display: block;
+        font-size: 9px;
+        font-weight: 700;
+        margin-bottom: 0;
+      }
+      .business-card {
+        width: 85mm;
+        height: 55mm;
+        border: 1px dashed #000;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: end;
+        text-align: center;
+        font-size: 8px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sheet">
+      <table>
+        <tr class="head">
+          <td style="width:40%;">
+            <span class="head-label">Installatør:</span>
+            <span class="head-value">${escapeHtml(state.meta.installer || '\u00A0')}</span>
+          </td>
+          <td style="width:32%;">
+            <span class="head-label">Anlegg nr.:</span>
+            <span class="head-value">${escapeHtml(state.meta.boardName || '\u00A0')}</span>
+            <span class="head-label" style="margin-top:3px;display:block;">Tilkobl. fase:</span>
+            <span class="head-value">${escapeHtml(state.meta.supply || '\u00A0')}</span>
+          </td>
+          <td rowspan="2" style="width:28%;" class="warn">
+            <strong>ADVARSEL!</strong>
+            Abonnenten er etter sterkstrømforskriftene forpliktet til å melde installasjonsendringer.
+            Elektrisitetsverket har påtalt at anseelse forholdene vedkommende.
+          </td>
+        </tr>
+        <tr class="head">
+          <td>
+            <span class="head-label">Tlf.:</span>
+            <span class="head-value">${escapeHtml(state.meta.installerPhone || '\u00A0')}</span>
+          </td>
+          <td>
+            <span class="head-label">Adresse:</span>
+            <span class="head-value">${escapeHtml(state.meta.projectAddress || '\u00A0')}</span>
+          </td>
+        </tr>
+      </table>
+
+      <table>
+        <tr class="grouphead">
+          <th class="c-no">KURS</th>
+          <th class="c-desc"></th>
+          <th colspan="2">SIKRING</th>
+          <th colspan="3">LEDNING</th>
+        </tr>
+        <tr class="cols">
+          <th class="c-no">NR.</th>
+          <th class="c-desc" style="text-align:left;">KURSFORTEGNELSE:</th>
+          <th class="c-amp">Amp.</th>
+          <th class="c-kar">Kar.</th>
+          <th class="c-len">Lengde</th>
+          <th class="c-mm2">mm²</th>
+          <th class="c-mate">MÅTE</th>
+        </tr>
+        <tbody class="rows">
+          ${rowMarkup}
+        </tbody>
+      </table>
+
+      <div class="bottom-strip">
+        <div class="note-box">
+          <span class="label">Merknad:</span>
+        </div>
+        <div class="business-card">Plass for installator-sticker/signatur 85 x 55 mm</div>
+      </div>
+    </div>
+  </body>
+</html>`;
+    }
+
+    function loadExample(value) {
+      const example = examples.find((item) => item.value === value);
+      if (!example) return;
+      const selectedMode = sheetMode && sheetMode.value === 'advanced'
+        ? 'advanced'
+        : (sheetMode && sheetMode.value === 'basic' ? 'basic' : state.mode);
+      selectedExampleValue = example.value;
+      state = {
+        mode: selectedMode === 'advanced' ? 'advanced' : 'basic',
+        descriptionFlow: state.descriptionFlow || 'continue-row',
+        meta: { ...Object.fromEntries(metaFields.map((field) => [field.key, ''])), ...example.meta },
+        rows: Array.from({ length: ROW_COUNT }, (_, index) => ({ ...createEmptyRow(index), ...(example.rows[index] ?? {}), circuit: String(index + 1) })),
+      };
+      renderAll();
+      saveState(`Loaded example: ${example.label}.`);
+    }
+
+    metaGrid.addEventListener('input', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      state.meta[target.dataset.metaKey] = target.value;
+      renderPreview();
+      saveState();
+    });
+
+    sheetMode?.addEventListener('change', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLSelectElement)) return;
+      state.mode = target.value === 'advanced' ? 'advanced' : 'basic';
+      renderAll();
+      saveState(`Switched to ${state.mode === 'advanced' ? 'advanced' : 'basic'} mode.`);
+    });
+
+    descriptionFlow?.addEventListener('change', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLSelectElement)) return;
+      state.descriptionFlow = ['continue-row', 'wrap', 'truncate'].includes(target.value) ? target.value : 'continue-row';
+      renderAll();
+      saveState(`Long text mode: ${state.descriptionFlow}.`);
+    });
+
+    function handleRowUpdate(event) {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return;
+      const rowIndex = Number(target.dataset.rowIndex);
+      const columnKey = target.dataset.columnKey;
+      if (Number.isNaN(rowIndex) || !columnKey || !state.rows[rowIndex]) return;
+      state.rows[rowIndex][columnKey] = target.value;
+      if (columnKey === 'preset') applyPreset(state.rows[rowIndex], target.value);
+      if (columnKey === 'status' && String(target.value).toLowerCase() === 'spare') state.rows[rowIndex].description = 'SPARE';
+      renderTable();
+      renderValidation();
+      renderPreview();
+      saveState();
+    }
+
+    tableBody.addEventListener('input', handleRowUpdate);
+    tableBody.addEventListener('change', handleRowUpdate);
+    tableBody.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      const insertIndex = Number(target.dataset.insertRowIndex);
+      if (!Number.isNaN(insertIndex) && state.rows[insertIndex]) {
+        state.rows.splice(insertIndex + 1, 0, createEmptyRow(0));
+        state.rows = state.rows.map((row, index) => ({ ...row, circuit: String(index + 1) }));
+        renderAll();
+        saveState(`Inserted row after ${insertIndex + 1}.`);
+        return;
+      }
+
+      const rowIndex = Number(target.dataset.deleteRowIndex);
+      if (Number.isNaN(rowIndex) || !state.rows[rowIndex]) return;
+      const confirmed = window.confirm(`Delete row ${rowIndex + 1}?`);
+      if (!confirmed) return;
+      state.rows.splice(rowIndex, 1);
+      state.rows = state.rows.map((row, index) => ({ ...row, circuit: String(index + 1) }));
+      renderAll();
+      saveState(`Deleted row ${rowIndex + 1}.`);
+    });
+
+    exampleSelect.addEventListener('change', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLSelectElement)) return;
+      selectedExampleValue = target.value;
+    });
+
+    document.querySelector('#load-example').addEventListener('click', () => loadExample(exampleSelect.value));
+    document.querySelector('#add-row').addEventListener('click', () => {
+      state.rows.push(createEmptyRow(state.rows.length));
+      renderAll();
+      saveState('Added row.');
+    });
+
+    document.querySelector('#reset-sheet').addEventListener('click', () => {
+      state = createInitialState();
+      selectedExampleValue = '';
+      renderAll();
+      saveState('Sheet reset.');
+    });
+    document.querySelector('#download-sheet').addEventListener('click', () => {
+      const html = buildOfficialSheetHtml();
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'nek400-kursfortegnelse-sheet.html';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      saveState('Downloaded printable sheet file.');
+    });
+
+    function printSheetOnly() {
+      const html = buildOfficialSheetHtml();
+      const frame = document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.right = '0';
+      frame.style.bottom = '0';
+      frame.style.width = '0';
+      frame.style.height = '0';
+      frame.style.border = '0';
+      document.body.append(frame);
+
+      frame.srcdoc = html;
+      frame.onload = () => {
+        const win = frame.contentWindow;
+        if (!win) {
+          frame.remove();
+          return;
+        }
+
+        const cleanup = () => frame.remove();
+        win.addEventListener('afterprint', cleanup, { once: true });
+        win.focus();
+        win.print();
+
+        // Fallback cleanup in case afterprint is not emitted.
+        setTimeout(() => {
+          if (frame.isConnected) frame.remove();
+        }, 3000);
+      };
+    }
+
+    document.querySelector('#print-sheet').addEventListener('click', printSheetOnly);
+
+    renderAll();
+  </script>
+</BaseLayout>
+
+<style>
+  :global(.site-header),
+  :global(.site-footer) {
+    display: none !important;
+  }
+  .sheet-only-shell {
+    display: grid;
+    gap: 1rem;
+    max-width: 100%;
+    padding: 1rem;
+  }
+  .status-line { margin: 0; color: var(--muted); }
+  .toolbar-card, .editor-card, .info-card { border: 1px solid var(--border); border-radius: 18px; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 93%, transparent), color-mix(in srgb, var(--surface-2) 88%, transparent)); box-shadow: var(--shadow); padding: 1rem; }
+  .print-sheet-host { display: none; }
+  .toolbar-row, .layout-grid { display: grid; gap: 1rem; }
+  .layout-grid { grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr); }
+  .toolbar-row { grid-template-columns: minmax(170px, 280px) minmax(170px, 280px) minmax(170px, 280px) 1fr; align-items: end; }
+  .toolbar-field, .meta-field { display: grid; gap: 0.35rem; }
+  .toolbar-field span, .section-kicker, .meta-field span { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  .toolbar-field select, .meta-field input, .editor-table input, .editor-table select { width: 100%; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 96%, transparent); color: var(--text); padding: 0.62rem 0.72rem; font: inherit; }
+  .toolbar-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .toolbar-actions button { border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); padding: 0.58rem 0.9rem; cursor: pointer; }
+  .toolbar-actions .accent { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .row-actions-cell { white-space: nowrap; }
+  .row-insert-btn, .row-delete-btn { border: 1px solid var(--border); border-radius: 8px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); padding: 0.3rem 0.5rem; cursor: pointer; font-size: 0.78rem; }
+  .row-insert-btn { margin-right: 0.35rem; }
+  .section-head { display: flex; justify-content: space-between; gap: 1rem; align-items: end; margin-bottom: 0.8rem; }
+  .section-head h2, .info-card h2, .paper-title-row h3, .paper-block h4 { margin: 0; font-family: var(--font-display); }
+  .meta-grid { display: grid; gap: 0.8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rule-list, .validation-list { margin: 0; padding-left: 1rem; display: grid; gap: 0.5rem; }
+  .table-scroll { overflow: auto; }
+  .editor-table, .sheet-table { width: 100%; border-collapse: collapse; }
+  .editor-table th, .editor-table td, .sheet-table th, .sheet-table td { border: 1px solid var(--border); }
+  .editor-table th, .sheet-table th { padding: 0.55rem; text-align: left; background: color-mix(in srgb, var(--surface-2) 80%, transparent); font-family: var(--font-display); font-size: 0.78rem; }
+  .editor-table td, .sheet-table td { padding: 0.25rem; }
+  .validation-list .error, .paper-findings .error { color: #8a2323; }
+  .validation-list .warn, .paper-findings .warn { color: #8a5b18; }
+  .validation-list .ok, .paper-findings .ok { color: #1d6b37; }
+  .paper-sheet {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0.55rem;
+    border: 1px solid #111;
+    border-radius: 2px;
+    background: #fff;
+    color: #111;
+  }
+  .nek-sheet {
+    max-width: 920px;
+    margin: 0 auto;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
+  }
+  .paper-title-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #111;
+  }
+  .paper-title-side {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    gap: 0.4rem;
+    align-items: stretch;
+  }
+  .paper-title-kicker {
+    margin: 0 0 0.15rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111;
+  }
+  .paper-title-row h3 {
+    font-size: 1.22rem;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .paper-warning-block {
+    border: 1px solid #111;
+    padding: 0.25rem 0.35rem;
+    background: #fff;
+    display: grid;
+    gap: 0.14rem;
+  }
+  .paper-warning-title {
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.09em;
+  }
+  .paper-warning-block p {
+    margin: 0;
+    font-size: 0.57rem;
+    line-height: 1.2;
+  }
+  .paper-mini-block {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 82px;
+    padding: 0.25rem 0.4rem;
+    border: 1px solid #111;
+    background: #fff;
+    text-align: right;
+  }
+  .paper-mini-block span {
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #111;
+  }
+  .paper-mini-block strong { font-size: 0.95rem; }
+  .paper-form-grid { display: grid; gap: 0.6rem; }
+  .top-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .secondary-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+  .advanced-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .paper-block {
+    display: grid;
+    gap: 0;
+    border: 1px solid #111;
+    background: #fff;
+  }
+  .paper-block h4 {
+    padding: 0.16rem 0.35rem;
+    background: #ececec;
+    border-bottom: 1px solid #111;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .paper-field-row {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    min-height: 19px;
+    border-bottom: 1px solid #111;
+  }
+  .paper-field-row:last-child { border-bottom: 0; }
+  .paper-field-label,
+  .paper-field-value {
+    padding: 0.16rem 0.3rem;
+    display: flex;
+    align-items: center;
+  }
+  .paper-field-label {
+    background: #f5f5f5;
+    border-right: 1px solid #111;
+    font-size: 0.58rem;
+  }
+  .paper-field-value {
+    background: #fff;
+    font-size: 0.64rem;
+  }
+  .note-block .paper-field-row {
+    grid-template-columns: 60px minmax(0, 1fr);
+    min-height: 62px;
+  }
+  .note-row .paper-field-value {
+    align-items: start;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .paper-table-shell {
+    border: 1px solid #111;
+    background: #fff;
+  }
+  .sheet-table.nek-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .sheet-table.nek-table th,
+  .sheet-table.nek-table td {
+    border: 1px solid #111;
+    padding: 0.1rem 0.16rem;
+    font-size: 0.56rem;
+  }
+  .sheet-table.nek-table th {
+    background: #ececec;
+    color: #111;
+    text-align: left;
+    font-size: 0.54rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .sheet-table.nek-table td {
+    background: #fff;
+    height: 13px;
+  }
+  .paper-findings { gap: 0; }
+  .paper-findings h4 {
+    padding: 0.16rem 0.35rem;
+    background: #ececec;
+    border-bottom: 1px solid #111;
+  }
+  .paper-findings ul {
+    margin: 0;
+    padding: 0.25rem 0.45rem 0.35rem 1rem;
+    background: #fff;
+  }
+  .paper-findings li {
+    margin: 0.1rem 0;
+    font-size: 0.58rem;
+  }
+  @media (max-width: 1080px) { .layout-grid, .toolbar-row { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) {
+    .meta-grid,
+    .top-grid,
+    .secondary-grid,
+    .advanced-grid,
+    .toolbar-row { grid-template-columns: 1fr; }
+    .section-head,
+    .paper-title-row { flex-direction: column; align-items: start; }
+    .paper-title-side { grid-template-columns: 1fr; }
+    .paper-mini-block { text-align: left; }
+    .paper-field-row { grid-template-columns: 108px minmax(0, 1fr); }
+  }
+  @media print {
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
+    }
+    body * {
+      visibility: hidden !important;
+    }
+    .print-sheet-host,
+    .print-sheet-host * {
+      visibility: visible !important;
+    }
+    .print-sheet-host {
+      display: block !important;
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
+    }
+    .paper-sheet {
+      display: block !important;
+      border: none;
+      box-shadow: none;
+      padding: 0.4rem;
+      margin: 0;
+      background: #fff;
+    }
+    .paper-findings { display: none !important; }
+    .paper-sheet,
+    .sheet-table.nek-table,
+    .sheet-table.nek-table th,
+    .sheet-table.nek-table td,
+    .paper-block,
+    .paper-field-row,
+    .paper-field-label,
+    .paper-warning-block,
+    .paper-mini-block,
+    .paper-title-row,
+    .paper-table-shell,
+    .paper-findings h4 { border-color: #000 !important; }
+    @page {
+      size: A4 portrait;
+      margin: 6mm;
+    }
+  }
+</style>

@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About Zach Olinske | Olinske"
+  description="Architectural scope, operating focus, and what this blog is designed to cover."
+  canonicalUrl={Astro.site ? new URL('/about/', Astro.site).toString() : '/about/'}
+>
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Author</p>
+      <h1 class="hero-title">Zach Olinske</h1>
+      <p class="hero-subtitle">
+        Senior Cloud Solution Architect focused on Azure resilience, FinOps trade-offs,
+        sovereignty constraints, and practical operating models for enterprise teams.
+      </p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-1">
+      <h2>Architectural Scope</h2>
+      <p>
+        This site focuses on architecture decisions where reliability, economics, and governance collide.
+        The target audience is architects, principal engineers, CTO staff, and platform leaders.
+      </p>
+      <ul>
+        <li>Cloud resilience and BCDR design under real operational constraints</li>
+        <li>FinOps and reliability trade-offs that impact executive decisions</li>
+        <li>Sovereignty and policy boundaries in multi-region enterprise systems</li>
+        <li>AI strategy for production operating models, not product demos</li>
+      </ul>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-2">
+      <h2>What This Blog Is Not</h2>
+      <ul>
+        <li>Not introductory cloud tutorials</li>
+        <li>Not vendor marketing recap</li>
+        <li>Not trend-chasing thought leadership</li>
+      </ul>
+      <p>
+        The intent is durable reference material that teams can cite during architecture reviews and planning.
+      </p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-2">
+      <h2>Recommended Entry Points</h2>
+      <ul>
+        <li><a href="/azure-resilience/">Azure Resilience</a></li>
+        <li><a href="/finops/">FinOps</a></li>
+        <li><a href="/sovereignty/">Sovereignty</a></li>
+        <li><a href="/posts/">All Posts</a></li>
+      </ul>
+    </section>
+  </main>
+</BaseLayout>

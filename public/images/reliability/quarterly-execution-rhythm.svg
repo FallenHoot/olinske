@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Quarterly Reliability Execution Rhythm</title>
+  <desc id="desc">Monthly loop and quarterly reliability week cadence for sustained execution.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f9f6; }
+      .ring { fill: none; stroke: #567142; stroke-width: 18; }
+      .node { fill: #ffffff; stroke: #5a7548; stroke-width: 2; rx: 12; }
+      .txtH { fill: #324626; font-family: Segoe UI, Arial, sans-serif; font-size: 26px; font-weight: 700; }
+      .txtN { fill: #3d5530; font-family: Segoe UI, Arial, sans-serif; font-size: 19px; font-weight: 700; }
+      .txtS { fill: #4f6444; font-family: Segoe UI, Arial, sans-serif; font-size: 17px; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="58" text-anchor="middle" class="txtH">Quarterly Reliability Execution Rhythm</text>
+
+  <circle class="ring" cx="600" cy="390" r="220"/>
+
+  <rect class="node" x="520" y="140" width="160" height="74"/>
+  <text x="600" y="184" text-anchor="middle" class="txtN">Month 1</text>
+  <text x="600" y="206" text-anchor="middle" class="txtS">Indicator review</text>
+
+  <rect class="node" x="860" y="350" width="180" height="74"/>
+  <text x="950" y="394" text-anchor="middle" class="txtN">Month 2</text>
+  <text x="950" y="416" text-anchor="middle" class="txtS">Simulation drill</text>
+
+  <rect class="node" x="520" y="580" width="180" height="74"/>
+  <text x="610" y="624" text-anchor="middle" class="txtN">Month 3</text>
+  <text x="610" y="646" text-anchor="middle" class="txtS">ADR refresh</text>
+
+  <rect class="node" x="150" y="350" width="220" height="74"/>
+  <text x="260" y="394" text-anchor="middle" class="txtN">Reliability Week</text>
+  <text x="260" y="416" text-anchor="middle" class="txtS">Executive package</text>
+
+  <text x="600" y="395" text-anchor="middle" class="txtN">Repeat Quarterly</text>
+</svg>

@@ -1,0 +1,131 @@
+:root,
+html[data-theme="fjord"],
+html[data-theme="nordic-light"] {
+  --bg: #edf3f7;
+  --bg-2: #dce8ef;
+  --surface: #f8fbfd;
+  --surface-2: #e8f1f6;
+  --text: #122637;
+  --muted: #3e5b6f;
+  --accent: #2f7ca8;
+  --accent-2: #6da8c9;
+  --foundry: #ff6b1a;
+  --frost: #a7d5ef;
+  --border: rgba(18, 38, 55, 0.16);
+  --ring: rgba(47, 124, 168, 0.44);
+  --shadow: 0 18px 44px rgba(35, 66, 89, 0.16);
+  --font-display: "Public Sans", "Segoe UI", sans-serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+html[data-theme="foundry"],
+html[data-theme="deep-cloud"] {
+  --bg: #111317;
+  --bg-2: #1b2028;
+  --surface: #181d24;
+  --surface-2: #222933;
+  --text: #f2f5f9;
+  --muted: #a1afbf;
+  --accent: #ff7e2c;
+  --accent-2: #58b4e3;
+  --foundry: #ff7e2c;
+  --frost: #7ec6e8;
+  --border: rgba(242, 245, 249, 0.2);
+  --ring: rgba(255, 126, 44, 0.55);
+  --shadow: 0 22px 52px rgba(0, 0, 0, 0.48);
+  --font-display: "Public Sans", "Segoe UI", sans-serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+html[data-theme="high-contrast"] {
+  --bg: #ffffff;
+  --bg-2: #efefef;
+  --surface: #ffffff;
+  --surface-2: #f8f8f8;
+  --text: #000000;
+  --muted: #121212;
+  --accent: #005fcc;
+  --accent-2: #000000;
+  --foundry: #d84800;
+  --frost: #2f7ca8;
+  --border: rgba(0, 0, 0, 0.45);
+  --ring: rgba(255, 212, 0, 0.85);
+  --shadow: 0 0 0 2px rgba(0, 0, 0, 0.22);
+  --font-display: "Public Sans", "Segoe UI", sans-serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+}/* ── Fjord — glacier blues, gloss whites, glassmorphism ──────────────── */
+:root,
+html[data-theme="fjord"] {
+  --bg:            #eef3f9;
+  --bg-2:          #dce8f5;
+  --surface:       rgba(255, 255, 255, 0.80);
+  --surface-2:     rgba(230, 242, 252, 0.85);
+  --text:          #0d2340;
+  --muted:         #42688c;
+  --accent:        #2272d8;
+  --accent-2:      #00c0a8;
+  --border:        rgba(13, 35, 64, 0.12);
+  --ring:          rgba(34, 114, 216, 0.50);
+  --shadow:        0 20px 60px rgba(13, 35, 64, 0.14);
+  --glass:         blur(18px) saturate(160%);
+  --font-display:  "Geist", "Segoe UI", sans-serif;
+  --font-body:     "Source Serif 4", Georgia, serif;
+  --font-mono:     "Geist Mono", "Consolas", monospace;
+  --hero-gradient: linear-gradient(140deg, #c8dff7 0%, #eef3f9 60%, #dce8f5 100%);
+  /* Monolith face colours */
+  --m-front:       linear-gradient(160deg, #d4e8f8 0%, #b8d6f2 50%, #a8c8ea 100%);
+  --m-side:        linear-gradient(180deg, #8ab3d4 0%, #7098b8 100%);
+  --m-cap:         linear-gradient(135deg, #c8def2 0%, #9ec0dc 100%);
+  --m-glow:        rgba(34, 114, 216, 0.30);
+}
+
+/* ── Foundry — raw steel dark, safety orange, terminal green ─────────── */
+html[data-theme="foundry"] {
+  --bg:            #0a0a0c;
+  --bg-2:          #141416;
+  --surface:       #1a1a1e;
+  --surface-2:     #222226;
+  --text:          #e6e6ec;
+  --muted:         #888896;
+  --accent:        #ff6b35;
+  --accent-2:      #22ff88;
+  --border:        rgba(255, 107, 53, 0.22);
+  --ring:          rgba(255, 107, 53, 0.55);
+  --shadow:        0 20px 64px rgba(0, 0, 0, 0.75);
+  --glass:         blur(12px) saturate(130%);
+  --font-display:  "Geist", monospace;
+  --font-body:     "Geist", monospace;
+  --font-mono:     "Geist Mono", "Consolas", monospace;
+  --hero-gradient: linear-gradient(145deg, #1c0800 0%, #0a0a0c 55%, #0f0c08 100%);
+  --m-front:       linear-gradient(160deg, #2a1408 0%, #3e1e0c 50%, #4a2410 100%);
+  --m-side:        linear-gradient(180deg, #1a0c04 0%, #280f04 100%);
+  --m-cap:         linear-gradient(135deg, #ff6b35 0%, #e04c14 100%);
+  --m-glow:        rgba(255, 107, 53, 0.35);
+}
+
+/* ── Midnight — OLED black, neon-blue circuitry ───────────────────────── */
+html[data-theme="midnight"] {
+  --bg:            #000000;
+  --bg-2:          #050510;
+  --surface:       #080818;
+  --surface-2:     #0c0c22;
+  --text:          #d8e4ff;
+  --muted:         #4e608a;
+  --accent:        #00b4ff;
+  --accent-2:      #c470ff;
+  --border:        rgba(0, 180, 255, 0.18);
+  --ring:          rgba(0, 180, 255, 0.55);
+  --shadow:        0 20px 64px rgba(0, 0, 0, 0.95);
+  --glass:         blur(14px) saturate(180%);
+  --font-display:  "Geist", "Segoe UI", sans-serif;
+  --font-body:     "Source Serif 4", Georgia, serif;
+  --font-mono:     "Geist Mono", "Consolas", monospace;
+  --hero-gradient: radial-gradient(ellipse 120% 80% at 20% 40%, #001a3a 0%, #000000 65%);
+  --m-front:       linear-gradient(160deg, #001428 0%, #002040 50%, #002a54 100%);
+  --m-side:        linear-gradient(180deg, #000e1e 0%, #001428 100%);
+  --m-cap:         linear-gradient(135deg, #00b4ff 0%, #0070a8 100%);
+  --m-glow:        rgba(0, 180, 255, 0.35);
+}

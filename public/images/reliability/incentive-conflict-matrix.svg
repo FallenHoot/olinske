@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Incentive Conflict Matrix</title>
+  <desc id="desc">Cross-functional incentives can align or conflict with reliability outcomes.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8f7fc; }
+      .grid { fill: #ffffff; stroke: #3f3a73; stroke-width: 2; }
+      .head { fill: #3f3a73; }
+      .good { fill: #d8f0e4; }
+      .risk { fill: #f9dfd9; }
+      .txtW { fill: #ffffff; font-family: Segoe UI, Arial, sans-serif; font-size: 20px; font-weight: 700; }
+      .txtD { fill: #26214f; font-family: Segoe UI, Arial, sans-serif; font-size: 18px; font-weight: 700; }
+      .txtS { fill: #3a3568; font-family: Segoe UI, Arial, sans-serif; font-size: 16px; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="52" text-anchor="middle" class="txtD">Systems Fail According to Incentives</text>
+  <text x="600" y="82" text-anchor="middle" class="txtS">Reliability improves when scorecards reward survivability and not only speed.</text>
+
+  <rect class="grid head" x="120" y="140" width="250" height="70"/>
+  <text x="245" y="183" text-anchor="middle" class="txtW">Function</text>
+  <rect class="grid head" x="370" y="140" width="320" height="70"/>
+  <text x="530" y="183" text-anchor="middle" class="txtW">Primary Metric</text>
+  <rect class="grid head" x="690" y="140" width="390" height="70"/>
+  <text x="885" y="183" text-anchor="middle" class="txtW">Reliability Effect</text>
+
+  <rect class="grid" x="120" y="210" width="250" height="90"/>
+  <text x="245" y="263" text-anchor="middle" class="txtD">Product</text>
+  <rect class="grid" x="370" y="210" width="320" height="90"/>
+  <text x="530" y="263" text-anchor="middle" class="txtS">Feature velocity</text>
+  <rect class="grid risk" x="690" y="210" width="390" height="90"/>
+  <text x="885" y="263" text-anchor="middle" class="txtS">Degraded modes deferred</text>
+
+  <rect class="grid" x="120" y="300" width="250" height="90"/>
+  <text x="245" y="353" text-anchor="middle" class="txtD">Finance</text>
+  <rect class="grid" x="370" y="300" width="320" height="90"/>
+  <text x="530" y="353" text-anchor="middle" class="txtS">Spend reduction</text>
+  <rect class="grid risk" x="690" y="300" width="390" height="90"/>
+  <text x="885" y="353" text-anchor="middle" class="txtS">Resilience headroom removed</text>
+
+  <rect class="grid" x="120" y="390" width="250" height="90"/>
+  <text x="245" y="443" text-anchor="middle" class="txtD">Platform</text>
+  <rect class="grid" x="370" y="390" width="320" height="90"/>
+  <text x="530" y="443" text-anchor="middle" class="txtS">Standardization</text>
+  <rect class="grid risk" x="690" y="390" width="390" height="90"/>
+  <text x="885" y="443" text-anchor="middle" class="txtS">Tier differences flattened</text>
+
+  <rect class="grid" x="120" y="480" width="250" height="90"/>
+  <text x="245" y="533" text-anchor="middle" class="txtD">SRE/Operations</text>
+  <rect class="grid" x="370" y="480" width="320" height="90"/>
+  <text x="530" y="533" text-anchor="middle" class="txtS">Incident stability</text>
+  <rect class="grid good" x="690" y="480" width="390" height="90"/>
+  <text x="885" y="533" text-anchor="middle" class="txtS">Burn-rate and recovery discipline</text>
+</svg>

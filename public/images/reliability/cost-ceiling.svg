@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Reliability Cost Ceiling</title>
+  <desc id="desc">Reliability improvement curve flattens as observability, redundancy, and operational overhead costs rise steeply.</desc>
+  <defs>
+    <style>
+      .bg { fill: #fbf8f4; }
+      .axis { stroke: #5a4632; stroke-width: 3; }
+      .curveR { fill: none; stroke: #2468a2; stroke-width: 6; }
+      .curveC { fill: none; stroke: #b36a1f; stroke-width: 6; }
+      .txtD { fill: #3f2f22; font-family: Segoe UI, Arial, sans-serif; font-size: 24px; font-weight: 700; }
+      .txtS { fill: #5a4632; font-family: Segoe UI, Arial, sans-serif; font-size: 20px; }
+      .point { fill: #b36a1f; }
+      .note { fill: #fff7e8; stroke: #b36a1f; stroke-width: 2; rx: 10; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="760"/>
+  <text x="600" y="56" text-anchor="middle" class="txtD">Reliability Cost Ceiling</text>
+  <text x="600" y="90" text-anchor="middle" class="txtS">More controls increase reliability, but supporting economics can cap progress.</text>
+
+  <line class="axis" x1="120" y1="640" x2="1080" y2="640"/>
+  <line class="axis" x1="120" y1="640" x2="120" y2="140"/>
+
+  <text x="600" y="700" text-anchor="middle" class="txtS">Control investment and system complexity</text>
+  <text x="44" y="390" text-anchor="middle" class="txtS" transform="rotate(-90 44 390)">Index value</text>
+
+  <path class="curveR" d="M140 600 C 280 500, 420 420, 560 340 C 700 280, 820 250, 1040 235"/>
+  <text x="830" y="220" class="txtS">Reliability outcome</text>
+
+  <path class="curveC" d="M140 610 C 300 600, 430 560, 560 470 C 700 360, 820 220, 1040 120"/>
+  <text x="860" y="138" class="txtS">Total sustaining cost</text>
+
+  <circle class="point" cx="720" cy="338" r="8"/>
+  <rect class="note" x="742" y="292" width="340" height="92"/>
+  <text x="760" y="326" class="txtS">Cost ceiling zone:</text>
+  <text x="760" y="354" class="txtS">Telemetry, redundancy, and on-call</text>
+  <text x="760" y="380" class="txtS">overhead begin outpacing gains.</text>
+</svg>

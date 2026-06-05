@@ -1,7 +1,7 @@
 ---
 title: "Welcome to Signal Over Hype"
 description: "Why I started writing, what I will cover, and what to expect."
-publishDate: 2026-03-28
+publishDate: '2026-02-15'
 tags:
   - engineering-culture
   - cloud-architecture

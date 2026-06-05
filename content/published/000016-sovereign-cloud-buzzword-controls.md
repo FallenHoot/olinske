@@ -4,7 +4,7 @@ description: >-
   My take on sovereign cloud: the term hides multiple different enterprise
   requirements. The wrong packaging creates expensive compliance theater. The
   right controls create trust.
-publishDate: '2026-06-06'
+publishDate: '2026-05-17'
 tags:
   - cloud-architecture
   - sovereignty

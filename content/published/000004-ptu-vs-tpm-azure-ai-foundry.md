@@ -1,7 +1,7 @@
 ---
 title: "Azure AI Foundry: When Capacity Scarcity Pushes Customers into PTU Too Early"
 description: "When Standard capacity is constrained, enterprises may move to provisioned throughput before demand is proven. That can create stranded cost and reduce cloud elasticity in practice."
-publishDate: 2026-05-06
+publishDate: '2026-03-08'
 tags:
   - cloud-architecture
   - finops

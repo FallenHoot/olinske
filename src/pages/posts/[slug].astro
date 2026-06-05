@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import VoteButtons from '../../components/VoteButtons.astro';
+import { RELIABILITY_TRACKS } from '../../data/reliabilityTracks';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -55,6 +56,31 @@ const followUpLinks = (post.data.followUps ?? [])
           title: ref,
         };
   });
+
+  const isReliabilityGuidePost = RELIABILITY_TRACKS.some((track) => track.slugs.includes(slug));
+
+  const reliabilityTrackNav = RELIABILITY_TRACKS
+    .map((track) => {
+      const chapters = track.slugs
+        .map((trackSlug) => {
+          const related = postBySlug.get(trackSlug);
+          if (!related) return null;
+          return {
+            slug: trackSlug,
+            href: `/posts/${trackSlug}/`,
+            title: related.data.title,
+            isCurrent: trackSlug === slug,
+          };
+        })
+        .filter(Boolean);
+
+      return {
+        ...track,
+        chapters,
+        hasCurrent: chapters.some((chapter) => chapter.isCurrent),
+      };
+    })
+    .filter((track) => track.chapters.length > 0);
 
 const articleJsonLd = {
   '@context': 'https://schema.org',
@@ -157,6 +183,38 @@ const breadcrumbJsonLd = {
                 </ul>
               </>
             )}
+          </aside>
+        )
+      }
+
+      {
+        isReliabilityGuidePost && reliabilityTrackNav.length > 0 && (
+          <aside class="toc-panel">
+            <h2>Guide Tracks</h2>
+            <p class="post-meta">Pick a reader path and move chapter-to-chapter inside that track.</p>
+            {
+              reliabilityTrackNav.map((track) => (
+                <div style="margin-top:0.9rem;">
+                  <h3 style="margin:0 0 0.35rem;font-size:0.93rem;">{track.title}</h3>
+                  <p class="post-meta" style="margin:0 0 0.45rem;">{track.audience}</p>
+                  <ul class="toc-list">
+                    {
+                      track.chapters.map((chapter) => (
+                        <li class="toc-item">
+                          <a
+                            href={chapter.href}
+                            class={chapter.isCurrent ? 'is-active' : undefined}
+                            aria-current={chapter.isCurrent ? 'page' : undefined}
+                          >
+                            {chapter.title}
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              ))
+            }
           </aside>
         )
       }

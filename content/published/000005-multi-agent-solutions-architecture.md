@@ -1,7 +1,7 @@
 ---
 title: "Building Multi-Agent Solutions Without Making a Mess"
 description: "Teams deploying multiple AI agents face coordination, state management, and failure propagation problems. Here is what actually works in production."
-publishDate: 2026-05-10
+publishDate: '2026-03-15'
 tags:
   - ai-strategy
   - agents

@@ -1,7 +1,7 @@
 ---
 title: "Why CTOs Need to Mandate Architecture Decision Records"
 description: "Architecture Decision Records (ADRs) are not bureaucracy. They are the only scalable way to preserve context and prevent repeated mistakes as teams grow."
-publishDate: 2026-04-12
+publishDate: '2026-04-05'
 tags:
   - engineering-culture
   - architecture

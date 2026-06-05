@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const GUIDE_SLUGS = [
+  '000017-reliability-is-an-economic-decision',
+  '000018-reliability-is-an-economic-decision',
+  '000019-systems-fail-according-to-incentives',
+  '000020-shared-responsibility-accountability-vacuum',
+  '000021-reliability-equation-financial-model',
+  '000022-provider-failures-status-pages',
+  '000023-partial-failure-control-plane-failures',
+  '000024-hidden-cost-reliability-tooling',
+  '000025-reliability-tradeoffs-on-call-finops',
+  '000026-reliability-governance-adr-ledger-indicators',
+  '000027-reliability-execution-quarterly-plan',
+  '000028-reliability-operating-artifacts-and-policy-templates',
+  '000029-reliability-pricing-saas-margin-trap',
+  '000030-reliability-maturity-organizational-adoption',
+  '000031-the-things-that-actually-break',
+  '000032-identity-tier-zero-spof',
+  '000033-silent-outages-data-corruption',
+  '000034-reliability-illusions',
+  '000035-change-primary-failure-source',
+  '000036-sovereignty-myth-scale-reality-digital-readiness',
+] as const;
+
+const publishedPosts = await getCollection('posts', ({ data }) =>
+  data.status === 'published' || data.status === 'scheduled'
+);
+
+const postBySlug = new Map(
+  publishedPosts.map((post) => [post.data.slug ?? post.id.replace(/\.md$/, ''), post])
+);
+
+const guidePosts = GUIDE_SLUGS
+  .map((slug) => postBySlug.get(slug))
+  .filter(Boolean);
+---
+
+<BaseLayout
+  title="Writing | Olinske"
+  description="Long-form writing from Zach Olinske, including the full Reliability Survival Guide."
+>
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Library</p>
+      <h1 class="hero-title">Writing</h1>
+      <p class="hero-subtitle">Long-form essays, operating frameworks, and the full Reliability Survival Guide in reading order.</p>
+    </section>
+
+    <section class="hero-panel fade-in fade-delay-1" style="margin-top:1rem;">
+      <p class="eyebrow">Book</p>
+      <h2 style="margin:0;">The Reliability Survival Guide</h2>
+      <p class="hero-subtitle" style="margin-top:0.55rem;">20 chapters and appendix posts now grouped in one place.</p>
+      <p class="post-meta">Published entries found: {guidePosts.length}</p>
+    </section>
+
+    <section aria-label="Reliability Survival Guide chapter list" class="v-grid" style="margin-top:1rem;">
+      {
+        guidePosts.length === 0 ? (
+          <article class="v-card">
+            <div class="v-card-thumb" aria-hidden="true"></div>
+            <div class="v-card-body">
+              <h3>No guide posts are published yet.</h3>
+              <p>When chapters are published, they will appear here automatically.</p>
+            </div>
+          </article>
+        ) : (
+          guidePosts.map((post) => {
+            const slug = post.data.slug ?? post.id.replace(/\.md$/, '');
+            return (
+              <a class="v-card scroll-reveal" href={`/posts/${slug}/`}>
+                <div class="v-card-thumb" aria-hidden="true"></div>
+                <div class="v-card-body">
+                  <p class="v-card-meta">
+                    <span>{post.data.publishDate.toISOString().slice(0, 10)}</span>
+                    <span>BOOK</span>
+                  </p>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.description}</p>
+                </div>
+              </a>
+            );
+          })
+        )
+      }
+    </section>
+  </main>
+
+  <script>
+    const items = Array.from(document.querySelectorAll('.scroll-reveal'));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    items.forEach((el, i) => {
+      el.style.transitionDelay = `${i * 45}ms`;
+      observer.observe(el);
+    });
+  </script>
+</BaseLayout>

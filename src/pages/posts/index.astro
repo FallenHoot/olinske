@@ -8,6 +8,44 @@ const allPosts = (
   )
 ).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
+const selectedCategory = (Astro.url.searchParams.get('category') || '').trim().toLowerCase();
+const selectedQuery = (Astro.url.searchParams.get('q') || '').trim();
+
+const normalizeText = (value?: string) =>
+  (value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const matchesCategory = (tags: string[], category: string) => {
+  if (!category) return true;
+  const categoryKeyword = category.replace(/-/g, ' ').toLowerCase();
+  return tags.some((tag) => tag.includes(categoryKeyword) || categoryKeyword.includes(tag));
+};
+
+const matchesQuery = (
+  title: string,
+  description: string,
+  tags: string[],
+  body: string,
+  query: string,
+) => {
+  if (!query) return true;
+  const haystack = normalizeText([title, description, tags.join(' '), body].join(' '));
+  const terms = normalizeText(query)
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter(Boolean);
+  return terms.every((term) => haystack.includes(term));
+};
+
+const filteredPosts = allPosts.filter((post) => {
+  const tags = (post.data.tags ?? []).map((tag) => tag.toLowerCase());
+  return matchesCategory(tags, selectedCategory)
+    && matchesQuery(post.data.title, post.data.description ?? '', tags, post.body ?? '', selectedQuery);
+});
+
 const estimateReadTime = (body?: string) => {
   const words = (body ?? '').trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 220));
@@ -29,17 +67,18 @@ const estimateReadTime = (body?: string) => {
           class="posts-search-input"
           type="search"
           name="q"
+          value={selectedQuery}
           placeholder="Search keywords, topics, or phrases"
           aria-label="Search article keywords"
         />
-        <input id="posts-category-input" type="hidden" name="category" value="" />
+        <input id="posts-category-input" type="hidden" name="category" value={selectedCategory} />
         <button type="submit" class="btn-link">Search</button>
         <a id="posts-clear-link" class="btn-link btn-muted" href="/posts/" hidden>Clear filters</a>
       </form>
     </section>
 
     <section aria-label="Post grid" class="v-grid">
-      {allPosts.map((post) => (
+      {filteredPosts.map((post) => (
         <a
           class="v-card scroll-reveal"
           href={`/posts/${post.id.replace(/\.md$/, '')}/`}
@@ -117,6 +156,14 @@ const estimateReadTime = (body?: string) => {
 
     function matchesQuery(card, selectedQuery) {
       if (!selectedQuery) return true;
+
+      const normalizeText = (value) =>
+        value
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
       const text = [
         card.getAttribute('data-title') || '',
         card.getAttribute('data-description') || '',
@@ -124,13 +171,14 @@ const estimateReadTime = (body?: string) => {
         card.getAttribute('data-body') || '',
       ].join(' ');
 
-      const terms = selectedQuery
-        .toLowerCase()
+      const normalizedText = normalizeText(text);
+
+      const terms = normalizeText(selectedQuery)
         .split(/\s+/)
         .map((t) => t.trim())
         .filter(Boolean);
 
-      return terms.every((term) => text.includes(term));
+      return terms.every((term) => normalizedText.includes(term));
     }
 
     function applyFilters() {

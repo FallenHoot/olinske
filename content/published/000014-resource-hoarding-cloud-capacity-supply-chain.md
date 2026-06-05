@@ -4,7 +4,7 @@ description: >-
   Resource hoarding in cloud is a rational response to scarcity. The root cause
   is a multi-layer supply chain problem from power and facilities to wafers,
   packaging, and deployment.
-publishDate: '2026-06-06'
+publishDate: '2026-05-03'
 tags:
   - cloud-architecture
   - finops

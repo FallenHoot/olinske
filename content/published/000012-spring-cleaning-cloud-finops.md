@@ -5,7 +5,7 @@ description: >-
   not where is the waste. It is what are we choosing to spend money on, and is
   that choice still justified. Here are the hard questions that make people
   uncomfortable.
-publishDate: '2026-06-06'
+publishDate: '2026-04-19'
 tags:
   - cloud-architecture
   - finops

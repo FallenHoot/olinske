@@ -5,7 +5,7 @@ description: >-
   problems. They cannot fix them. Agentic AI can be the operations team they do
   not have. Here is what I built and what it means for lean and mature teams
   alike.
-publishDate: '2026-06-06'
+publishDate: '2026-04-26'
 tags:
   - cloud-architecture
   - ai-strategy

@@ -4,7 +4,7 @@ description: >-
   Sovereign clouds seemed like a good idea in the post-Snowden era. Geopolitics,
   technology economics, and regulatory evolution have made the model
   unsustainable for many commercial use cases.
-publishDate: '2026-06-06'
+publishDate: '2026-05-10'
 tags:
   - cloud-architecture
   - sovereignty

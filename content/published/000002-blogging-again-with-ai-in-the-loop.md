@@ -2,7 +2,7 @@
 title: "100 Drafts and Nothing Published. Can AI Solve the Problem That Is Me?"
 slug: 100-drafts-nothing-published-can-ai-solve-me
 description: "I had 100 blog posts stuck in draft on WordPress and 50 more on the new platform. The problem was never the tools. It was me. So I built an editing team out of AI agents to find out if that changes anything."
-publishDate: 2026-04-19
+publishDate: '2026-02-22'
 tags:
   - engineering-culture
   - ai-strategy

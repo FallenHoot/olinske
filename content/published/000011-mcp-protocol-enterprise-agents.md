@@ -4,7 +4,7 @@ description: >-
   Model Context Protocol is the most important protocol in the AI agent
   ecosystem right now. What it does, what it does not do, and where enterprise
   adoption will hit friction.
-publishDate: '2026-06-06'
+publishDate: '2026-04-12'
 tags:
   - ai-strategy
   - cloud-architecture

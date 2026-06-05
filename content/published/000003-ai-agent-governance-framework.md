@@ -1,7 +1,7 @@
 ---
 title: "AI Agent Governance: A Starting Point Nobody Gave Me"
 description: "My LinkedIn automation posted a draft with a broken link before I knew it happened. People commented. The blog had never published it. That is when I realized my agent pipeline had no governance. Here is what I built after that mistake."
-publishDate: 2026-04-29
+publishDate: '2026-03-01'
 tags:
   - ai-strategy
   - governance

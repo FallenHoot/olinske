@@ -1,7 +1,7 @@
 ---
 title: "FinOps at Scale: Using Azure Data Explorer as Your Cost Brain"
 description: "Most teams treat cloud cost analysis as a chore. Azure Data Explorer can make it a competitive advantage. Here is how."
-publishDate: 2026-05-24
+publishDate: '2026-03-29'
 tags:
   - cloud-architecture
   - finops

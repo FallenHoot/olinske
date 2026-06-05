@@ -187,6 +187,36 @@ const breadcrumbJsonLd = {
   </main>
 
   <script>
+    import mermaid from 'mermaid';
+
+    const mermaidCodeBlocks = Array.from(document.querySelectorAll('.article-panel pre > code.language-mermaid'));
+    if (mermaidCodeBlocks.length > 0) {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        theme: 'neutral',
+      });
+
+      mermaidCodeBlocks.forEach((codeBlock) => {
+        const source = codeBlock.textContent?.trim();
+        if (!source) return;
+
+        const container = document.createElement('div');
+        container.className = 'mermaid';
+        container.textContent = source;
+
+        const pre = codeBlock.parentElement;
+        if (pre) pre.replaceWith(container);
+      });
+
+      const mermaidNodes = Array.from(document.querySelectorAll('.article-panel .mermaid'));
+      if (mermaidNodes.length > 0) {
+        mermaid.run({ nodes: mermaidNodes }).catch((error) => {
+          console.error('Mermaid render failed', error);
+        });
+      }
+    }
+
     const headingNodes = Array.from(document.querySelectorAll('.article-panel h2[id], .article-panel h3[id]'));
     const tocAnchors = Array.from(document.querySelectorAll('.toc-list a'));
     const anchorMap = new Map(tocAnchors.map((anchor) => [anchor.getAttribute('href')?.slice(1), anchor]));

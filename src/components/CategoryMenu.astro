@@ -1,14 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
+import { TOPICS, filterPostsByTopic } from '../data/topicTaxonomy';
 
-const CATEGORIES = [
-  { slug: 'cloud-architecture',   label: 'Cloud Architecture',   theme: 'fjord' },
-  { slug: 'legacy-systems',       label: 'Legacy Systems',       theme: 'foundry' },
-  { slug: 'geospatial',           label: 'Geospatial & Maps',    theme: 'fjord' },
-  { slug: 'engineering-culture',  label: 'Engineering Culture',  theme: 'midnight' },
-  { slug: 'family-legacy',        label: 'Family Legacy',        theme: 'foundry' },
-  { slug: 'ai-strategy',          label: 'AI Strategy',          theme: 'midnight' },
-] as const;
+function getTopicTheme(slug: string): 'fjord' | 'foundry' | 'midnight' {
+  if (slug === 'cloud-architecture' || slug === 'geospatial') return 'fjord';
+  if (slug === 'legacy-systems' || slug === 'family-legacy') return 'foundry';
+  return 'midnight';
+}
+
+const CATEGORIES = TOPICS.map((topic) => ({
+  slug: topic.slug,
+  label: topic.label,
+  theme: getTopicTheme(topic.slug),
+}));
 
 // Count posts per category by matching tags
 const allPosts = await getCollection('posts', ({ data }) =>
@@ -17,11 +21,17 @@ const allPosts = await getCollection('posts', ({ data }) =>
 
 const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
+const postSearchIndex = sortedPosts.map((post) => ({
+  title: post.data.title,
+  slug: post.id.replace(/\.md$/, ''),
+  publishDate: post.data.publishDate.toISOString(),
+  tags: post.data.tags ?? [],
+  description: post.data.description ?? '',
+  body: post.body ?? '',
+}));
+
 function countForCategory(slug: string): number {
-  const keyword = slug.replace(/-/g, ' ');
-  return allPosts.filter((p) =>
-    (p.data.tags ?? []).some((t) => t.toLowerCase().includes(keyword) || keyword.includes(t.toLowerCase()))
-  ).length;
+  return filterPostsByTopic(allPosts, slug).length;
 }
 ---
 
@@ -33,17 +43,30 @@ function countForCategory(slug: string): number {
     <div class="cat-columns">
       <!-- Left column: Topics -->
       <div class="cat-col-topics">
-        <p class="cat-heading">TOPICS</p>
+        <p class="cat-heading">QUICK FIND</p>
+        <label class="cat-search-wrap" for="cat-menu-search">
+          <span class="cat-search-label">Search articles and topics</span>
+          <input
+            id="cat-menu-search"
+            class="cat-search-input"
+            type="search"
+            placeholder="Search by keyword"
+            autocomplete="off"
+          />
+        </label>
+        <p class="cat-search-note">Press Enter to open the best matching article.</p>
+        <p class="cat-heading">TOPIC FILTERS</p>
         <ul class="cat-list">
           {CATEGORIES.map((cat) => (
-            <li class="cat-item" data-cat-theme={cat.theme}>
-              <a href={`/posts/?category=${cat.slug}`} class="cat-link">
+            <li class="cat-item" data-cat-theme={cat.theme} data-filter-text={`${cat.label} ${cat.slug}`}>
+              <a href={`/topics/${encodeURIComponent(cat.slug)}/`} class="cat-link">
                 <span class="cat-label">{cat.label}</span>
                 <span class="cat-count">[{countForCategory(cat.slug)}]</span>
               </a>
             </li>
           ))}
         </ul>
+        <p class="cat-no-results" id="cat-topic-empty" hidden>No matching topics.</p>
         <a href="/posts/" class="cat-all">View all articles →</a>
       </div>
 
@@ -52,23 +75,26 @@ function countForCategory(slug: string): number {
         <p class="cat-heading">RECENT ARTICLES</p>
         <ul class="cat-article-list">
           {sortedPosts.slice(0, 6).map((post) => (
-            <li class="cat-article-item">
+            <li class="cat-article-item" data-filter-text={`${post.data.title} ${(post.data.tags ?? []).join(' ')}`}>
               <a href={`/posts/${post.id.replace(/\.md$/, '')}/`} class="cat-article-link">
                 <span class="cat-article-title">{post.data.title}</span>
                 <span class="cat-article-date">{post.data.publishDate.toISOString().slice(0, 10)}</span>
               </a>
               <div class="cat-tag-row">
                 {(post.data.tags ?? []).slice(0, 4).map((tag) => (
-                  <a href={`/posts/?category=${tag}`} class="cat-tag">{tag}</a>
+                  <a href={`/posts/?category=${encodeURIComponent(tag)}`} class="cat-tag">{tag}</a>
                 ))}
               </div>
             </li>
           ))}
         </ul>
+        <p class="cat-no-results" id="cat-article-empty" hidden>No matching recent articles.</p>
       </div>
     </div>
   </div>
 </div>
+
+<script id="cat-post-index" type="application/json" set:html={JSON.stringify(postSearchIndex)}></script>
 
 <style>
   .cat-menu {
@@ -141,6 +167,49 @@ function countForCategory(slug: string): number {
     padding: 0;
     display: grid;
     gap: 0.4rem;
+  }
+
+  .cat-search-wrap {
+    display: grid;
+    gap: 0.42rem;
+    margin: 0 0 0.95rem;
+  }
+
+  .cat-search-note {
+    margin: 0 0 1rem;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.64rem;
+    letter-spacing: 0.04em;
+    color: rgba(200, 220, 255, 0.46);
+  }
+
+  .cat-search-label {
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(200, 220, 255, 0.42);
+  }
+
+  .cat-search-input {
+    border: 1px solid rgba(200, 220, 255, 0.18);
+    background: rgba(9, 19, 37, 0.75);
+    color: #e0ecff;
+    border-radius: 10px;
+    padding: 0.5rem 0.62rem;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
+  }
+
+  .cat-search-input::placeholder {
+    color: rgba(200, 220, 255, 0.4);
+  }
+
+  .cat-search-input:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent, #4da3ff) 60%, transparent);
+    outline-offset: 1px;
+    border-color: var(--accent, #4da3ff);
   }
 
   .cat-item {
@@ -257,6 +326,14 @@ function countForCategory(slug: string): number {
     color: var(--accent, #4da3ff);
   }
 
+  .cat-no-results {
+    margin: 0.8rem 0 0;
+    font-family: var(--font-mono, Consolas, monospace);
+    font-size: 0.7rem;
+    color: rgba(200, 220, 255, 0.44);
+    letter-spacing: 0.03em;
+  }
+
   .cat-article-date {
     font-family: var(--font-mono, Consolas, monospace);
     font-size: 0.65rem;
@@ -312,11 +389,36 @@ function countForCategory(slug: string): number {
   const menu     = document.getElementById('category-menu')!;
   const openBtn  = document.querySelector<HTMLElement>('[data-menu-btn]');
   const closeBtn = document.querySelector<HTMLElement>('[data-menu-close]');
+  const searchInput = document.getElementById('cat-menu-search') as HTMLInputElement | null;
+  const topicItems = Array.from(document.querySelectorAll<HTMLElement>('.cat-item'));
+  const articleItems = Array.from(document.querySelectorAll<HTMLElement>('.cat-article-item'));
+  const topicEmpty = document.getElementById('cat-topic-empty');
+  const articleEmpty = document.getElementById('cat-article-empty');
+  const searchIndexNode = document.getElementById('cat-post-index');
+  const postIndex = (() => {
+    if (!searchIndexNode?.textContent) return [];
+    try {
+      return JSON.parse(searchIndexNode.textContent) as Array<{
+        title: string;
+        slug: string;
+        publishDate: string;
+        tags: string[];
+        description: string;
+        body: string;
+      }>;
+    } catch {
+      return [];
+    }
+  })();
 
   const open = () => {
     menu.classList.add('is-open');
     menu.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
   };
 
   const close = () => {
@@ -336,5 +438,55 @@ function countForCategory(slug: string): number {
   // Close when clicking backdrop (not inner content)
   menu.addEventListener('click', (e) => {
     if (e.target === menu) close();
+  });
+
+  const filterByKeyword = () => {
+    const query = (searchInput?.value || '').toLowerCase().trim();
+    let visibleTopics = 0;
+    let visibleArticles = 0;
+
+    topicItems.forEach((item) => {
+      const haystack = (item.dataset.filterText || '').toLowerCase();
+      const show = !query || haystack.includes(query);
+      item.hidden = !show;
+      if (show) visibleTopics += 1;
+    });
+
+    articleItems.forEach((item) => {
+      const haystack = (item.dataset.filterText || '').toLowerCase();
+      const show = !query || haystack.includes(query);
+      item.hidden = !show;
+      if (show) visibleArticles += 1;
+    });
+
+    if (topicEmpty) topicEmpty.hidden = visibleTopics !== 0;
+    if (articleEmpty) articleEmpty.hidden = visibleArticles !== 0;
+  };
+
+  searchInput?.addEventListener('input', filterByKeyword);
+
+  searchInput?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+
+    const query = (searchInput.value || '').toLowerCase().trim();
+    if (!query) return;
+
+    event.preventDefault();
+
+    const terms = query
+      .split(/\s+/)
+      .map((term) => term.trim())
+      .filter(Boolean);
+
+    const matches = postIndex.filter((entry) => {
+      const haystack = [entry.title, entry.description, entry.tags.join(' '), entry.body].join(' ').toLowerCase();
+      return terms.every((term) => haystack.includes(term));
+    });
+
+    if (matches.length === 0) return;
+
+    matches.sort((a, b) => new Date(a.publishDate).valueOf() - new Date(b.publishDate).valueOf());
+    const target = matches[0];
+    window.location.href = `/posts/${target.slug}/`;
   });
 </script>

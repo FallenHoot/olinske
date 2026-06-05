@@ -2,7 +2,6 @@
 import '../styles/theme-vars.css';
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import CategoryMenu from '../components/CategoryMenu.astro';
 
 interface Props {
   title: string;
@@ -20,7 +19,7 @@ const {
   ogType = 'website',
 } = Astro.props;
 const currentPath = Astro.url.pathname;
-const showThemeToggle = currentPath !== '/';
+const showThemeToggle = true;
 const currentYear = new Date().getFullYear();
 const resolvedCanonical = canonicalUrl
   ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined);
@@ -82,24 +81,11 @@ const resolvedOgImage = (() => {
     <!-- Run before first paint to prevent flash of wrong theme -->
     <script is:inline>
       (function () {
-        var VALID = ['fjord', 'foundry', 'midnight'];
-        var ALIASES = {
-          'nordic-light': 'fjord',
-          'deep-cloud': 'foundry',
-          'high-contrast': 'midnight'
-        };
-        var isHome = window.location.pathname === '/';
-        var param  = new URLSearchParams(window.location.search).get('theme');
-        var saved  = localStorage.getItem('theme') || 'fjord';
-        var normalizedParam = param && ALIASES[param] ? ALIASES[param] : param;
-        var normalizedSaved = ALIASES[saved] ? ALIASES[saved] : saved;
-        var theme  = isHome
-          ? 'fjord'
-          : (VALID.includes(normalizedParam) ? normalizedParam : (VALID.includes(normalizedSaved) ? normalizedSaved : 'fjord'));
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved === 'light' || saved === 'dark' ? saved : (prefersDark ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
-        if (!isHome) {
-          localStorage.setItem('theme', theme);
-        }
+        localStorage.setItem('theme', theme);
       })();
     </script>
   </head>
@@ -113,8 +99,17 @@ const resolvedOgImage = (() => {
         <nav class="site-nav" aria-label="Primary">
           <a class={currentPath === '/' ? 'nav-link is-active' : 'nav-link'} href="/">Home</a>
           <a class={currentPath.startsWith('/about') ? 'nav-link is-active' : 'nav-link'} href="/about/">About</a>
+          <a class={currentPath.startsWith('/topics') ? 'nav-link is-active' : 'nav-link'} href="/topics/">Topics</a>
           <a class={currentPath.startsWith('/tools') ? 'nav-link is-active' : 'nav-link'} href="/tools/">Tools</a>
-          <button class="nav-link menu-btn" data-menu-btn type="button">Topics</button>
+          <form class="nav-search" action="/posts/" method="get" role="search" aria-label="Search articles by keyword">
+            <input
+              class="nav-search-input"
+              type="search"
+              name="q"
+              placeholder="Keyword search"
+              aria-label="Keyword search"
+            />
+          </form>
           {showThemeToggle && <ThemeToggle />}
         </nav>
       </div>
@@ -135,6 +130,5 @@ const resolvedOgImage = (() => {
         </nav>
       </div>
     </footer>
-    <CategoryMenu />
   </body>
 </html>

@@ -97,7 +97,41 @@ const { slug } = Astro.props;
 
 <script define:vars={{ slug }}>
   const VOTED_KEY = `voted_${slug}`;
+  const LOCAL_COUNTS_KEY = `vote_counts_${slug}`;
   const STATUS_TIMEOUT = 3000; // ms
+
+  function getLocalCounts() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(LOCAL_COUNTS_KEY) || '{}');
+      return {
+        up: Number(parsed.up) || 0,
+        down: Number(parsed.down) || 0,
+      };
+    } catch {
+      return { up: 0, down: 0 };
+    }
+  }
+
+  function setLocalCounts(up, down) {
+    localStorage.setItem(LOCAL_COUNTS_KEY, JSON.stringify({ up, down }));
+  }
+
+  async function readJsonSafely(resp) {
+    const contentType = (resp.headers.get('content-type') || '').toLowerCase();
+    const bodyText = await resp.text();
+
+    if (!bodyText) return {};
+
+    if (contentType.includes('application/json')) {
+      return JSON.parse(bodyText);
+    }
+
+    try {
+      return JSON.parse(bodyText);
+    } catch {
+      throw new Error(bodyText.slice(0, 140) || `HTTP ${resp.status}`);
+    }
+  }
 
   async function initVotes() {
     const widget = document.querySelector(`[data-slug="${slug}"]`);
@@ -129,13 +163,22 @@ const { slug } = Astro.props;
         const resp = await fetch(`/api/vote?slug=${encodeURIComponent(slug)}`);
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-        const { up, down } = await resp.json();
+        const { up, down } = await readJsonSafely(resp);
         widget.querySelector('[data-direction="up"]').textContent = up;
         widget.querySelector('[data-direction="down"]').textContent = down;
       } catch (err) {
-        console.error('Failed to load vote counts:', err);
-        widget.querySelector('[data-direction="up"]').textContent = '?';
-        widget.querySelector('[data-direction="down"]').textContent = '?';
+        const { up, down } = getLocalCounts();
+        widget.querySelector('[data-direction="up"]').textContent = up;
+        widget.querySelector('[data-direction="down"]').textContent = down;
+
+        status.className = 'vote-status';
+        status.textContent = 'Vote service unavailable. Showing local counts.';
+        setTimeout(() => {
+          status.textContent = '';
+          status.className = 'vote-status';
+        }, STATUS_TIMEOUT);
+
+        console.error('Failed to load vote counts, using local fallback:', err);
       }
     }
 
@@ -153,12 +196,12 @@ const { slug } = Astro.props;
           body: JSON.stringify({ slug, direction })
         });
 
+        const payload = await readJsonSafely(resp);
         if (!resp.ok) {
-          const errData = await resp.json();
-          throw new Error(errData.error || `HTTP ${resp.status}`);
+          throw new Error(payload.error || `HTTP ${resp.status}`);
         }
 
-        const { up, down } = await resp.json();
+        const { up, down } = payload;
 
         // Update UI
         widget.querySelector('[data-direction="up"]').textContent = up;
@@ -178,12 +221,27 @@ const { slug } = Astro.props;
           status.className = 'vote-status';
         }, STATUS_TIMEOUT);
       } catch (err) {
-        status.className = 'vote-status error';
-        status.textContent = err.message;
+        // Fall back to local-only vote mode when API is unavailable.
+        const counts = getLocalCounts();
+        if (direction === 'up') {
+          counts.up += 1;
+        } else {
+          counts.down += 1;
+        }
+        setLocalCounts(counts.up, counts.down);
 
-        // Allow retry on error
-        upBtn.disabled = false;
-        downBtn.disabled = false;
+        widget.querySelector('[data-direction="up"]').textContent = counts.up;
+        widget.querySelector('[data-direction="down"]').textContent = counts.down;
+
+        localStorage.setItem(VOTED_KEY, direction);
+        const votedBtn = direction === 'up' ? upBtn : downBtn;
+        votedBtn.classList.add('voted');
+        votedBtn.disabled = true;
+
+        status.className = 'vote-status success';
+        status.textContent = 'Vote saved locally on this device.';
+
+        console.error('Vote API unavailable, used local fallback:', err);
 
         setTimeout(() => {
           status.textContent = '';

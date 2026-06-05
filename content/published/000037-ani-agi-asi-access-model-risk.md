@@ -22,15 +22,11 @@ This article focuses on cumulative inference risk. Active attack chains, such as
 
 Inference risk model:
 
-$$
-Risk = f(\text{identity linkage}, \text{retention}, \text{connector breadth}, \text{trust boundary strength})
-$$
+Risk is proportional to (identity linkage * retention * connector breadth) / trust boundary strength.
 
 ## ANI is enough to create this risk
 
 ANI is Artificial Narrow Intelligence, and most enterprise AI deployments still behave like ANI systems. AGI and ASI matter for capability debates, yet you do not need either to produce cross-project inference from ordinary activity. Stronger synthesis would raise speed and blast radius, not create this category of risk from scratch.
-
-Most enterprises are operating in ANI-like conditions today. The mistake is assuming ANI-like means low consequence.
 
 ## Why this topic is bigger than one prompt
 
@@ -68,8 +64,6 @@ This is where many real incidents have historically started in analogous systems
 3. Organization layer: policy, behavior, and exception handling.
 
 Most teams debate the model layer, while most failures happen in the system and organization layers.
-
-The precise failure mode is this: identity plus memory plus cross-system data access plus weak trust boundaries.
 
 In governance terms, this is primarily a system-layer problem, expressed through control plane decisions and data plane exposure, not a base model problem.
 
@@ -120,8 +114,6 @@ An MCP that looks safe on its own can become unsafe when paired with a second MC
 
 Most enterprise systems enforce identity-scoped access, so composition risk typically requires over-permissioning, misconfigured connectors, or untrusted content injection.
 
-The risk is often less about one dangerous tool and more about dangerous combinations of otherwise reasonable tools.
-
 In architecture terms, this is where trust boundaries fail:
 
 1. Data plane: what can be read and retrieved.
@@ -133,8 +125,6 @@ When composition is weakly governed, retrieval paths quietly become execution pa
 ## Attack preconditions matrix
 
 Use this as a fast test for any agent or MCP workflow. Remove one precondition, and you usually break the attack chain.
-
-If you prefer a checklist instead of theory, use this.
 
 | Attack precondition | Typical example | Control move that breaks the chain |
 | --- | --- | --- |
@@ -156,9 +146,7 @@ The first tool reads internal customer notes. The second tool sends an HTTP requ
 
 Nobody pasted a roadmap. Nobody explicitly shared a secret. The leak came from tool composition and context linkage.
 
-This chain is avoidable when teams block untrusted-to-privileged context promotion and require explicit approval for cross-MCP high-impact actions.
-
-No novel model capability is required. Only ordinary workflow composition is required.
+This chain is avoidable when teams block untrusted-to-privileged context promotion and require explicit approval for cross-MCP high-impact actions. No novel model capability is required.
 
 ## Detection when prevention fails
 
@@ -205,7 +193,7 @@ If your policy says one thing and employee behavior says another, behavior is yo
 
 ## Closing
 
-I do not think this is a paranoid take. It is a sober read of a pattern we have already seen: harmless inputs become meaningful intelligence when systems can connect enough dots for long enough. We are still mostly in ANI, which does not mean we are safe by default. This is the best moment to get serious, before stronger synthesis arrives and your historical data becomes someone else's strategic map.
+I do not think this is a paranoid take. It is a sober read of a pattern we have already seen: harmless inputs become meaningful intelligence when systems can connect enough dots for long enough. This is the best moment to get serious, before stronger synthesis arrives and your historical data becomes someone else's strategic map.
 
 If this sounds abstract, run a simple exercise with your leadership team. Use a synthetic dataset first, or use fully redacted prompts that have passed legal and privacy review. Then ask what project narrative an analyst could reconstruct from metadata and question patterns across three adjacent roles.
 

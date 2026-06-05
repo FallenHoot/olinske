@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { TOPICS, filterPostsByTopic } from '../../data/topicTaxonomy';
+
+const allPosts = (
+  await getCollection('posts', ({ data }) =>
+    data.status === 'published' || data.status === 'scheduled'
+  )
+).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const topicCards = TOPICS.map((topic) => {
+  const posts = filterPostsByTopic(allPosts, topic.slug);
+  const latest = posts.slice(0, 3);
+  return { topic, count: posts.length, latest };
+}).sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout title="Topics | Olinske" description="Topic hubs for cloud architecture, legacy systems, geospatial, engineering culture, family legacy, and AI strategy.">
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Reference Navigation</p>
+      <h1 class="hero-title">Topic Hubs</h1>
+      <p class="hero-subtitle">Browse by core themes instead of chronology. Designed for fast navigation from idea to the right article set.</p>
+      <a class="btn-link" href="/posts/">Browse all articles</a>
+    </section>
+
+    <section aria-label="Topic hubs" class="v-grid">
+      {topicCards.map(({ topic, count, latest }) => (
+        <a class="v-card scroll-reveal" href={`/topics/${topic.slug}/`}>
+          <div class="v-card-thumb" aria-hidden="true"></div>
+          <div class="v-card-body">
+            <p class="v-card-meta">
+              <span>{count} ARTICLE{count === 1 ? '' : 'S'}</span>
+              <span>{topic.slug.toUpperCase()}</span>
+            </p>
+            <h3>{topic.label}</h3>
+            <p>{topic.description}</p>
+            <ul class="topic-preview-list">
+              {latest.map((post) => (
+                <li>{post.data.title}</li>
+              ))}
+            </ul>
+          </div>
+        </a>
+      ))}
+    </section>
+  </main>
+
+  <script>
+    const items = Array.from(document.querySelectorAll('.scroll-reveal'));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    items.forEach((el, i) => {
+      el.style.transitionDelay = `${i * 55}ms`;
+      observer.observe(el);
+    });
+  </script>
+</BaseLayout>

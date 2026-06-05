@@ -85,7 +85,30 @@ In practical terms, non-engineering roles now perform work that looks like light
 
 Security and data access have to move with that reality. The old question was, "who can view this data?" The new question is, "who can trigger which action, using which data, through which tool path, under which approval conditions?"
 
-When organizations miss this shift, they overinvest in model debates and underinvest in runtime controls.
+Organizations are not choosing between innovation and control. They are choosing between uncontrolled innovation and architected innovation.
+
+## Why most AI guardrails fail
+
+Most guardrails fail because they are applied at the wrong layer.
+
+1. They are tool-centric instead of workflow-centric.
+2. They block read and reasoning paths that users need for real work.
+3. They ignore composition risk across connectors and systems.
+4. They create enough friction that teams route around them.
+
+This produces fake safety. Useful work is blocked, unsafe work moves into shadow workflows, and governance confidence drifts away from operational reality.
+
+## What actually works
+
+Enable thinking. Constrain movement.
+
+1. Allow internal querying, summarization, and synthesis.
+2. Constrain propagation, persistence, and outbound transmission.
+3. Enforce identity-scoped context and least-privilege connector scope.
+4. Gate high-impact writes and egress with policy and approvals.
+5. Continuously monitor composition drift and context expansion.
+
+If guardrails stop useful work, they will be bypassed. If guardrails allow unsafe work, they will be exposed. Architecture is the only path that scales trust and utility together.
 
 ## The MCP power and trap
 

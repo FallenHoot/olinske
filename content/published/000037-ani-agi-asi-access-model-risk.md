@@ -1,8 +1,8 @@
 ---
-title: 'ANI, AGI, ASI, and the Story We Keep Repeating'
+title: 'The Risk Is Not the Prompt. It Is the Pattern.'
 description: >-
-  A storytelling walk through ANI, AGI, and ASI, then the real concern: how
-  ordinary prompts across coworkers can become one strategic picture over time.
+  Enterprise AI risk is less about one prompt and more about identity-linked
+  activity accumulating across tools, memory, and access boundaries.
 publishDate: '2026-06-01'
 tags:
   - ai-strategy
@@ -12,13 +12,21 @@ tags:
 status: published
 ---
 
-Last week, I was in a conversation that started exactly the way these conversations always start. Someone said, "I do not share sensitive data with AI tools, so I am not worried." I used to say the same thing about search. I never used a search engine like a private vault. I mostly asked ordinary questions, clicked through results, and moved on. That is the shape of the problem: not the platform, the pattern.
+Last week, I was in a conversation that started exactly the way these conversations always start. Someone said, "I do not share sensitive data with AI tools, so I am not worried." I used to say the same thing about search, where I asked ordinary questions, clicked through results, and moved on without thinking much about cumulative traces. That is the shape of the problem: not the platform, the pattern.
 
-The real risk is not what you type into a model. The risk is identity-linked activity accumulated over time across systems. In practical terms, the failure mode is simple: identity plus memory plus cross-system data access plus weak trust boundaries.
+The real risk is not what you type into a model. The risk is potential identity-linked activity accumulated across systems where memory, connectors, and audit correlation are enabled. In practical terms, the failure mode is simple: identity plus memory plus cross-system data access plus weak trust boundaries.
 
-That is why I still reference ANI, AGI, and ASI. Most production systems today are ANI-like for quick lookups, error checks, comparisons, and idea scaffolding. That is already enough for this risk to materialize.
+That is why I still reference ANI, AGI, and ASI. Most production systems today are ANI-like for quick lookups, error checks, comparisons, and idea scaffolding. That capability level is already enough for this risk to materialize under the right system conditions.
 
-## ANI-like systems are enough for this risk to materialize
+This article focuses on cumulative inference risk. Active attack chains, such as prompt injection and tool exploitation, are related but distinct failure modes.
+
+Inference risk model:
+
+$$
+Risk = f(\text{identity linkage}, \text{retention}, \text{connector breadth}, \text{trust boundary strength})
+$$
+
+## ANI is enough to create this risk
 
 ANI is Artificial Narrow Intelligence, and most enterprise AI deployments still behave like ANI systems. AGI and ASI matter for capability debates, yet you do not need either to produce cross-project inference from ordinary activity. Stronger synthesis would raise speed and blast radius, not create this category of risk from scratch.
 
@@ -53,7 +61,7 @@ The remaining risk is at the workflow layer:
 3. Shadow use of consumer tools outside enterprise boundaries.
 4. Shared context systems that quietly accumulate operational detail.
 
-This is exactly where real incidents start. A practical way to think about this is three layers:
+This is where many real incidents have historically started in analogous systems. A practical way to think about this is three layers:
 
 1. Model layer: what the base model can and cannot do.
 2. System layer: memory, retrieval, connectors, logs, and identity.
@@ -63,7 +71,11 @@ Most teams debate the model layer, while most failures happen in the system and 
 
 The precise failure mode is this: identity plus memory plus cross-system data access plus weak trust boundaries.
 
-In governance terms, this is primarily a control plane problem, not a base model problem.
+In governance terms, this is primarily a system-layer problem, expressed through control plane decisions and data plane exposure, not a base model problem.
+
+## What this is not
+
+Enterprise copilots reading email or documents inside tenant boundaries is not the same as data exfiltration. Risk emerges when data moves across systems, connectors expand scope beyond intent, and retention links activity over time.
 
 ## Where the business is moving now
 
@@ -81,7 +93,9 @@ Model Context Protocol has been a major improvement for practical AI work. It gi
 
 In simple terms, MCP allows one tool to call another tool using model output as input.
 
-An MCP that looks safe on its own can become unsafe when paired with a second MCP that has different permissions or outputs. One connector can read sensitive internal context. Another connector can write, transmit, or transform data in ways nobody intended. Linked together, they can open a context path that should never have existed.
+An MCP that looks safe on its own can become unsafe when paired with a second MCP that has different permissions or outputs. One connector can read sensitive internal context. Another connector can write, transmit, or transform data in ways nobody intended. Linked together, they can create unintended context paths if composition is not governed explicitly.
+
+Most enterprise systems enforce identity-scoped access, so composition risk typically requires over-permissioning, misconfigured connectors, or untrusted content injection.
 
 The risk is often less about one dangerous tool and more about dangerous combinations of otherwise reasonable tools.
 
@@ -107,7 +121,7 @@ If you prefer a checklist instead of theory, use this.
 | Cross-tool composition path | Tool A reads sensitive data and Tool B can transmit/transform it | Evaluate tool combinations, not only single tools. Default deny cross-MCP context sharing. |
 | Persistent memory/retention | Long-lived memory links activity over time | Set retention TTLs, isolate memory by project, and purge on policy triggers. |
 
-This is the operational test: if all preconditions are true in one workflow, assume exploitability and redesign before release.
+This is the operational test: if all preconditions are true in one workflow, treat it as high risk until explicitly validated and redesigned before release.
 
 ## One concrete mini-case
 
@@ -131,6 +145,7 @@ Prevention controls are mandatory, and detection controls are what tell you wher
 2. Alert on unusual cross-connector sequences for the same identity or workload.
 3. Flag long prompt-to-action chains where low-risk prompts lead to high-impact actions.
 4. Correlate metadata signals across logs to identify repeated cross-context reconstruction patterns.
+5. Detect identity-linked context expansion across unrelated systems over time.
 
 Example: a read-only system triggering outbound HTTP calls within the same prompt chain should be treated as high risk.
 
@@ -167,13 +182,15 @@ If your policy says one thing and employee behavior says another, behavior is yo
 
 ## Closing
 
-I do not think this is a paranoid take. It is a sober read of a pattern we have already seen: harmless inputs become meaningful intelligence when systems can connect enough dots for long enough. We are still mostly in ANI, which does not mean we are safe by default. This is the best moment to get serious, before better synthesis arrives and your historical data becomes someone else's strategic map.
+I do not think this is a paranoid take. It is a sober read of a pattern we have already seen: harmless inputs become meaningful intelligence when systems can connect enough dots for long enough. We are still mostly in ANI, which does not mean we are safe by default. This is the best moment to get serious, before stronger synthesis arrives and your historical data becomes someone else's strategic map.
 
 If this sounds abstract, run a simple exercise with your leadership team. Use a synthetic dataset first, or use fully redacted prompts that have passed legal and privacy review. Then ask what project narrative an analyst could reconstruct from metadata and question patterns across three adjacent roles.
 
 Most organizations already have this risk. They usually cannot see it yet because it appears only when systems are composed.
 
-If your access model is not designed for AI-driven workflows, it is already broken.
+If your access model is not designed for AI-driven workflows, it is likely misaligned.
+
+The first organization to take this seriously will not prevent AI usage. It will define the safe architecture for it.
 
 ---
 

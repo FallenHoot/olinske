@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import VoteButtons from '../../components/VoteButtons.astro';
-import { RELIABILITY_TRACKS } from '../../data/reliabilityTracks';
+import { RELIABILITY_CHAPTER_LABELS, RELIABILITY_TRACKS } from '../../data/reliabilityTracks';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -59,28 +59,39 @@ const followUpLinks = (post.data.followUps ?? [])
 
   const isReliabilityGuidePost = RELIABILITY_TRACKS.some((track) => track.slugs.includes(slug));
 
+  const getChapterLabel = (chapterSlug: string, fallbackTitle: string) => (
+    RELIABILITY_CHAPTER_LABELS[chapterSlug] ?? fallbackTitle
+  );
+
   const reliabilityTrackNav = RELIABILITY_TRACKS
     .map((track) => {
       const chapters = track.slugs
         .map((trackSlug) => {
           const related = postBySlug.get(trackSlug);
           if (!related) return null;
+          const title = related.data.title;
           return {
             slug: trackSlug,
             href: `/posts/${trackSlug}/`,
-            title: related.data.title,
+            title,
+            label: getChapterLabel(trackSlug, title),
             isCurrent: trackSlug === slug,
           };
         })
         .filter(Boolean);
 
+      const currentIndex = chapters.findIndex((chapter) => chapter.isCurrent);
+
       return {
         ...track,
         chapters,
-        hasCurrent: chapters.some((chapter) => chapter.isCurrent),
+        hasCurrent: currentIndex >= 0,
+        currentIndex,
       };
     })
-    .filter((track) => track.chapters.length > 0);
+    .filter((track) => track.chapters.length > 0 && track.hasCurrent);
+
+  const defaultTrackId = reliabilityTrackNav[0]?.id ?? '';
 
 const articleJsonLd = {
   '@context': 'https://schema.org',
@@ -189,31 +200,65 @@ const breadcrumbJsonLd = {
 
       {
         isReliabilityGuidePost && reliabilityTrackNav.length > 0 && (
-          <aside class="toc-panel">
-            <h2>Guide Tracks</h2>
-            <p class="post-meta">Pick a reader path and move chapter-to-chapter inside that track.</p>
+          <aside class="toc-panel guide-track-panel">
+            <h2>Guide Track</h2>
+            <p class="post-meta">Pick a path, then move chapter-to-chapter inside that track.</p>
+            <label class="guide-track-label" for="guide-track-select">Reader path</label>
+            <select id="guide-track-select" class="guide-track-select" data-default-track-id={defaultTrackId}>
+              {
+                reliabilityTrackNav.map((track) => (
+                  <option value={track.id}>{track.title}</option>
+                ))
+              }
+            </select>
+
             {
-              reliabilityTrackNav.map((track) => (
-                <div style="margin-top:0.9rem;">
-                  <h3 style="margin:0 0 0.35rem;font-size:0.93rem;">{track.title}</h3>
-                  <p class="post-meta" style="margin:0 0 0.45rem;">{track.audience}</p>
-                  <ul class="toc-list">
-                    {
-                      track.chapters.map((chapter) => (
-                        <li class="toc-item">
-                          <a
-                            href={chapter.href}
-                            class={chapter.isCurrent ? 'is-active' : undefined}
-                            aria-current={chapter.isCurrent ? 'page' : undefined}
-                          >
-                            {chapter.title}
-                          </a>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              ))
+              reliabilityTrackNav.map((track) => {
+                const prevChapter = track.currentIndex > 0 ? track.chapters[track.currentIndex - 1] : null;
+                const nextChapter = track.currentIndex < track.chapters.length - 1
+                  ? track.chapters[track.currentIndex + 1]
+                  : null;
+
+                return (
+                  <section class="guide-track-group" data-track-id={track.id} hidden>
+                    <p class="post-meta guide-track-audience">{track.audience}</p>
+                    <ul class="toc-list guide-track-list">
+                      {
+                        track.chapters.map((chapter) => (
+                          <li class="toc-item">
+                            <a
+                              href={chapter.href}
+                              title={chapter.title}
+                              class={chapter.isCurrent ? 'is-active' : undefined}
+                              aria-current={chapter.isCurrent ? 'page' : undefined}
+                            >
+                              {chapter.label}
+                            </a>
+                          </li>
+                        ))
+                      }
+                    </ul>
+
+                    <div class="guide-track-jump">
+                      {
+                        prevChapter ? (
+                          <a class="guide-track-jump-link" href={prevChapter.href}>← {prevChapter.label}</a>
+                        ) : (
+                          <span class="guide-track-jump-placeholder">Start of this track</span>
+                        )
+                      }
+
+                      {
+                        nextChapter ? (
+                          <a class="guide-track-jump-link" href={nextChapter.href}>{nextChapter.label} →</a>
+                        ) : (
+                          <span class="guide-track-jump-placeholder">End of this track</span>
+                        )
+                      }
+                    </div>
+                  </section>
+                );
+              })
             }
           </aside>
         )
@@ -276,8 +321,51 @@ const breadcrumbJsonLd = {
     }
 
     const headingNodes = Array.from(document.querySelectorAll('.article-panel h2[id], .article-panel h3[id]'));
-    const tocAnchors = Array.from(document.querySelectorAll('.toc-list a'));
+    const tocAnchors = Array.from(document.querySelectorAll('#toc-list a'));
     const anchorMap = new Map(tocAnchors.map((anchor) => [anchor.getAttribute('href')?.slice(1), anchor]));
+
+    const trackSelect = document.getElementById('guide-track-select');
+    const trackGroups = Array.from(document.querySelectorAll('.guide-track-group'));
+    if (trackSelect && trackGroups.length > 0) {
+      const storageKey = 'reliability-guide-track';
+      const validIds = new Set(
+        trackGroups
+          .map((group) => group.getAttribute('data-track-id'))
+          .filter(Boolean)
+      );
+
+      const showTrack = (trackId) => {
+        trackGroups.forEach((group) => {
+          group.hidden = group.getAttribute('data-track-id') !== trackId;
+        });
+
+        trackSelect.value = trackId;
+
+        try {
+          localStorage.setItem(storageKey, trackId);
+        } catch {
+          // Ignore storage errors in private browsing modes.
+        }
+      };
+
+      const fallbackTrack = trackSelect.dataset.defaultTrackId || trackSelect.value;
+      let initialTrack = fallbackTrack;
+      try {
+        const savedTrack = localStorage.getItem(storageKey);
+        if (savedTrack && validIds.has(savedTrack)) initialTrack = savedTrack;
+      } catch {
+        // Ignore storage errors in private browsing modes.
+      }
+
+      if (!validIds.has(initialTrack) && validIds.has(fallbackTrack)) {
+        initialTrack = fallbackTrack;
+      }
+
+      showTrack(initialTrack);
+      trackSelect.addEventListener('change', () => {
+        if (validIds.has(trackSelect.value)) showTrack(trackSelect.value);
+      });
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {

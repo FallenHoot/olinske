@@ -18,6 +18,38 @@ const normalizeText = (value?: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+const STOP_WORDS = new Set([
+  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'in', 'is', 'it',
+  'not', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'were', 'with',
+]);
+
+const parseQueryTerms = (query: string) => {
+  const normalizedQuery = normalizeText(query);
+  const rawTerms = normalizedQuery
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+  const meaningfulTerms = rawTerms.filter((term) => !STOP_WORDS.has(term));
+  return {
+    normalizedQuery,
+    terms: meaningfulTerms.length > 0 ? meaningfulTerms : rawTerms,
+  };
+};
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const containsWholeWord = (text: string, term: string) => {
+  const pattern = new RegExp(`(^|\\s)${escapeRegExp(term)}(\\s|$)`);
+  return pattern.test(text);
+};
+
+const countWholeWordOccurrences = (text: string, term: string) => {
+  const pattern = new RegExp(`(^|\\s)${escapeRegExp(term)}(?=\\s|$)`, 'g');
+  const matches = text.match(pattern);
+  return matches ? matches.length : 0;
+};
+
 const matchesCategory = (tags: string[], category: string) => {
   if (!category) return true;
   const categoryKeyword = category.replace(/-/g, ' ').toLowerCase();
@@ -33,18 +65,83 @@ const matchesQuery = (
 ) => {
   if (!query) return true;
   const haystack = normalizeText([title, description, tags.join(' '), body].join(' '));
-  const terms = normalizeText(query)
-    .split(/\s+/)
-    .map((t) => t.trim())
-    .filter(Boolean);
-  return terms.every((term) => haystack.includes(term));
+  const { normalizedQuery, terms } = parseQueryTerms(query);
+  if (!terms.length) return true;
+
+  if (normalizedQuery.length >= 6 && haystack.includes(normalizedQuery)) {
+    return true;
+  }
+
+  return terms.every((term) => containsWholeWord(haystack, term));
 };
 
-const filteredPosts = allPosts.filter((post) => {
-  const tags = (post.data.tags ?? []).map((tag) => tag.toLowerCase());
-  return matchesCategory(tags, selectedCategory)
-    && matchesQuery(post.data.title, post.data.description ?? '', tags, post.body ?? '', selectedQuery);
-});
+const queryScore = (
+  title: string,
+  description: string,
+  tags: string[],
+  body: string,
+  query: string,
+) => {
+  if (!query) return 0;
+
+  const normalizedTitle = normalizeText(title);
+  const normalizedDescription = normalizeText(description);
+  const normalizedTags = normalizeText(tags.join(' '));
+  const normalizedBody = normalizeText(body);
+  const parsed = parseQueryTerms(query);
+  const normalizedQuery = parsed.normalizedQuery;
+  const terms = parsed.terms;
+
+  let score = 0;
+  if (normalizedQuery.length >= 3) {
+    if (normalizedTitle === normalizedQuery) score += 4000;
+    if (normalizedTitle.startsWith(normalizedQuery)) score += 2500;
+  }
+
+  if (normalizedQuery.length >= 3) {
+    if (normalizedTitle.includes(normalizedQuery)) score += 140;
+    if (normalizedDescription.includes(normalizedQuery)) score += 100;
+    if (normalizedTags.includes(normalizedQuery)) score += 85;
+    if (normalizedBody.includes(normalizedQuery)) score += 40;
+  }
+
+  terms.forEach((term) => {
+    const titleCount = countWholeWordOccurrences(normalizedTitle, term);
+    const descriptionCount = countWholeWordOccurrences(normalizedDescription, term);
+    const tagCount = countWholeWordOccurrences(normalizedTags, term);
+    const bodyCount = countWholeWordOccurrences(normalizedBody, term);
+
+    if (titleCount > 0) {
+      score += 2000;
+      score += titleCount * 180;
+    }
+
+    score += descriptionCount * 42;
+    score += tagCount * 55;
+    score += bodyCount * 12;
+  });
+
+  return score;
+};
+
+const filteredPosts = allPosts
+  .map((post) => {
+    const tags = (post.data.tags ?? []).map((tag) => tag.toLowerCase());
+    const inCategory = matchesCategory(tags, selectedCategory);
+    const inQuery = matchesQuery(post.data.title, post.data.description ?? '', tags, post.body ?? '', selectedQuery);
+    return {
+      post,
+      inCategory,
+      inQuery,
+      score: queryScore(post.data.title, post.data.description ?? '', tags, post.body ?? '', selectedQuery),
+    };
+  })
+  .filter((entry) => entry.inCategory && entry.inQuery)
+  .sort((a, b) => {
+    if (selectedQuery && a.score !== b.score) return b.score - a.score;
+    return b.post.data.publishDate.valueOf() - a.post.data.publishDate.valueOf();
+  })
+  .map((entry) => entry.post);
 
 const estimateReadTime = (body?: string) => {
   const words = (body ?? '').trim().split(/\s+/).filter(Boolean).length;
@@ -129,6 +226,7 @@ const estimateReadTime = (body?: string) => {
     const subtitle = document.getElementById('posts-subtitle');
     const topicLabel = document.getElementById('posts-active-topic');
     const emptyCard = document.getElementById('posts-empty-card');
+    const postGrid = document.querySelector('.v-grid');
 
     const params = new URLSearchParams(window.location.search);
     const category = (params.get('category') || '').trim();
@@ -154,15 +252,52 @@ const estimateReadTime = (body?: string) => {
       return tags.some((tag) => tag.includes(categoryKeyword) || categoryKeyword.includes(tag));
     }
 
+    const STOP_WORDS = new Set([
+      'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'in', 'is', 'it',
+      'not', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'were', 'with',
+    ]);
+
+    const normalizeText = (value) =>
+      value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const parseQueryTerms = (query) => {
+      const normalizedQuery = normalizeText(query);
+      const rawTerms = normalizedQuery
+        .split(/\s+/)
+        .map((t) => t.trim())
+        .filter(Boolean);
+      const meaningfulTerms = rawTerms.filter((term) => !STOP_WORDS.has(term));
+      return {
+        normalizedQuery,
+        terms: meaningfulTerms.length > 0 ? meaningfulTerms : rawTerms,
+      };
+    };
+
+    const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const containsWholeWord = (text, term) => {
+      const pattern = new RegExp(`(^|\\s)${escapeRegExp(term)}(\\s|$)`);
+      return pattern.test(text);
+    };
+
+    const countWholeWordOccurrences = (text, term) => {
+      const pattern = new RegExp(`(^|\\s)${escapeRegExp(term)}(?=\\s|$)`, 'g');
+      const matches = text.match(pattern);
+      return matches ? matches.length : 0;
+    };
+
     function matchesQuery(card, selectedQuery) {
       if (!selectedQuery) return true;
 
-      const normalizeText = (value) =>
-        value
-          .toLowerCase()
-          .replace(/[^a-z0-9\s]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
+      const countWholeWordOccurrences = (text, term) => {
+        const pattern = new RegExp(`(^|\\s)${escapeRegExp(term)}(?=\\s|$)`, 'g');
+        const matches = text.match(pattern);
+        return matches ? matches.length : 0;
+      };
 
       const text = [
         card.getAttribute('data-title') || '',
@@ -173,21 +308,83 @@ const estimateReadTime = (body?: string) => {
 
       const normalizedText = normalizeText(text);
 
-      const terms = normalizeText(selectedQuery)
-        .split(/\s+/)
-        .map((t) => t.trim())
-        .filter(Boolean);
+      const { normalizedQuery, terms } = parseQueryTerms(selectedQuery);
+      if (!terms.length) return true;
 
-      return terms.every((term) => normalizedText.includes(term));
+      if (normalizedQuery.length >= 6 && normalizedText.includes(normalizedQuery)) {
+        return true;
+      }
+
+      return terms.every((term) => containsWholeWord(normalizedText, term));
+    }
+
+    function queryScore(card, selectedQuery) {
+      if (!selectedQuery) return 0;
+
+      const normalizedTitle = normalizeText(card.getAttribute('data-title') || '');
+      const normalizedDescription = normalizeText(card.getAttribute('data-description') || '');
+      const normalizedTags = normalizeText((card.getAttribute('data-tags') || '').replace(/\|\|/g, ' '));
+      const normalizedBody = normalizeText(card.getAttribute('data-body') || '');
+      const { normalizedQuery, terms } = parseQueryTerms(selectedQuery);
+
+      let score = 0;
+      if (normalizedQuery.length >= 3) {
+        if (normalizedTitle === normalizedQuery) score += 4000;
+        if (normalizedTitle.startsWith(normalizedQuery)) score += 2500;
+      }
+
+      if (normalizedQuery.length >= 3) {
+        if (normalizedTitle.includes(normalizedQuery)) score += 140;
+        if (normalizedDescription.includes(normalizedQuery)) score += 100;
+        if (normalizedTags.includes(normalizedQuery)) score += 85;
+        if (normalizedBody.includes(normalizedQuery)) score += 40;
+      }
+
+      terms.forEach((term) => {
+        const titleCount = countWholeWordOccurrences(normalizedTitle, term);
+        const descriptionCount = countWholeWordOccurrences(normalizedDescription, term);
+        const tagCount = countWholeWordOccurrences(normalizedTags, term);
+        const bodyCount = countWholeWordOccurrences(normalizedBody, term);
+
+        if (titleCount > 0) {
+          score += 2000;
+          score += titleCount * 180;
+        }
+
+        score += descriptionCount * 42;
+        score += tagCount * 55;
+        score += bodyCount * 12;
+      });
+
+      return score;
     }
 
     function applyFilters() {
-      let visibleCount = 0;
-      cards.forEach((card) => {
+      const ranked = [];
+      cards.forEach((card, index) => {
         const show = matchesCategory(card, category) && matchesQuery(card, query);
         card.hidden = !show;
-        if (show) visibleCount += 1;
+        if (show) {
+          ranked.push({
+            card,
+            score: queryScore(card, query),
+            index,
+          });
+        }
       });
+
+      if (query && postGrid) {
+        ranked
+          .sort((a, b) => {
+            if (a.score !== b.score) return b.score - a.score;
+            return a.index - b.index;
+          })
+          .forEach((entry) => {
+            postGrid.insertBefore(entry.card, emptyCard);
+          });
+      }
+
+      const visibleCount = ranked.length;
 
       if (emptyCard) emptyCard.hidden = visibleCount !== 0;
 

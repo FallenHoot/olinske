@@ -392,6 +392,66 @@ a:focus-visible {
   padding-left: 0.7rem;
 }
 
+.guide-track-label {
+  display: block;
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.guide-track-select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--text);
+  padding: 0.45rem 0.6rem;
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+}
+
+.guide-track-group {
+  margin-top: 0.75rem;
+}
+
+.guide-track-audience {
+  margin-bottom: 0.5rem;
+}
+
+.guide-track-list .toc-item a {
+  display: block;
+  line-height: 1.35;
+}
+
+.guide-track-jump {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 0.4rem;
+}
+
+.guide-track-jump-link {
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.guide-track-jump-link:hover {
+  text-decoration: underline;
+}
+
+.guide-track-jump-placeholder {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
 .article-panel {
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -423,6 +483,22 @@ a:focus-visible {
 .article-panel figure,
 .article-panel .mermaid {
   margin: 0 0 1.25rem;
+}
+
+.article-panel img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-2) 86%, transparent);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.12);
+  transition: filter 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+html[data-theme="dark"] .article-panel img {
+  /* Soften bright diagrams and screenshots in dark mode. */
+  filter: brightness(0.86) contrast(0.94) saturate(0.9);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
 }
 
 .article-panel table {

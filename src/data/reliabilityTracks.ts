@@ -5,6 +5,28 @@ export interface ReliabilityTrack {
   slugs: string[];
 }
 
+export const RELIABILITY_CHAPTER_LABELS: Record<string, string> = {
+  '000018-reliability-is-an-economic-decision': 'Chapter 1: Economic Decision',
+  '000019-systems-fail-according-to-incentives': 'Chapter 2: Incentives',
+  '000020-shared-responsibility-accountability-vacuum': 'Chapter 3b: Accountability Vacuum',
+  '000021-reliability-equation-financial-model': 'Chapter 4: Financial Model',
+  '000022-provider-failures-status-pages': 'Chapter 5: Provider Constraints',
+  '000023-partial-failure-control-plane-failures': 'Chapter 6: Partial Failure',
+  '000024-hidden-cost-reliability-tooling': 'Chapter 7: Tooling Cost',
+  '000025-reliability-tradeoffs-on-call-finops': 'Chapter 8: Trade-offs',
+  '000026-reliability-governance-adr-ledger-indicators': 'Chapter 9: Governance',
+  '000027-reliability-execution-quarterly-plan': 'Chapter 10: Quarterly Plan',
+  '000028-reliability-operating-artifacts-and-policy-templates': 'Appendix: Templates',
+  '000029-reliability-pricing-saas-margin-trap': 'Chapter 12: Pricing and Margin',
+  '000030-reliability-maturity-organizational-adoption': 'Chapter 13: Adoption',
+  '000031-the-things-that-actually-break': 'Chapter 3: What Breaks',
+  '000032-identity-tier-zero-spof': 'Chapter 5a: Identity Tier-0',
+  '000033-silent-outages-data-corruption': 'Chapter 6b: Silent Outages',
+  '000034-reliability-illusions': 'Chapter 7b: Reliability Illusions',
+  '000035-change-primary-failure-source': 'Chapter 7d: Change Failure',
+  '000036-sovereignty-myth-scale-reality-digital-readiness': 'Chapter 14: Sovereignty Reality',
+};
+
 export const RELIABILITY_TRACKS: ReliabilityTrack[] = [
   {
     id: 'rapid-orientation',

@@ -353,6 +353,15 @@ a:focus-visible {
   gap: 1rem;
 }
 
+.article-shell > .toc-panel {
+  grid-column: 1;
+}
+
+.article-shell > .article-panel,
+.article-shell > .vote-widget {
+  grid-column: 2;
+}
+
 .toc-panel {
   position: sticky;
   top: 90px;
@@ -828,6 +837,12 @@ html[data-theme="dark"] .article-panel img {
 
   .article-shell {
     grid-template-columns: 1fr;
+  }
+
+  .article-shell > .toc-panel,
+  .article-shell > .article-panel,
+  .article-shell > .vote-widget {
+    grid-column: auto;
   }
 
   .toc-panel {

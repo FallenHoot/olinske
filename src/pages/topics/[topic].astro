@@ -24,6 +24,9 @@ const posts = filterPostsByTopic(allPosts, topic.slug);
 
 <BaseLayout title={`${topic.label} | Olinske`} description={topic.description}>
   <main class="container site-shell">
+    <div hidden aria-hidden="true" data-pagefind-filter="contentType:Topic"></div>
+    <div hidden aria-hidden="true" data-pagefind-filter={`category:${topic.slug}`}></div>
+
     <section class="hero-panel fade-in">
       <p class="eyebrow">Topic Lens</p>
       <h1 class="hero-title">{topic.label}</h1>

@@ -22,6 +22,8 @@ const ogImage = `/og/${slug}.svg`;
 const publishedIso = post.data.publishDate.toISOString();
 const modifiedIso = (post.data.lastUpdated ?? post.data.publishDate).toISOString();
 const lastReviewed = (post.data.lastUpdated ?? post.data.publishDate).toISOString().slice(0, 10);
+const primaryCategory = (post.data.tags?.[0] ?? 'uncategorized').toLowerCase();
+const pagefindTagFilters = (post.data.tags ?? []).map((tag) => tag.toLowerCase());
 
 const postBySlug = new Map(
   allPublishedPosts.map((item) => [item.data.slug ?? item.id.replace(/\.md$/, ''), item])
@@ -145,6 +147,14 @@ const breadcrumbJsonLd = {
   </Fragment>
 
   <main class="container site-shell">
+    <div hidden aria-hidden="true" data-pagefind-filter="contentType:Post"></div>
+    <div hidden aria-hidden="true" data-pagefind-filter={`category:${primaryCategory}`}></div>
+    {
+      pagefindTagFilters.map((tag) => (
+        <div hidden aria-hidden="true" data-pagefind-filter={`tag:${tag}`}></div>
+      ))
+    }
+
     <section class="hero-panel fade-in">
       <p class="eyebrow">{post.data.publishDate.toISOString().slice(0, 10)}</p>
       <h1 class="hero-title">{post.data.title}</h1>
@@ -172,7 +182,7 @@ const breadcrumbJsonLd = {
     <section class="article-shell fade-in fade-delay-2">
       {
         (prerequisiteLinks.length > 0 || followUpLinks.length > 0) && (
-          <aside class="toc-panel">
+          <aside class="toc-panel" data-pagefind-ignore>
             {prerequisiteLinks.length > 0 && (
               <>
                 <h2>This post assumes knowledge from</h2>
@@ -200,7 +210,7 @@ const breadcrumbJsonLd = {
 
       {
         isReliabilityGuidePost && reliabilityTrackNav.length > 0 && (
-          <aside class="toc-panel guide-track-panel">
+          <aside class="toc-panel guide-track-panel" data-pagefind-ignore>
             <h2>Guide Track</h2>
             <p class="post-meta">Pick a path, then move chapter-to-chapter inside that track.</p>
             <label class="guide-track-label" for="guide-track-select">Reader path</label>
@@ -264,7 +274,7 @@ const breadcrumbJsonLd = {
         )
       }
 
-      <aside class="toc-panel">
+      <aside class="toc-panel" data-pagefind-ignore>
         <h2>On this page</h2>
         {
           toc.length === 0 ? (

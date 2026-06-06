@@ -31,6 +31,21 @@ Local scripts are for local validation and debugging only. They do not replace G
 
 Latest export details are in EXPORT-METADATA.json.
 
+## Full-text search (Pagefind)
+
+Keyword search is powered by Pagefind static indexing.
+
+1. Build first to generate or refresh the search index:
+	- npm run build
+2. Start development server after build:
+	- npm run dev -- --host
+
+Notes:
+
+- Pagefind indexes compiled files in dist/pagefind.
+- If you add new content and search does not find it yet, run npm run build again.
+- Global keyword search routes to /search/ and supports query-string priming with ?q=.
+
 ## Git safety
 
 This repository enforces a local pre-push check to prevent accidental local-only changes.

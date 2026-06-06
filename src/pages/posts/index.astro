@@ -94,12 +94,12 @@ const queryScore = (
 
   let score = 0;
   if (normalizedQuery.length >= 3) {
-    if (normalizedTitle === normalizedQuery) score += 4000;
-    if (normalizedTitle.startsWith(normalizedQuery)) score += 2500;
+    if (normalizedTitle === normalizedQuery) score += 1000000;
+    if (normalizedTitle.startsWith(normalizedQuery)) score += 800000;
+    if (normalizedTitle.includes(normalizedQuery)) score += 500000;
   }
 
   if (normalizedQuery.length >= 3) {
-    if (normalizedTitle.includes(normalizedQuery)) score += 140;
     if (normalizedDescription.includes(normalizedQuery)) score += 100;
     if (normalizedTags.includes(normalizedQuery)) score += 85;
     if (normalizedBody.includes(normalizedQuery)) score += 40;
@@ -293,12 +293,6 @@ const estimateReadTime = (body?: string) => {
     function matchesQuery(card, selectedQuery) {
       if (!selectedQuery) return true;
 
-      const countWholeWordOccurrences = (text, term) => {
-        const pattern = new RegExp(`(^|\\s)${escapeRegExp(term)}(?=\\s|$)`, 'g');
-        const matches = text.match(pattern);
-        return matches ? matches.length : 0;
-      };
-
       const text = [
         card.getAttribute('data-title') || '',
         card.getAttribute('data-description') || '',
@@ -329,12 +323,12 @@ const estimateReadTime = (body?: string) => {
 
       let score = 0;
       if (normalizedQuery.length >= 3) {
-        if (normalizedTitle === normalizedQuery) score += 4000;
-        if (normalizedTitle.startsWith(normalizedQuery)) score += 2500;
+        if (normalizedTitle === normalizedQuery) score += 1000000;
+        if (normalizedTitle.startsWith(normalizedQuery)) score += 800000;
+        if (normalizedTitle.includes(normalizedQuery)) score += 500000;
       }
 
       if (normalizedQuery.length >= 3) {
-        if (normalizedTitle.includes(normalizedQuery)) score += 140;
         if (normalizedDescription.includes(normalizedQuery)) score += 100;
         if (normalizedTags.includes(normalizedQuery)) score += 85;
         if (normalizedBody.includes(normalizedQuery)) score += 40;

@@ -1,0 +1,240 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Search | Olinske" description="Full-text search across articles, topics, and writing on Olinske.">
+  <main class="container site-shell search-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Site Search</p>
+      <h1 class="hero-title">Find Exactly<br />What You Need</h1>
+      <p class="hero-subtitle">Search all published content with static full-text indexing powered by Pagefind.</p>
+
+      <form class="search-form" id="site-search-form" role="search" aria-label="Search published articles">
+        <input
+          id="site-search-input"
+          class="search-input"
+          type="search"
+          placeholder="Search by keyword, title, framework, or acronym"
+          aria-label="Search published articles"
+          autocomplete="off"
+        />
+      </form>
+
+      <p class="search-status" id="search-status" aria-live="polite"></p>
+
+      <div class="search-results" id="search-results" hidden>
+        <ul class="search-results-list" id="search-results-list"></ul>
+      </div>
+
+      <p class="search-empty" id="search-empty" hidden>No matching articles found for this search term.</p>
+    </section>
+  </main>
+
+  <script is:inline>
+    let pagefindPromise;
+
+    async function getPagefind() {
+      if (!pagefindPromise) pagefindPromise = import('/pagefind/pagefind.js');
+      return pagefindPromise;
+    }
+
+    function renderResults(items, term) {
+      const list = document.getElementById('search-results-list');
+      const resultsShell = document.getElementById('search-results');
+      const empty = document.getElementById('search-empty');
+      const status = document.getElementById('search-status');
+      if (!list || !resultsShell || !empty || !status) return;
+
+      list.innerHTML = '';
+      if (!items.length) {
+        resultsShell.hidden = true;
+        empty.hidden = false;
+        status.textContent = `No articles found for "${term}".`;
+        return;
+      }
+
+      items.forEach((item) => {
+        const li = document.createElement('li');
+        li.className = 'search-result-item';
+
+        const link = document.createElement('a');
+        link.className = 'search-result-link';
+        link.href = item.url;
+
+        const title = document.createElement('h3');
+        title.className = 'search-result-title';
+        title.textContent = item.title;
+
+        const excerpt = document.createElement('p');
+        excerpt.className = 'search-result-excerpt';
+        excerpt.innerHTML = item.excerpt;
+
+        link.appendChild(title);
+        link.appendChild(excerpt);
+        li.appendChild(link);
+        list.appendChild(li);
+      });
+
+      empty.hidden = true;
+      resultsShell.hidden = false;
+      status.textContent = `${items.length} article${items.length === 1 ? '' : 's'} found for "${term}".`;
+    }
+
+    async function runSearch(term) {
+      const normalized = term.trim();
+      const status = document.getElementById('search-status');
+      const resultsShell = document.getElementById('search-results');
+      const empty = document.getElementById('search-empty');
+
+      if (!normalized) {
+        if (status) status.textContent = 'Enter a keyword and press Enter to search.';
+        if (resultsShell) resultsShell.hidden = true;
+        if (empty) empty.hidden = true;
+        return;
+      }
+
+      if (status) status.textContent = `Searching for "${normalized}"...`;
+
+      try {
+        const pagefind = await getPagefind();
+        const response = await pagefind.search(normalized);
+        const rawResults = response?.results ?? [];
+
+        const hydrated = await Promise.all(
+          rawResults.map(async (result) => {
+            const data = await result.data();
+            return {
+              url: data.url,
+              title: data.meta?.title || data.url,
+              excerpt: data.excerpt || '',
+            };
+          })
+        );
+
+        const articleResults = hydrated.filter(
+          (item) => item.url.startsWith('/posts/') && item.url !== '/posts/' && !item.url.startsWith('/posts/?')
+        );
+        renderResults(articleResults, normalized);
+      } catch (error) {
+        if (status) status.textContent = 'Search failed to load. Run a build to refresh the search index.';
+      }
+    }
+
+    function initSearchPage() {
+      const form = document.getElementById('site-search-form');
+      const input = document.getElementById('site-search-input');
+      if (!(form instanceof HTMLFormElement) || !(input instanceof HTMLInputElement)) return;
+
+      const initialQuery = (new URLSearchParams(window.location.search).get('q') || '').trim();
+      input.value = initialQuery;
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const term = input.value.trim();
+        const url = new URL(window.location.href);
+        if (term) {
+          url.searchParams.set('q', term);
+        } else {
+          url.searchParams.delete('q');
+        }
+        window.history.replaceState({}, '', url);
+        runSearch(term);
+      });
+
+      runSearch(initialQuery);
+    }
+
+    document.addEventListener('astro:page-load', initSearchPage);
+    initSearchPage();
+  </script>
+
+  <style is:global>
+    .search-shell {
+      padding-top: 2.5rem;
+      padding-bottom: 3rem;
+    }
+
+    .search-shell .hero-panel {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .search-form {
+      margin-top: 1.25rem;
+    }
+
+    .search-input {
+      width: 100%;
+      display: block;
+      border: 1px solid var(--line-subtle);
+      border-radius: 14px;
+      padding: 0.75rem 0.95rem;
+      background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
+      color: var(--text-primary);
+      font-family: 'Public Sans', sans-serif;
+      font-size: 1.05rem;
+    }
+
+    .search-input:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 1px;
+    }
+
+    .search-status {
+      margin-top: 0.85rem;
+      margin-bottom: 0.65rem;
+      color: var(--text-muted);
+      font-size: 0.94rem;
+    }
+
+    .search-results-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .search-result-item {
+      border: 1px solid var(--line-subtle);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--surface-elevated) 95%, transparent);
+      transition: border-color 150ms ease, transform 150ms ease;
+    }
+
+    .search-result-item:hover {
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--line-subtle));
+      transform: translateY(-1px);
+    }
+
+    .search-result-link {
+      display: block;
+      padding: 0.9rem 1rem;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .search-result-title {
+      margin: 0;
+      font-size: 1.22rem;
+    }
+
+    .search-result-excerpt {
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+      color: var(--text-muted);
+    }
+
+    .search-result-excerpt mark {
+      background: color-mix(in srgb, var(--accent) 24%, transparent);
+      color: inherit;
+      border-radius: 4px;
+      padding: 0 0.15em;
+    }
+
+    .search-empty {
+      margin-top: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</BaseLayout>

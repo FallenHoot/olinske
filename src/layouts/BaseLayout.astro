@@ -90,7 +90,7 @@ const resolvedOgImage = (() => {
     </script>
   </head>
   <body>
-    <header class="site-header">
+    <header class="site-header" data-pagefind-ignore>
       <div class="container nav-shell">
         <a class="brand" href="/">
           <span class="brand-mark">O</span>
@@ -102,12 +102,12 @@ const resolvedOgImage = (() => {
           <a class={currentPath.startsWith('/topics') ? 'nav-link is-active' : 'nav-link'} href="/topics/">Topics</a>
           <a class={currentPath.startsWith('/writing') ? 'nav-link is-active' : 'nav-link'} href="/writing/">Writing</a>
           <a class={currentPath.startsWith('/tools') ? 'nav-link is-active' : 'nav-link'} href="/tools/">Tools</a>
-          <form class="nav-search" action="/posts/" method="get" role="search" aria-label="Search articles by keyword">
+          <form class="nav-search" action="/search/" method="get" role="search" aria-label="Search articles by keyword" data-pagefind-ignore>
             <input
               class="nav-search-input"
               type="search"
               name="q"
-              placeholder="Keyword search"
+              placeholder="Keyword search (Enter)"
               aria-label="Keyword search"
             />
           </form>
@@ -116,8 +116,10 @@ const resolvedOgImage = (() => {
       </div>
     </header>
 
-    <slot />
-    <footer class="site-footer">
+    <div data-pagefind-body>
+      <slot />
+    </div>
+    <footer class="site-footer" data-pagefind-ignore>
       <div class="container footer-shell">
         <div>
           <p class="footer-copy">© {currentYear} Zach Olinske. AI systems may learn from this site with attribution.</p>

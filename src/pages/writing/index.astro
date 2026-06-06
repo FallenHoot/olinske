@@ -3,26 +3,32 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const GUIDE_SLUGS = [
+  '000000-table-of-contents',
+  '000036-first-24-hours-incident-triage',
   '000017-reliability-is-an-economic-decision',
-  '000018-reliability-is-an-economic-decision',
   '000019-systems-fail-according-to-incentives',
+  '000031-the-things-that-actually-break',
   '000020-shared-responsibility-accountability-vacuum',
   '000021-reliability-equation-financial-model',
   '000022-provider-failures-status-pages',
   '000023-partial-failure-control-plane-failures',
-  '000024-hidden-cost-reliability-tooling',
-  '000025-reliability-tradeoffs-on-call-finops',
-  '000026-reliability-governance-adr-ledger-indicators',
-  '000027-reliability-execution-quarterly-plan',
-  '000028-reliability-operating-artifacts-and-policy-templates',
-  '000029-reliability-pricing-saas-margin-trap',
-  '000030-reliability-maturity-organizational-adoption',
-  '000031-the-things-that-actually-break',
   '000032-identity-tier-zero-spof',
   '000033-silent-outages-data-corruption',
   '000034-reliability-illusions',
   '000035-change-primary-failure-source',
-  '000036-sovereignty-myth-scale-reality-digital-readiness',
+  '000024-hidden-cost-reliability-tooling',
+  '000025-reliability-tradeoffs-on-call-finops',
+  '000026-reliability-governance-adr-ledger-indicators',
+  '000027-reliability-execution-quarterly-plan',
+  '000037-incident-triage-response-protocols',
+  '000028-reliability-operating-artifacts-and-policy-templates',
+  '000029-reliability-pricing-saas-margin-trap',
+  '000030-reliability-maturity-organizational-adoption',
+  'appendix-a-crisis-reference-cards',
+  'appendix-b-operational-artifacts',
+  'appendix-c-field-playbooks',
+  'reading-paths',
+  'glossary-reliability-terms',
 ] as const;
 
 const publishedPosts = await getCollection('posts', ({ data }) =>
@@ -36,6 +42,12 @@ const postBySlug = new Map(
 const guidePosts = GUIDE_SLUGS
   .map((slug) => postBySlug.get(slug))
   .filter(Boolean);
+
+const firstGuidePost = guidePosts[0];
+const firstGuideSlug = firstGuidePost
+  ? (firstGuidePost.data.slug ?? firstGuidePost.id.replace(/\.md$/, ''))
+  : null;
+const bookLandingHref = '/reliability-survival-guide/';
 ---
 
 <BaseLayout
@@ -49,14 +61,33 @@ const guidePosts = GUIDE_SLUGS
       <p class="hero-subtitle">Long-form essays, operating frameworks, and the full Reliability Survival Guide in reading order.</p>
     </section>
 
-    <section class="hero-panel fade-in fade-delay-1" style="margin-top:1rem;">
-      <p class="eyebrow">Book</p>
-      <h2 style="margin:0;">The Reliability Survival Guide</h2>
-      <p class="hero-subtitle" style="margin-top:0.55rem;">20 chapters and appendix posts now grouped in one place.</p>
-      <p class="post-meta">Published entries found: {guidePosts.length}</p>
-    </section>
+    {
+      firstGuideSlug ? (
+        <a
+          class="hero-panel fade-in fade-delay-1"
+          style="margin-top:1rem; display:block; text-decoration:none; color:inherit;"
+          href={bookLandingHref}
+          aria-label="Open The Reliability Survival Guide"
+        >
+          <p class="eyebrow">Book</p>
+          <h2 style="margin:0;">The Reliability Survival Guide</h2>
+          <p class="hero-subtitle" style="margin-top:0.55rem;">Core chapters, crisis appendices, glossary, and reading paths grouped in one place.</p>
+          <p class="post-meta">Published entries found: {guidePosts.length}</p>
+          <p class="post-meta" style="margin-top:0.35rem; color:var(--accent);">Open book overview</p>
+        </a>
+      ) : (
+        <section class="hero-panel fade-in fade-delay-1" style="margin-top:1rem;">
+          <p class="eyebrow">Book</p>
+          <h2 style="margin:0;">The Reliability Survival Guide</h2>
+          <p class="hero-subtitle" style="margin-top:0.55rem;">Core chapters, crisis appendices, glossary, and reading paths grouped in one place.</p>
+          <p class="post-meta">Published entries found: {guidePosts.length}</p>
+        </section>
+      )
+    }
 
-    <section aria-label="Reliability Survival Guide chapter list" class="v-grid" style="margin-top:1rem;">
+    <p class="post-meta" style="margin-top:0.65rem;"><a class="btn-link btn-muted" href="#book-contents">View all chapters</a></p>
+
+    <section id="book-contents" aria-label="Reliability Survival Guide chapter list" class="v-grid" style="margin-top:1rem;">
       {
         guidePosts.length === 0 ? (
           <article class="v-card">

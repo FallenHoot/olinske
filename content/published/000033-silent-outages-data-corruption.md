@@ -108,7 +108,7 @@ Step 1 succeeds. Steps 2-4 fail due to a dependency issue (session service is sl
 
 You designed your system to be idempotent: the same request can be retried safely.
 
-But your idempotency check is wrong:
+However, your idempotency check is wrong:
 - You check by (user_id, request_id) but the same request_id is reused across sessions
 - You check by timestamp but clocks are not synchronized
 - You check by content hash but the content has cosmetic differences
@@ -170,7 +170,7 @@ Use different systems:
 ### 5. Monitor for corruption indicators, not just error rates
 
 Error rate 0.001%: normal.
-But:
+However:
 - Cache hit rate dropped from 95% to 85%: investigate
 - Search result count differs from database count: investigate
 - Replication lag is now 5 seconds when it was 100ms: investigate
@@ -229,6 +229,490 @@ if value is not None:
 
 This catches cache staleness in real time.
 
+## Detection Queries by Database Type
+
+Theory without practice is a lecture. Here are the actual queries you run to detect silent failures.
+
+Run these. Do not skip them because they look obvious. Silent failures look obvious in hindsight.
+
+### Tier 1: Run Every 5 Minutes (Most Critical)
+
+These are the canaries for catastrophic data loss. Alert immediately if counts are non-zero.
+
+#### PostgreSQL / SQL
+
+```sql
+-- Orphaned foreign key records (data exists in child but not parent)
+SELECT tablename, orphaned_count
+FROM (
+  SELECT 'orders_without_users' as tablename,
+    COUNT(*) as orphaned_count
+  FROM orders
+  WHERE user_id NOT IN (SELECT id FROM users)
+  
+  UNION ALL
+  
+  SELECT 'sessions_without_users' as tablename,
+    COUNT(*) as orphaned_count
+  FROM sessions
+  WHERE user_id NOT IN (SELECT id FROM users)
+) counts
+WHERE orphaned_count > 0;
+
+-- Replication lag (primary to replica) in seconds
+SELECT EXTRACT(EPOCH FROM (now() - pg_last_xact_replay_timestamp()))
+  AS replication_lag_seconds;
+
+-- Uncommitted transactions that are blocking others
+SELECT pid, usename, query, state_change
+FROM pg_stat_activity
+WHERE state = 'active'
+  AND query_start < now() - interval '5 minutes'
+ORDER BY query_start DESC;
+
+-- Table bloat (dead rows that slow queries)
+SELECT schemaname, tablename,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size,
+  ROUND(100 * (pg_total_relation_size(schemaname||'.'||tablename) - pg_relation_size(schemaname||'.'||tablename))
+    / pg_total_relation_size(schemaname||'.'||tablename)) AS bloat_pct
+FROM pg_tables
+WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
+LIMIT 10;
+```
+
+#### MySQL / MariaDB
+
+```sql
+-- Orphaned foreign key records
+SELECT COUNT(*) as orphaned_orders
+FROM orders o
+LEFT JOIN users u ON o.user_id = u.id
+WHERE u.id IS NULL;
+
+-- Replication lag (seconds behind primary)
+SHOW SLAVE STATUS\G
+-- Look for: Seconds_Behind_Master
+
+-- InnoDB redo log utilization
+SELECT VARIABLE_VALUE
+FROM information_schema.global_variables
+WHERE variable_name = 'innodb_log_file_size';
+
+-- Slow queries in the slow query log
+SELECT count_star, sum_timer_wait, sql_text
+FROM performance_schema.events_statements_summary_by_digest
+ORDER BY count_star DESC
+LIMIT 5;
+```
+
+#### DynamoDB (AWS SDK / CloudWatch)
+
+```python
+# Check for write throttling
+import boto3
+cloudwatch = boto3.client('cloudwatch')
+
+response = cloudwatch.get_metric_statistics(
+    Namespace='AWS/DynamoDB',
+    MetricName='WriteThrottleEvents',
+    StartTime=datetime.now() - timedelta(minutes=5),
+    EndTime=datetime.now(),
+    Period=60,
+    Statistics=['Sum']
+)
+
+throttle_events = sum(dp['Sum'] for dp in response['Datapoints'])
+if throttle_events > 0:
+    print(f"ALERT: Write throttled {throttle_events} times in 5 minutes")
+
+# Check for item collection size limit violations
+# (happens when an item exceeds 10GB due to versioning)
+response = cloudwatch.get_metric_statistics(
+    Namespace='AWS/DynamoDB',
+    MetricName='ItemCollectionSizeExceeded',
+    StartTime=datetime.now() - timedelta(minutes=5),
+    EndTime=datetime.now(),
+    Period=60,
+    Statistics=['Sum']
+)
+```
+
+#### Redis
+
+```bash
+# Memory usage (if it hits max, writes silently fail)
+redis-cli INFO memory | grep -E "used_memory|maxmemory|evicted_keys"
+
+# Replication lag (if Redis has replicas)
+redis-cli INFO replication | grep -E "role|slave|offset"
+
+# Expired keys stuck in memory (if your expiration is not working)
+redis-cli DBSIZE
+redis-cli SCAN 0 TYPE string COUNT 1000  # Sample for TTLs
+redis-cli TTL <sample_key>  # -1 means no expiration
+
+# Slow log (commands that are slow)
+redis-cli SLOWLOG GET 10
+```
+
+#### Message Queues (SQS / RabbitMQ)
+
+```python
+# AWS SQS: Check for messages that are not being consumed
+import boto3
+sqs = boto3.client('sqs')
+
+queue_url = 'https://sqs.us-east-1.amazonaws.com/123456789012/my-queue'
+attrs = sqs.get_queue_attributes(
+    QueueUrl=queue_url,
+    AttributeNames=['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible']
+)
+
+visible = int(attrs['Attributes']['ApproximateNumberOfMessages'])
+in_flight = int(attrs['Attributes']['ApproximateNumberOfMessagesNotVisible'])
+
+if visible > 1000 and in_flight < 10:
+    print(f"ALERT: Messages backing up. {visible} waiting, only {in_flight} in flight")
+
+# Dead-letter queue (messages that failed and were retried too many times)
+dlq_attrs = sqs.get_queue_attributes(
+    QueueUrl='https://sqs.us-east-1.amazonaws.com/123456789012/my-queue-dlq',
+    AttributeNames=['ApproximateNumberOfMessages']
+)
+dlq_count = int(dlq_attrs['Attributes']['ApproximateNumberOfMessages'])
+if dlq_count > 0:
+    print(f"ALERT: {dlq_count} messages in dead-letter queue")
+```
+
+---
+
+### Tier 2: Run Every Hour (Important Consistency Checks)
+
+These catch subtle corruption that spreads slowly. Alerting threshold is usually non-zero (some corruption is normal after partial failures), but sudden increases are dangerous.
+
+#### PostgreSQL
+
+```sql
+-- Check for rows with NULL in columns that should have values
+SELECT tablename, column_name, null_count
+FROM (
+  SELECT 'users' as tablename, 'email' as column_name,
+    COUNT(*) as null_count
+  FROM users WHERE email IS NULL
+  
+  UNION ALL
+  
+  SELECT 'orders' as tablename, 'total_amount' as column_name,
+    COUNT(*) as null_count
+  FROM orders WHERE total_amount IS NULL OR total_amount <= 0
+) nulls
+WHERE null_count > 0;
+
+-- Check for duplicate unique keys (should never happen)
+SELECT column_name, value, count(*) as duplicate_count
+FROM (
+  SELECT email, email as value, COUNT(*) 
+  FROM users 
+  GROUP BY email 
+  HAVING COUNT(*) > 1
+) duplicates
+GROUP BY column_name, value;
+
+-- Check for cascade delete failures
+-- (user deleted but their orders remain)
+SELECT COUNT(*) as orphaned_orders
+FROM orders
+WHERE user_id NOT IN (SELECT id FROM users);
+
+-- Check for inconsistent totals
+-- (order total != sum of line items)
+SELECT COUNT(*) as broken_totals
+FROM orders o
+WHERE o.total_amount != (
+  SELECT COALESCE(SUM(unit_price * quantity), 0)
+  FROM order_items
+  WHERE order_id = o.id
+);
+```
+
+#### MongoDB
+
+```python
+# Check for missing indexes that are causing slow queries
+import pymongo
+
+client = pymongo.MongoClient('mongodb://localhost:27017/')
+db = client['production']
+
+# Find collections with full table scans
+for collection_name in db.list_collection_names():
+    stats = db.command('collStats', collection_name)
+    
+    # If totalIndexSize is 0, no indexes exist
+    if stats.get('totalIndexSize', 0) == 0 and stats['count'] > 1000:
+        print(f"WARNING: {collection_name} has {stats['count']} documents but no indexes")
+
+# Check for duplicate _id values (should be impossible)
+for collection_name in db.list_collection_names():
+    collection = db[collection_name]
+    duplicates = collection.aggregate([
+        {'$group': {'_id': '$_id', 'count': {'$sum': 1}}},
+        {'$match': {'count': {'$gt': 1}}}
+    ])
+    
+    dup_count = sum(1 for _ in duplicates)
+    if dup_count > 0:
+        print(f"ALERT: {collection_name} has {dup_count} duplicate _id values")
+```
+
+#### DynamoDB
+
+```python
+# Check for data validation anomalies using Athena queries
+import boto3
+
+athena = boto3.client('athena')
+
+# Example: Check for orders with timestamps in the future
+query = """
+SELECT COUNT(*) as future_orders
+FROM my_dynamodb_table
+WHERE created_at > current_timestamp
+"""
+
+response = athena.start_query_execution(
+    QueryString=query,
+    QueryExecutionContext={'Database': 'my_database'},
+    ResultConfiguration={'OutputLocation': 's3://my-bucket/results/'}
+)
+```
+
+---
+
+### Tier 3: Run Daily (Trending & Anomalies)
+
+These are the slow checks that reveal long-term degradation. Run at low traffic times.
+
+#### PostgreSQL / MySQL
+
+```sql
+-- Database growth rate (are you storing things you should not?)
+SELECT
+  datname as database_name,
+  pg_size_pretty(pg_database_size(datname)) as size,
+  COUNT(*) * 8 / 1024.0 as size_change_mb_since_yesterday
+FROM pg_database
+WHERE datistemplate = false
+ORDER BY pg_database_size(datname) DESC;
+
+-- Table growth rate (which tables are bloating?)
+SELECT
+  schemaname,
+  tablename,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size,
+  ROUND(100.0 * (EXTRACT(EPOCH FROM (now() - last_vacuum)) / 86400)) as days_since_vacuum
+FROM pg_tables
+LEFT JOIN pg_stat_user_tables USING (tablename)
+WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
+LIMIT 20;
+
+-- Backup success rate (are backups actually working?)
+SELECT
+  backup_id,
+  database_name,
+  backup_time,
+  backup_size,
+  verification_status
+FROM backups
+WHERE backup_time > now() - interval '24 hours'
+ORDER BY backup_time DESC;
+```
+
+---
+
+## Frequency Recommendations by Tier
+
+| Tier | Frequency | Alert Threshold | Example |
+|---|---|---|---|
+| **Tier 1** | Every 5 minutes | Non-zero (immediate escalate) | Replication lag, orphaned records, write throttling |
+| **Tier 2** | Every hour | Usually zero, alert on change | Duplicate keys, cascade failures, data validation |
+| **Tier 3** | Daily | Trend-based | Table growth, backup validation, slow queries |
+
+---
+
+## Real Incident Mappings
+
+### Incident: GitHub Database Replication Lag (2017)
+
+**What happened:** Replication lag drifted from 100ms to 8 seconds during a deploy. Application timed out and fell back to stale replica. Users saw 6-hour-old repos.
+
+**Detection query (Tier 1):**
+```sql
+SELECT EXTRACT(EPOCH FROM (now() - pg_last_xact_replay_timestamp()))
+  AS replication_lag_seconds;
+```
+
+**Should have alerted when:** Lag exceeded 2 seconds (not 60 seconds)
+
+**Resolution:** Tuned alert threshold from 60s to 5s. Added canary queries that verify replica is fresh before using it.
+
+### Incident: Discord Cache Partitioning (2016)
+
+**What happened:** Cache layer partitioned during network event. Half the servers cached one version of user data, half cached another. Users saw data flicker between two states.
+
+**Detection query (Tier 2):**
+```python
+# Sample cache entries and compare to database
+for key in redis.scan(match='user:*', count=100):
+    cache_value = redis.get(key)
+    db_value = db.get(key)
+    if cache_value != db_value:
+        log_inconsistency(key, cache=cache_value, db=db_value)
+```
+
+**Should have alerted when:** 10+ inconsistencies detected in one minute
+
+**Resolution:** Built cache verification into request path. On mismatch, invalidate cache and return fresh data.
+
+### Incident: Stripe Failed Cascade Delete (2014)
+
+**What happened:** Deleted a customer. Billing records remained. New customer with same ID received old invoices.
+
+**Detection query (Tier 1):**
+```sql
+SELECT COUNT(*) as orphaned_invoices
+FROM invoices
+WHERE customer_id NOT IN (SELECT id FROM customers);
+```
+
+**Should have alerted when:** Any orphaned invoices existed (should be zero)
+
+**Resolution:** Made cascade deletes explicit. Built pre- and post-delete validation. Never rely on implicit cascades.
+
+---
+
+## Response Procedures: Detect → Isolate → Reconcile → Validate
+
+When a consistency query triggers:
+
+**1. Detect (Now)**
+- Query confirmed corruption exists
+- Example: 47 orphaned records found
+- Alert: Yes, escalate immediately
+
+**2. Isolate (0-5 minutes)**
+- Stop writes to affected tables (if safe)
+- Example: Set orders table to read-only
+- Prevent corruption from spreading
+- Notify team: "Table X is read-only during reconciliation"
+
+**3. Reconcile (5-60 minutes)**
+- Repair the corruption
+- Manual examples:
+  ```sql
+  -- Delete orphaned records
+  DELETE FROM orders WHERE user_id NOT IN (SELECT id FROM users);
+  
+  -- Recalculate totals
+  UPDATE orders SET total = (SELECT SUM(price) FROM order_items WHERE order_id = orders.id);
+  ```
+- Validate that repair succeeded
+
+**4. Validate (Before resuming)**
+- Re-run the detection query (should show zero)
+- Sample queries to verify data looks correct
+- Resume writes only after validation passes
+- Postmortem: Why did the corruption happen?
+
+---
+
+## Threshold Tuning: When to Alert
+
+**Anti-pattern:** "Alert when count > 0"
+- Triggers too often for inevitable small corruptions
+- Teams create alert suppression rules (defeats the purpose)
+
+**Better pattern:** Alert when count is abnormal for your system
+
+```python
+# Pseudocode: Smart threshold
+orphaned_records = run_query("SELECT COUNT(*) orphaned FROM orders...")
+
+# Baseline: What is normal for this system?
+# Most systems have occasional orphaned records from:
+# - Cascade delete timing windows
+# - Partial failure recovery
+baseline = 0  # or 1 or 5, depends on your system
+
+if orphaned_records > baseline * 10:
+    # Major corruption, alert immediately
+    alert("CRITICAL: Orphaned record count {orphaned_records}, baseline {baseline}")
+elif orphaned_records > baseline + 1 and orphaned_records > baseline * 1.5:
+    # Trending toward corruption, investigate
+    alert("WARNING: Orphaned count increased from {baseline} to {orphaned_records}")
+else:
+    # Normal
+    pass
+```
+
+---
+
+## Automation: Running Queries in Production
+
+**Option 1: Scheduled job (recommended)**
+```python
+import schedule
+import time
+
+def run_consistency_checks():
+    results = {
+        'timestamp': datetime.now(),
+        'checks': []
+    }
+    
+    # Tier 1 every 5 minutes
+    results['checks'].append(check_replication_lag())
+    results['checks'].append(check_orphaned_records())
+    results['checks'].append(check_write_throttling())
+    
+    # Tier 2 every hour
+    if datetime.now().minute == 0:
+        results['checks'].append(check_duplicate_keys())
+        results['checks'].append(check_cascade_deletes())
+    
+    # Tier 3 daily at 2am
+    if datetime.now().hour == 2 and datetime.now().minute == 0:
+        results['checks'].append(check_table_bloat())
+        results['checks'].append(check_backup_success())
+    
+    # Send results to observability system
+    observability.send(results)
+    
+    # Alert on any failures
+    for check in results['checks']:
+        if check['status'] == 'FAILED':
+            alert.send(check)
+
+schedule.every(5).minutes.do(run_consistency_checks)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+```
+
+**Option 2: Observability system SQL job**
+- Set up recurring SQL jobs in your observability tool (e.g., DataDog, New Relic, Datadog)
+- They run the queries on schedule and alert on anomalies
+- Easier than maintaining code, but less flexible
+
+**Option 3: Database-native jobs**
+- PostgreSQL: pg_cron extension
+- MySQL: Event scheduler
+- Less flexible, but no external dependencies
+
+---
+
 ## The uncomfortable truth
 
 The systems that fail silently are the ones you are confident about.
@@ -265,7 +749,7 @@ If you are only monitoring error rate, you are not monitoring for the worst fail
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000018-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
 | [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
 | [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |

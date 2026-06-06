@@ -214,13 +214,13 @@ Do not attempt all phases in one year. The system will break under its own weigh
 
 At the end of this adoption, your organization will have:
 
-✅ Clear visibility into what matters: SLI measurement for critical journeys  
-✅ Clear targets: SLO by tier with executive review and adjustment  
-✅ Clear consequences: burn-rate gating that is respected and followed  
-✅ Clear trade-offs: bypass rules that force decision-making, not denial  
-✅ Clear economics: reliability premium is measurable and justified  
-✅ Clear ownership: reliability debt is tracked with named owners  
-✅ Clear alignment: engineering, product, and finance speak the same language
+Clear visibility into what matters: SLI measurement for critical journeys  
+Clear targets: SLO by tier with executive review and adjustment  
+Clear consequences: burn-rate gating that is respected and followed  
+Clear trade-offs: bypass rules that force decision-making, not denial  
+Clear economics: reliability premium is measurable and justified  
+Clear ownership: reliability debt is tracked with named owners  
+Clear alignment: engineering, product, and finance speak the same language
 
 This is not perfect reliability. This is *intentional* reliability. Chosen by your organization. Measured. Governed. Economically defensible.
 
@@ -275,7 +275,7 @@ If you can answer that question honestly, the rest is detail.
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000018-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
 | [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | [Chapter 3](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
 | [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |

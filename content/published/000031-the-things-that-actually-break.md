@@ -59,7 +59,7 @@ When a service gets slow enough:
 - System collapses
 - Now it looks like a crash
 
-But it started as latency.
+It started as latency.
 
 **Why latency is worse than outage:**
 - An outage is visible immediately
@@ -238,7 +238,7 @@ You cannot engineer your way around these hard truths. You must:
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000018-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
 | [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | **Chapter 3** | **The things that actually break** |
 | [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |

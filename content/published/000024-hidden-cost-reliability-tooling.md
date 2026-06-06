@@ -138,7 +138,7 @@ Your product depends on a cloud provider, plus your application code, plus your 
 
 The observability cost ceiling exists because teams cannot measure everything at full fidelity forever.
 
-But measurement priority becomes obvious once you define your SLI.
+Measurement priority becomes obvious once you define your SLI.
 
 If your SLI is "successful checkouts / attempted checkouts," then you must have:
 

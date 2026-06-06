@@ -198,7 +198,7 @@ The wrong response is to proceed with the uniform upgrade at the original cost a
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000018-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
 | [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | [Chapter 3](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
 | [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |

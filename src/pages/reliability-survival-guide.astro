@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const GUIDE_SLUGS = [
+  '000000-table-of-contents',
+  '000036-first-24-hours-incident-triage',
+  '000017-reliability-is-an-economic-decision',
+  '000019-systems-fail-according-to-incentives',
+  '000031-the-things-that-actually-break',
+  '000020-shared-responsibility-accountability-vacuum',
+  '000021-reliability-equation-financial-model',
+  '000022-provider-failures-status-pages',
+  '000032-identity-tier-zero-spof',
+  '000023-partial-failure-control-plane-failures',
+  '000033-silent-outages-data-corruption',
+  '000034-reliability-illusions',
+  '000035-change-primary-failure-source',
+  '000024-hidden-cost-reliability-tooling',
+  '000025-reliability-tradeoffs-on-call-finops',
+  '000026-reliability-governance-adr-ledger-indicators',
+  '000027-reliability-execution-quarterly-plan',
+  '000037-incident-triage-response-protocols',
+  '000028-reliability-operating-artifacts-and-policy-templates',
+  '000029-reliability-pricing-saas-margin-trap',
+  '000030-reliability-maturity-organizational-adoption',
+  'appendix-a-crisis-reference-cards',
+  'appendix-b-operational-artifacts',
+  'appendix-c-field-playbooks',
+  'reading-paths',
+  'glossary-reliability-terms',
+] as const;
+
+const publishedPosts = await getCollection('posts', ({ data }) =>
+  data.status === 'published' || data.status === 'scheduled'
+);
+
+const postBySlug = new Map(
+  publishedPosts.map((post) => [post.data.slug ?? post.id.replace(/\.md$/, ''), post])
+);
+
+const guidePosts = GUIDE_SLUGS
+  .map((slug) => postBySlug.get(slug))
+  .filter(Boolean);
+
+const chapterCount = guidePosts.length;
+const sampleSlug = '000036-first-24-hours-incident-triage';
+---
+
+<BaseLayout
+  title="The Reliability Survival Guide | Olinske"
+  description="A field guide for operators, architects, and engineering leaders who need systems to survive real incidents under real constraints."
+  canonicalUrl={Astro.site ? new URL('/reliability-survival-guide/', Astro.site).toString() : '/reliability-survival-guide/'}
+>
+  <main class="container site-shell">
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">Book</p>
+      <h1 class="hero-title">The Reliability Survival Guide</h1>
+      <p class="hero-subtitle">
+        A practical operating manual for reliability decisions under cost pressure, staffing limits,
+        and incident-time uncertainty.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-link" href="/posts/000000-table-of-contents/">Read the full table of contents</a>
+        <a class="btn-link" href={`/posts/${sampleSlug}/`}>Read a sample chapter</a>
+        <a class="btn-link" href="/posts/READING-PATHS/">Choose a reading path</a>
+      </div>
+      <p class="post-meta" style="margin-top:0.8rem;">Current published entries in the guide package: {chapterCount}</p>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-1" style="margin-top:1rem;">
+      <h2>Who this is for</h2>
+      <ul>
+        <li>On-call engineers who need repeatable triage and decision procedures under pressure.</li>
+        <li>Architects who need to design for failure, not only for steady-state performance.</li>
+        <li>CTOs and engineering leaders balancing uptime commitments, margin, and delivery speed.</li>
+      </ul>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-2" style="margin-top:1rem;">
+      <h2>What changes after 30 days</h2>
+      <ul>
+        <li>Incident response moves from personality-driven to procedure-driven.</li>
+        <li>Reliability decisions become explicit trade-offs instead of hidden assumptions.</li>
+        <li>Leadership conversations shift from reactive outage blame to structured risk governance.</li>
+      </ul>
+    </section>
+
+    <section class="about-panel fade-in fade-delay-3" style="margin-top:1rem;">
+      <h2>What you get</h2>
+      <ul>
+        <li>Core chapter sequence from economics to execution.</li>
+        <li>Crisis cards and field playbooks for immediate operator use.</li>
+        <li>Operational templates for runbooks, governance, and post-incident validation.</li>
+        <li>Role-based reading paths for on-call, architect, and leadership audiences.</li>
+      </ul>
+      <div class="hero-actions" style="margin-top:1rem;">
+        <a class="btn-link" href="/writing/">Browse all guide entries</a>
+        <a class="btn-link" href="mailto:hello@olinske.com?subject=Reliability%20Survival%20Guide">Contact the author</a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

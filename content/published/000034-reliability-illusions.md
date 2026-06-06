@@ -78,7 +78,7 @@ Great. You have two providers, both 99.9%.
 
 If they are independent: 1 - (0.001 * 0.001) = 99.9999%.
 
-But they are not independent. They are both in the cloud. They are both using the same DNS provider. They are both relying on the same BGP routes. During the big outage, both go down together.
+They are not independent. They are both in the cloud. They are both using the same DNS provider. They are both relying on the same BGP routes. During the big outage, both go down together.
 
 You thought you had redundancy. You had correlation you did not measure.
 
@@ -128,7 +128,7 @@ You set alert thresholds to avoid false positives:
 
 These are reasonable looking thresholds.
 
-But what if:
+However, what if:
 - Your system peaks at 75% CPU normally. 80% is actually fine. You never alert.
 - Your error rate is 0.8% during normal operation. 1% is not an anomaly, it is Tuesday. You never alert.
 - Your latency p95 is 1.8 seconds. 2 seconds is not a problem. You never alert.
@@ -336,7 +336,7 @@ The team that says "we are so reliable we never test" is the team that is about 
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000018-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
 | [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
 | [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |

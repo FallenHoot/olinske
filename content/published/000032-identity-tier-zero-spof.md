@@ -1,5 +1,5 @@
 ---
-title: 'Chapter 5a: Identity – The System Kill Switch'
+title: 'Chapter 5: Identity – The System Kill Switch'
 description: >-
   Identity failures disable everything downstream. Yet most teams treat identity
   as infrastructure and third-party SLAs as sufficient. This chapter shows why
@@ -222,6 +222,365 @@ If your only identity source is a third-party API:
 - You have accepted their recovery time
 - You have no option to make it faster
 
+### 8. Implement monitoring for identity failures
+
+Do not wait for users to discover the problem.
+
+#### Detection Queries
+
+**Token Refresh Failure Rate (Alert if > 0.1% in 5 min)**
+```python
+# Pseudocode for monitoring system
+import time
+
+class TokenRefreshMonitor:
+    def track_refresh(self, success: bool, latency_ms: int):
+        # Track: success rate, latency, errors
+        window = get_5_minute_window()
+        window.record(success=success, latency=latency_ms)
+        
+        # Alert if failure rate spikes
+        success_rate = window.success_count / window.total_count
+        if success_rate < 0.999:  # < 99.9% success
+            alert(f"Token refresh at {success_rate*100:.2f}%, below threshold")
+
+# Bonus: Track refresh latency percentiles
+# If p99 latency > 5 seconds, client timeouts increase
+monitor.alert_if(latency_p99 > 5000)
+```
+
+**Session Store Replication Lag (Alert if > 1 second)**
+```python
+# If sessions are replicated, verify lag is low
+redis_master = connect_to_master()
+redis_replica = connect_to_replica()
+
+# Write marker to master
+marker_key = f"replication_check:{time.time()}"
+redis_master.set(marker_key, "1")
+
+# Check when it appears on replica
+start = time.time()
+timeout = 5  # 5 second timeout
+
+while time.time() - start < timeout:
+    if redis_replica.get(marker_key):
+        lag_seconds = time.time() - start
+        if lag_seconds > 1.0:
+            alert(f"Session replication lag: {lag_seconds:.2f}s")
+        break
+    time.sleep(0.01)
+else:
+    alert(f"Session replication lag: > 5 seconds (timeout)")
+```
+
+**Certificate Expiration (Alert 30 days before expiry)**
+```python
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+
+def check_cert_expiration(cert_path):
+    with open(cert_path, 'rb') as f:
+        cert = x509.load_pem_x509_certificate(f.read(), default_backend())
+    
+    expiry = cert.not_valid_after
+    days_remaining = (expiry - datetime.now()).days
+    
+    if days_remaining < 30:
+        alert(f"Certificate expires in {days_remaining} days")
+    elif days_remaining < 7:
+        alert(f"CRITICAL: Certificate expires in {days_remaining} days")
+```
+
+**Identity Provider Health (Ping every minute)**
+```python
+def monitor_identity_provider_health():
+    # Periodically verify the identity provider is responding
+    try:
+        response = requests.get(
+            f"{IDENTITY_PROVIDER_URL}/.well-known/openid-configuration",
+            timeout=2
+        )
+        
+        if response.status_code == 200:
+            latency = response.elapsed.total_seconds() * 1000
+            
+            if latency > 500:
+                log_warning(f"IdP latency high: {latency}ms")
+            
+            # Update health status
+            health_status['identity_provider_ok'] = True
+            health_status['last_check'] = datetime.now()
+        else:
+            alert(f"IdP returned {response.status_code}")
+            health_status['identity_provider_ok'] = False
+    
+    except requests.Timeout:
+        alert(f"IdP timeout (2s)")
+        health_status['identity_provider_ok'] = False
+    except Exception as e:
+        alert(f"IdP check failed: {e}")
+        health_status['identity_provider_ok'] = False
+```
+
+---
+
+### 9. Implement a 2-hour fallback: Degraded-Mode Authentication
+
+When identity provider fails, do not reject all requests. Instead, operate in degraded mode using cached tokens and permissions.
+
+#### Implementation Pattern
+
+```python
+from functools import wraps
+from datetime import datetime, timedelta
+import jwt
+
+class DegradedModeAuthenticator:
+    """Fall back to cached tokens when identity provider is unavailable."""
+    
+    def __init__(self, cache):
+        self.cache = cache  # Redis or similar
+        self.provider_health_key = "identity_provider_healthy"
+        self.fallback_ttl = 3600  # 1 hour fallback
+    
+    def is_provider_healthy(self):
+        """Check if identity provider is currently responsive."""
+        # Simple: last successful request was recent
+        last_ok = self.cache.get("identity_provider_last_ok")
+        if not last_ok:
+            return False
+        
+        last_ok_time = datetime.fromisoformat(last_ok)
+        return datetime.now() - last_ok_time < timedelta(minutes=1)
+    
+    def authenticate_request(self, request):
+        """
+        Try to authenticate against identity provider.
+        Fall back to cached token if provider is down.
+        """
+        
+        # Step 1: Extract the token from the request
+        token = extract_bearer_token(request)
+        if not token:
+            return None
+        
+        # Step 2: Try to validate against identity provider (primary path)
+        if self.is_provider_healthy():
+            try:
+                user = self.validate_token_with_provider(token)
+                
+                # Mark provider as healthy and cache the result
+                self.cache.set("identity_provider_last_ok", datetime.now().isoformat())
+                self.cache.set(f"cached_token:{token}", {
+                    'user': user,
+                    'validated_at': datetime.now().isoformat()
+                }, ex=self.fallback_ttl)
+                
+                return user
+            
+            except IdentityProviderException as e:
+                if "provider unavailable" in str(e).lower():
+                    # Provider is down, switch to fallback
+                    log_warning(f"Identity provider unavailable: {e}")
+                    self.cache.delete("identity_provider_healthy")
+                else:
+                    # Token is invalid (not a provider issue)
+                    return None
+        
+        # Step 3: Fall back to cached token validation
+        cached_result = self.cache.get(f"cached_token:{token}")
+        if cached_result:
+            user = cached_result['user']
+            validated_at = datetime.fromisoformat(cached_result['validated_at'])
+            age_seconds = (datetime.now() - validated_at).total_seconds()
+            
+            # Accept cached tokens up to 1 hour old during outage
+            if age_seconds < 3600:
+                log_info(f"Using cached token for user {user['id']} (age: {age_seconds}s)")
+                
+                # Mark this session as degraded
+                user['degraded_mode'] = True
+                return user
+            else:
+                log_warning(f"Cached token expired ({age_seconds}s old)")
+        
+        # Step 4: No valid token available
+        return None
+    
+    def validate_token_with_provider(self, token):
+        """
+        Validate token against the actual identity provider.
+        Raises IdentityProviderException if provider is unavailable.
+        """
+        try:
+            response = requests.post(
+                f"{IDENTITY_PROVIDER_URL}/validate",
+                json={'token': token},
+                timeout=2
+            )
+            
+            if response.status_code == 200:
+                return response.json()['user']
+            elif response.status_code == 401:
+                raise ValueError("Token invalid")
+            else:
+                raise IdentityProviderException(
+                    f"Provider returned {response.status_code}"
+                )
+        
+        except requests.Timeout:
+            raise IdentityProviderException("Provider timeout")
+        except requests.ConnectionError as e:
+            raise IdentityProviderException(f"Provider unavailable: {e}")
+
+
+# Attach to request handling
+def authenticate_request(request):
+    """Middleware that wraps requests with degraded-mode authentication."""
+    authenticator = DegradedModeAuthenticator(cache=redis_client)
+    user = authenticator.authenticate_request(request)
+    
+    if not user:
+        raise Unauthorized("Authentication failed")
+    
+    request.user = user
+    
+    # Log degraded mode usage for alerting
+    if user.get('degraded_mode'):
+        metrics.increment('auth.degraded_mode_usage')
+```
+
+#### Recovery Validation Checklist
+
+**When identity provider comes back online:**
+
+```python
+def validate_identity_recovery():
+    """Verify that identity provider recovery is complete."""
+    
+    checks = {
+        'provider_responding': False,
+        'tokens_valid': False,
+        'new_tokens_issued': False,
+        'degraded_mode_sessions_replaced': False,
+        'no_orphaned_sessions': False
+    }
+    
+    # Check 1: Provider is responding to health checks
+    try:
+        health = requests.get(
+            f"{IDENTITY_PROVIDER_URL}/.well-known/openid-configuration",
+            timeout=2
+        )
+        checks['provider_responding'] = health.status_code == 200
+    except Exception:
+        return checks  # Still down
+    
+    # Check 2: New tokens can be issued
+    try:
+        token = request_new_token("test@internal", "test_password")
+        checks['new_tokens_issued'] = token is not None
+    except Exception as e:
+        log_warning(f"Cannot issue new tokens: {e}")
+    
+    # Check 3: Existing tokens validate correctly
+    sample_tokens = redis_client.scan_iter("cached_token:*", count=10)
+    valid_count = 0
+    for token_key in sample_tokens:
+        token = token_key.split(':')[1]
+        try:
+            result = validate_token_with_provider(token)
+            valid_count += 1
+        except Exception:
+            pass
+    
+    checks['tokens_valid'] = valid_count > 0
+    
+    # Check 4: Clear degraded-mode session flag (users can refresh)
+    # This happens automatically on next token refresh
+    
+    # Only declare recovery if ALL checks pass
+    if all(checks.values()):
+        log_info("Identity recovery validated. Resuming normal operation.")
+        return checks
+    else:
+        log_warning(f"Identity recovery incomplete: {checks}")
+        return checks
+
+# Call this periodically while provider is recovering
+schedule.every(10).seconds.do(validate_identity_recovery)
+```
+
+---
+
+### 10. Test identity failover before you need it
+
+Do not discover your identity fallback does not work during an outage.
+
+#### Gameday Scenario: Identity Provider Down
+
+```python
+def gameday_identity_provider_down():
+    """Test: What happens when identity provider is offline?"""
+    
+    print("=== GAMEDAY: Identity Provider Down ===")
+    
+    # Step 1: Simulate provider unavailability
+    mock_identity_provider.set_status("unavailable")
+    
+    # Step 2: Try normal user workflows
+    results = {
+        'login_new_user': test_login("new@example.com"),
+        'refresh_token': test_token_refresh(),
+        'access_protected_resource': test_access("user_data"),
+        'api_calls_succeed': test_api_calls(100),
+    }
+    
+    # Step 3: Check degraded mode kicked in
+    metrics = get_current_metrics()
+    results['degraded_mode_active'] = metrics['auth.degraded_mode_usage'] > 0
+    
+    # Step 4: Simulate provider recovery
+    mock_identity_provider.set_status("healthy")
+    
+    # Step 5: Verify recovery works
+    time.sleep(5)
+    results['provider_recovery_detected'] = metrics['identity_provider_health'] == 'ok'
+    results['new_tokens_issued'] = test_new_token_after_recovery() is not None
+    
+    # Report
+    print(f"Results: {results}")
+    assert all(results.values()), "Identity failover failed"
+```
+
+**Run this gameday:**
+- Monthly (minimum)
+- Before major releases
+- When you change identity architecture
+
+---
+
+The uncomfortable truth
+
+Your identity provider may have a better SLA than your system does. That does not guarantee protection. The provider can be within contract while your customer journey is still degraded or unavailable.
+
+Until you have a fallback, a local cache, or a secondary provider, you are betting your uptime on someone else's infrastructure with no redundancy.
+
+That is the vulnerability that identity failures exploit.
+
+---
+
+## Key architecture principle
+
+**Identity should not have an unmitigated single point of failure you do not control.**
+
+If your only identity source is a third-party API:
+- You have accepted SLA-bound uptime
+- You have accepted their failure modes
+- You have accepted their recovery time
+- You have no option to make it faster
+
 That is a structural choice. Make it intentionally, not by accident.
 
 ---
@@ -230,7 +589,7 @@ That is a structural choice. Make it intentionally, not by accident.
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000018-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
 | [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
 | [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
@@ -249,3 +608,4 @@ That is a structural choice. Make it intentionally, not by accident.
 ---
 
 *I work at Microsoft. The views expressed here are my own and based solely on publicly available information. This content is for educational purposes and does not represent official Microsoft guidance or commitments.*
+

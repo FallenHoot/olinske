@@ -12,7 +12,7 @@ tags:
 status: published
 ---
 
-*← [Chapter 2: Systems Fail According to Incentives](/posts/000019-systems-fail-according-to-incentives) | [Shared Responsibility Accountability →](/posts/000020-shared-responsibility-accountability-vacuum)*
+*← [Chapter 2: Systems Fail According to Incentives](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | [Shared Responsibility Accountability →](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum)*
 
 ---
 
@@ -120,6 +120,25 @@ In a high-stress incident, that is 40 minutes of delay for what feels like a fas
 **This is not soft skills. This is infrastructure.** If your decision-making process requires synchronous consensus during an incident, your incident response time is not 4 hours. It is 4 hours plus however long it takes to reach consensus.
 
 Most teams do not have a documented decision cascade. "The VP will decide" is not a decision cascade during a 2 AM incident.
+Most teams do not have a documented decision cascade. "The VP will decide" is not a decision cascade during a 2 AM incident.
+
+### Recovery automation levels
+
+The human delay problem does not have a purely cultural solution. It has an architectural one.
+
+Categorize every recovery action your system requires into one of three levels:
+
+**Level 1: Manual failover.** A human decides and executes the recovery action. Appropriate for decisions with significant or unknown blast radius. Expected recovery time: 20 minutes to several hours depending on decision clarity and team availability.
+
+**Level 2: One-click failover.** The tooling is ready. A human still decides to act, but execution is a single action with a known outcome. Appropriate for well-understood, rehearsed failure modes. Expected recovery time: 5 to 20 minutes.
+
+**Level 3: Policy-driven automatic failover.** The system detects a failure condition, validates that it meets pre-defined thresholds, and executes the recovery action without human intervention. Appropriate for well-understood, low-blast-radius failure modes with clear and reliable detection signals. Expected recovery time: under 5 minutes.
+
+The question is not "should everything be Level 3?" It is "which of your recovery actions are still at Level 1 when they could safely be Level 2 or Level 3?"
+
+Most organizations have recovery actions at Level 1 not because the blast radius is unknown but because nobody built the tooling. Every Level 1 action that could be Level 2 adds minutes to your incident duration every time it runs, at full human cognitive cost.
+
+**Practical inventory.** List your top five recovery actions by frequency. For each, identify the level it currently operates at and the level it could operate at with tooling investment. Prioritize the actions that are most frequent and most costly to execute manually.
 
 ### 6. Failover is harder than you think
 
@@ -238,19 +257,33 @@ You cannot engineer your way around these hard truths. You must:
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
-| [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
+| [Chapter 1](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 2](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
 | **Chapter 3** | **The things that actually break** |
-| [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |
-| [Chapter 5](/posts/000022-provider-failures-status-pages) | Provider failures and status page reality |
-| [Chapter 6](/posts/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
-| [Chapter 7](/posts/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
-| [Chapter 8](/posts/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
-| [Chapter 9](/posts/000026-reliability-governance-adr-ledger-indicators) | Governance system |
-| [Chapter 10](/posts/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
-| [Chapter 12](/posts/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
-| [Appendix](/posts/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
-| [Chapter 13](/posts/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
+| [Chapter 4](/book/reliability-survival-guide/000021-reliability-equation-financial-model) | The financial model |
+| [Chapter 5](/book/reliability-survival-guide/000022-provider-failures-status-pages) | Provider failures and status page reality |
+| [Chapter 6](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
+| [Chapter 7](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
+| [Chapter 8](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
+| [Chapter 9](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | Governance system |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+
+---
+
+## Chapter bridge
+
+This chapter names the failure modes. The chapters that follow address them architecturally.
+
+- **Shared Responsibility (Chapter 3b)** explains why identity failures and dependency chains often persist without organizational ownership.
+- **Chapter 4 (Financial Model)** prices each failure mode so the cost of prevention becomes defensible.
+- **Chapter 5b (Identity)** gives the specific architecture patterns that address the identity failure modes described in item 1.
+- **Chapter 6a (Partial Failure)** deepens item 3: how to design systems that absorb degraded conditions as normal operating state.
+- **Chapter 6b (Silent Outages)** deepens item 7: why data corruption is harder to detect than downtime and what to measure instead.
+- **Chapter 9 (Governance)** converts items 4 through 10 into a governance system: decision cascades, capacity tracking, and the ADR ledger that makes reliability cuts visible before the next incident.
+| [Chapter 12](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
+| [Appendix](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
+| [Chapter 13](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
 
 ---
 

@@ -14,7 +14,7 @@ tags:
 status: published
 ---
 
-*← [Chapter 10: Execution and the Next Quarter](/posts/000027-reliability-execution-quarterly-plan) | [Chapter 13: Maturity and Adoption →](/posts/000030-reliability-maturity-organizational-adoption)*
+*← [Chapter 10: Execution and the Next Quarter](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | [Chapter 13: Maturity and Adoption →](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption)*
 
 ---
 
@@ -198,18 +198,18 @@ The wrong response is to proceed with the uniform upgrade at the original cost a
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
-| [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
-| [Chapter 3](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
-| [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |
-| [Chapter 5](/posts/000022-provider-failures-status-pages) | Provider failures and status page reality |
-| [Chapter 6](/posts/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
-| [Chapter 7](/posts/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
-| [Chapter 8](/posts/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
-| [Chapter 9](/posts/000026-reliability-governance-adr-ledger-indicators) | Governance system |
-| [Chapter 10](/posts/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+| [Chapter 1](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 2](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
+| [Chapter 3](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
+| [Chapter 4](/book/reliability-survival-guide/000021-reliability-equation-financial-model) | The financial model |
+| [Chapter 5](/book/reliability-survival-guide/000022-provider-failures-status-pages) | Provider failures and status page reality |
+| [Chapter 6](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
+| [Chapter 7](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
+| [Chapter 8](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
+| [Chapter 9](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | Governance system |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
 | **Chapter 12** | **Reliability pricing and the SaaS margin trap** |
-| [Appendix](/posts/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
+| [Appendix](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
 
 ---
 

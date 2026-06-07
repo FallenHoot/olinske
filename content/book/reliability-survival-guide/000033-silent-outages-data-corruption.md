@@ -14,7 +14,7 @@ tags:
 status: published
 ---
 
-*← [Identity – The System Kill Switch](/posts/000032-identity-tier-zero-spof) | [How You See (and Miss) Reality →](/posts/000034-reliability-illusions)*
+*← [Identity – The System Kill Switch](/book/reliability-survival-guide/000032-identity-tier-zero-spof) | [How You See (and Miss) Reality →](/book/reliability-survival-guide/000034-reliability-illusions)*
 
 ---
 
@@ -749,22 +749,22 @@ If you are only monitoring error rate, you are not monitoring for the worst fail
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
-| [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
-| [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
-| [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
-| [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |
-| [Chapter 5](/posts/000022-provider-failures-status-pages) | Provider failures and status page reality |
-| [Chapter 6](/posts/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
-| [Chapter 5 (Alt)](/posts/000032-identity-tier-zero-spof) | Identity as a Tier-0 failure domain |
+| [Chapter 1](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 2](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
+| [Chapter 3](/book/reliability-survival-guide/000031-the-things-that-actually-break) | The things that actually break |
+| [Shared Responsibility](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
+| [Chapter 4](/book/reliability-survival-guide/000021-reliability-equation-financial-model) | The financial model |
+| [Chapter 5](/book/reliability-survival-guide/000022-provider-failures-status-pages) | Provider failures and status page reality |
+| [Chapter 6](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
+| [Chapter 5 (Alt)](/book/reliability-survival-guide/000032-identity-tier-zero-spof) | Identity as a Tier-0 failure domain |
 | **Chapter 6 (Alt)** | **Silent outages and data corruption** |
-| [Chapter 7](/posts/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
-| [Chapter 8](/posts/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
-| [Chapter 9](/posts/000026-reliability-governance-adr-ledger-indicators) | Governance system |
-| [Chapter 10](/posts/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
-| [Chapter 12](/posts/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
-| [Appendix](/posts/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
-| [Chapter 13](/posts/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
+| [Chapter 7](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
+| [Chapter 8](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
+| [Chapter 9](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | Governance system |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+| [Chapter 12](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
+| [Appendix](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
+| [Chapter 13](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
 
 ---
 

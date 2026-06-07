@@ -102,6 +102,66 @@ This keeps maturity work economically disciplined instead of aspirational.
 | heavier alert coverage | tuning overhead and operator noise |
 | more drills | time, coordination, and opportunity cost |
 
+## Cloud-specific reliability cost drivers
+
+The cost table above captures category-level view. Enterprise reliability programs frequently underestimate five specific cloud cost drivers until they appear in billing.
+
+### Cross-region data transfer and egress
+
+Moving data between regions is not free. In most cloud providers, data that crosses a regional boundary incurs egress charges regardless of whether it is for replication, backup, or synchronous write paths.
+
+For a multi-region active-passive architecture with synchronous replication, every write is charged twice: the primary write and the replication egress. At high write volume, this cost becomes significant before the secondary region is ever actually used.
+
+**The trap.** Teams design multi-region architecture based on compute and storage cost, then discover egress cost in production billing. A multi-region design that doubles replication egress at scale can increase infrastructure cost by 20 to 40 percent depending on the data transfer rate.
+
+**What to do.** Model egress cost explicitly when comparing single-region-with-zones against multi-region. Include replication, backup, and cross-region API call volume in the model before committing to the architecture.
+
+---
+
+### Storage replication tiering
+
+Redundant storage across zones or regions is not uniformly priced. Zone-redundant storage (ZRS) costs more than locally redundant storage (LRS). Geo-redundant storage (GRS) costs more than ZRS. Geo-zone-redundant storage (GZRS) costs more than GRS.
+
+The delta is not trivial for high-volume storage. A workload that stores 100 TB of telemetry with GRS replication enabled pays significantly more than the same workload with LRS. Most teams default to the most resilient option without auditing whether the workload's SLO actually requires it.
+
+**What to do.** Classify storage by tier. Tier 1 data (transactional, compliance-required) justifies GZRS or GRS. Tier 3 data (telemetry, debug logs, non-critical exports) can use LRS and accept the data loss risk in exchange for cost reduction. Document the decision in an ADR.
+
+---
+
+### Control plane throttling and quota
+
+Cloud control planes enforce rate limits on management API calls. When automation (infrastructure-as-code, auto-scaling, deployment pipelines) exceeds these limits, operations queue or fail.
+
+This is not a theoretical concern. Large-scale deployments during incident response, rapid scale-out events, and chaos engineering runs that create and destroy many resources simultaneously regularly hit control plane throttle limits.
+
+**The reliability consequence.** Automated recovery that depends on rapid resource creation can be throttled at exactly the moment it is needed. A scale-out triggered by a traffic spike may queue for minutes because the control plane is rate-limited.
+
+**What to do.** Test control plane call rates under your worst-case recovery scenarios. Know the limits for your subscription tier. If automation exceeds limits in testing, adjust the recovery procedure or request a quota increase proactively rather than during an incident.
+
+---
+
+### Reserved capacity versus on-demand cost
+
+On-demand pricing is the baseline. Reserved instances or committed-use discounts reduce cost by 30 to 60 percent depending on term and provider.
+
+The reliability cost is that reserved capacity locks in a resource configuration. If your architecture changes in response to a reliability incident (different VM SKU, different region, different database tier), the reservation may not apply or may require exchange at reduced value.
+
+**The tradeoff.** Teams that reserve aggressively for cost efficiency sometimes find they cannot change architecture quickly because the sunk cost of reservations creates organizational pressure to preserve the existing configuration rather than optimize for the failure.
+
+**What to do.** Reserve the steady-state baseline. Keep scale-out capacity on demand. Reserve for stable Tier 1 workloads. Avoid reserving for experimental or rapidly-evolving architecture. Document reservations and their expiry dates in the architecture decision record.
+
+---
+
+### Observability ingestion and retention at scale
+
+Log Analytics, CloudWatch, and equivalent services price on ingestion volume and retention duration. A reliability incident that generates heavy logging creates a billing spike at the exact moment the system is already under stress.
+
+**The common failure.** Teams discover during a major incident that their verbose logging, which was generating minimal cost during normal operations, is now producing 10x normal ingestion volume and will trigger a budget alert before the incident is resolved.
+
+**What to do.** Define SLI-critical logs that must be retained at full fidelity. Sample or compress everything else. Set retention policies explicitly by tier. Know what a major incident costs in observability billing before it happens, not while it is happening.
+
+---
+
 ## SLI, SLO, and SLA: What you are actually measuring
 
 All this observability cost serves one purpose: to measure what you control and communicate what you promise.

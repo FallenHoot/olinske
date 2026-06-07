@@ -15,7 +15,7 @@ status: published
 
 The book should not end with principles. It should end with a plan.
 
-*← [Chapter 9: Governance](/posts/000026-reliability-governance-adr-ledger-indicators) | [Chapter 12: Reliability Pricing and the SaaS Margin Trap →](/posts/000029-reliability-pricing-saas-margin-trap)*
+*← [Chapter 9: Governance](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | [Chapter 12: Reliability Pricing and the SaaS Margin Trap →](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap)*
 
 This chapter exists to convert all the earlier doctrine into a practical operating cadence that leaders and engineering teams can use immediately.
 
@@ -121,4 +121,4 @@ If the book is a survival guide, the final chapter has to leave the reader with 
 
 The next step is execution on calendar, with explicit owners and measurable outcomes.
 
-Use the companion appendix for drop-in templates, burn-rate gates, and scorecard artifacts: `content/posts/000028-reliability-operating-artifacts-and-policy-templates.md`.
+Use the companion appendix for drop-in templates, burn-rate gates, and scorecard artifacts: `content/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates.md`.

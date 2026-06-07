@@ -13,7 +13,7 @@ tags:
 status: published
 ---
 
-*← [Chapter 12: Reliability Pricing and the SaaS Margin Trap](/posts/000029-reliability-pricing-saas-margin-trap)*
+*← [Chapter 12: Reliability Pricing and the SaaS Margin Trap](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap)*
 
 ---
 

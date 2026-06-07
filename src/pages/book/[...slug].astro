@@ -1,0 +1,392 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import VoteButtons from '../../components/VoteButtons.astro';
+import { RELIABILITY_CHAPTER_LABELS, RELIABILITY_TRACKS } from '../../data/reliabilityTracks';
+import { getCollection, render } from 'astro:content';
+
+const BOOK_BASE = '/book/reliability-survival-guide';
+
+export async function getStaticPaths() {
+  const chapters = await getCollection('book', ({ data }) => data.status === 'published' || data.status === 'scheduled');
+  return chapters.map((chapter) => ({
+    params: { slug: chapter.id.replace(/\.md$/, '') },
+    props: { chapter }
+  }));
+}
+
+const { chapter } = Astro.props;
+const allChapters = await getCollection('book', ({ data }) => data.status === 'published' || data.status === 'scheduled');
+const { Content, headings } = await render(chapter);
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+
+// Short slug is the filename without the book subfolder prefix and without .md
+const shortSlug = chapter.id.replace(/^reliability-survival-guide\//, '').replace(/\.md$/, '');
+const canonicalUrl = Astro.site
+  ? new URL(`/book/reliability-survival-guide/${shortSlug}/`, Astro.site).toString()
+  : `/book/reliability-survival-guide/${shortSlug}/`;
+const ogImage = `/og/${shortSlug}.svg`;
+const publishedIso = chapter.data.publishDate.toISOString();
+const modifiedIso = (chapter.data.lastUpdated ?? chapter.data.publishDate).toISOString();
+const lastReviewed = (chapter.data.lastUpdated ?? chapter.data.publishDate).toISOString().slice(0, 10);
+const primaryCategory = (chapter.data.tags?.[0] ?? 'uncategorized').toLowerCase();
+const pagefindTagFilters = (chapter.data.tags ?? []).map((tag) => tag.toLowerCase());
+
+// Build short-slug lookup map for track navigation
+const chapterByShortSlug = new Map(
+  allChapters.map((c) => [
+    c.id.replace(/^reliability-survival-guide\//, '').replace(/\.md$/, ''),
+    c,
+  ])
+);
+
+const prerequisiteLinks = (chapter.data.prerequisites ?? [])
+  .map((entry) => {
+    const ref = entry.replace(/^\/book\/reliability-survival-guide\//, '').replace(/\/$/, '');
+    const related = chapterByShortSlug.get(ref);
+    return related
+      ? { href: `${BOOK_BASE}/${ref}/`, title: related.data.title }
+      : { href: `${BOOK_BASE}/${ref}/`, title: ref };
+  });
+
+const followUpLinks = (chapter.data.followUps ?? [])
+  .map((entry) => {
+    const ref = entry.replace(/^\/book\/reliability-survival-guide\//, '').replace(/\/$/, '');
+    const related = chapterByShortSlug.get(ref);
+    return related
+      ? { href: `${BOOK_BASE}/${ref}/`, title: related.data.title }
+      : { href: `${BOOK_BASE}/${ref}/`, title: ref };
+  });
+
+const getChapterLabel = (slug: string, fallbackTitle: string) =>
+  RELIABILITY_CHAPTER_LABELS[slug] ?? fallbackTitle;
+
+const reliabilityTrackNav = RELIABILITY_TRACKS
+  .map((track) => {
+    const chapters = track.slugs
+      .map((trackSlug) => {
+        const related = chapterByShortSlug.get(trackSlug);
+        if (!related) return null;
+        const title = related.data.title;
+        return {
+          slug: trackSlug,
+          href: `${BOOK_BASE}/${trackSlug}/`,
+          title,
+          label: getChapterLabel(trackSlug, title),
+          isCurrent: trackSlug === shortSlug,
+        };
+      })
+      .filter(Boolean);
+
+    const currentIndex = chapters.findIndex((c) => c.isCurrent);
+
+    return {
+      ...track,
+      chapters,
+      hasCurrent: currentIndex >= 0,
+      currentIndex,
+    };
+  })
+  .filter((track) => track.chapters.length > 0 && track.hasCurrent);
+
+const defaultTrackId = reliabilityTrackNav[0]?.id ?? '';
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: chapter.data.title,
+  description: chapter.data.description,
+  datePublished: publishedIso,
+  dateModified: modifiedIso,
+  author: {
+    '@type': 'Person',
+    name: 'Zach Olinske'
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalUrl
+  }
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: Astro.site ? new URL('/', Astro.site).toString() : '/'
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Book',
+      item: Astro.site ? new URL('/reliability-survival-guide/', Astro.site).toString() : '/reliability-survival-guide/'
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: chapter.data.title,
+      item: canonicalUrl
+    }
+  ]
+};
+---
+
+<BaseLayout title={`${chapter.data.title} | Olinske`} description={chapter.data.description} canonicalUrl={canonicalUrl} ogImage={ogImage} ogType="article">
+  <Fragment slot="head">
+    <meta property="article:published_time" content={publishedIso} />
+    <meta property="article:modified_time" content={modifiedIso} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </Fragment>
+
+  <main class="container site-shell">
+    <div hidden aria-hidden="true" data-pagefind-filter="contentType:Book"></div>
+    <div hidden aria-hidden="true" data-pagefind-filter={`category:${primaryCategory}`}></div>
+    {
+      pagefindTagFilters.map((tag) => (
+        <div hidden aria-hidden="true" data-pagefind-filter={`tag:${tag}`}></div>
+      ))
+    }
+
+    <section class="hero-panel fade-in">
+      <p class="eyebrow">The Reliability Survival Guide &mdash; <a href="/reliability-survival-guide/">Book</a></p>
+      <h1 class="hero-title">{chapter.data.title}</h1>
+      <p class="hero-subtitle">{chapter.data.description}</p>
+      <p class="post-meta">Last reviewed: {lastReviewed}</p>
+      {chapter.data.appliesTo && <p class="post-meta">Applies to: {chapter.data.appliesTo}</p>}
+      <div class="tag-row">
+        {(chapter.data.tags ?? []).map((tag) => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    </section>
+
+    {
+      chapter.data.bluf && chapter.data.bluf.length > 0 && (
+        <section class="hero-panel fade-in fade-delay-1">
+          <p class="eyebrow">TL;DR</p>
+          <ul class="toc-list">
+            {chapter.data.bluf.map((item) => <li class="toc-item">{item}</li>)}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="article-shell fade-in fade-delay-2">
+      {
+        (prerequisiteLinks.length > 0 || followUpLinks.length > 0) && (
+          <aside class="toc-panel" data-pagefind-ignore>
+            {prerequisiteLinks.length > 0 && (
+              <>
+                <h2>This chapter assumes knowledge from</h2>
+                <ul class="toc-list">
+                  {prerequisiteLinks.map((item) => (
+                    <li class="toc-item"><a href={item.href}>{item.title}</a></li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {followUpLinks.length > 0 && (
+              <>
+                <h2 style="margin-top:0.9rem;">Follow-up deep dives</h2>
+                <ul class="toc-list">
+                  {followUpLinks.map((item) => (
+                    <li class="toc-item"><a href={item.href}>{item.title}</a></li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </aside>
+        )
+      }
+
+      {
+        reliabilityTrackNav.length > 0 && (
+          <aside class="toc-panel guide-track-panel" data-pagefind-ignore>
+            <h2>Guide Track</h2>
+            <p class="post-meta">Pick a path, then move chapter-to-chapter inside that track.</p>
+            <label class="guide-track-label" for="guide-track-select">Reader path</label>
+            <select id="guide-track-select" class="guide-track-select" data-default-track-id={defaultTrackId}>
+              {
+                reliabilityTrackNav.map((track) => (
+                  <option value={track.id}>{track.title}</option>
+                ))
+              }
+            </select>
+
+            {
+              reliabilityTrackNav.map((track) => {
+                const prevChapter = track.currentIndex > 0 ? track.chapters[track.currentIndex - 1] : null;
+                const nextChapter = track.currentIndex < track.chapters.length - 1
+                  ? track.chapters[track.currentIndex + 1]
+                  : null;
+
+                return (
+                  <section class="guide-track-group" data-track-id={track.id} hidden>
+                    <p class="post-meta guide-track-audience">{track.audience}</p>
+                    <ul class="toc-list guide-track-list">
+                      {
+                        track.chapters.map((ch) => (
+                          <li class="toc-item">
+                            <a
+                              href={ch.href}
+                              title={ch.title}
+                              class={ch.isCurrent ? 'is-active' : undefined}
+                              aria-current={ch.isCurrent ? 'page' : undefined}
+                            >
+                              {ch.label}
+                            </a>
+                          </li>
+                        ))
+                      }
+                    </ul>
+
+                    <div class="guide-track-jump">
+                      {
+                        prevChapter ? (
+                          <a class="guide-track-jump-link" href={prevChapter.href}>&#x2190; {prevChapter.label}</a>
+                        ) : (
+                          <span class="guide-track-jump-placeholder">Start of this track</span>
+                        )
+                      }
+
+                      {
+                        nextChapter ? (
+                          <a class="guide-track-jump-link" href={nextChapter.href}>{nextChapter.label} &#x2192;</a>
+                        ) : (
+                          <span class="guide-track-jump-placeholder">End of this track</span>
+                        )
+                      }
+                    </div>
+                  </section>
+                );
+              })
+            }
+          </aside>
+        )
+      }
+
+      <aside class="toc-panel" data-pagefind-ignore>
+        <h2>On this page</h2>
+        {
+          toc.length === 0 ? (
+            <p class="post-meta">No sections found.</p>
+          ) : (
+            <ul class="toc-list" id="toc-list">
+              {toc.map((heading) => (
+                <li class={heading.depth === 3 ? 'toc-item toc-sub' : 'toc-item'}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </aside>
+
+      <article class="article-panel">
+        <Content />
+      </article>
+
+      <VoteButtons slug={shortSlug} />
+    </section>
+  </main>
+
+  <script>
+    import mermaid from 'mermaid';
+
+    const mermaidCodeBlocks = Array.from(document.querySelectorAll('.article-panel pre > code.language-mermaid'));
+    if (mermaidCodeBlocks.length > 0) {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        theme: 'neutral',
+      });
+
+      mermaidCodeBlocks.forEach((codeBlock) => {
+        const source = codeBlock.textContent?.trim();
+        if (!source) return;
+
+        const container = document.createElement('div');
+        container.className = 'mermaid';
+        container.textContent = source;
+
+        const pre = codeBlock.parentElement;
+        if (pre) pre.replaceWith(container);
+      });
+
+      const mermaidNodes = Array.from(document.querySelectorAll('.article-panel .mermaid'));
+      if (mermaidNodes.length > 0) {
+        mermaid.run({ nodes: mermaidNodes }).catch((error) => {
+          console.error('Mermaid render failed', error);
+        });
+      }
+    }
+
+    const headingNodes = Array.from(document.querySelectorAll('.article-panel h2[id], .article-panel h3[id]'));
+    const tocAnchors = Array.from(document.querySelectorAll('#toc-list a'));
+    const anchorMap = new Map(tocAnchors.map((anchor) => [anchor.getAttribute('href')?.slice(1), anchor]));
+
+    const trackSelect = document.getElementById('guide-track-select');
+    const trackGroups = Array.from(document.querySelectorAll('.guide-track-group'));
+    if (trackSelect && trackGroups.length > 0) {
+      const storageKey = 'reliability-guide-track';
+      const validIds = new Set(
+        trackGroups
+          .map((group) => group.getAttribute('data-track-id'))
+          .filter(Boolean)
+      );
+
+      const showTrack = (trackId) => {
+        trackGroups.forEach((group) => {
+          group.hidden = group.getAttribute('data-track-id') !== trackId;
+        });
+
+        trackSelect.value = trackId;
+
+        try {
+          localStorage.setItem(storageKey, trackId);
+        } catch {
+          // Ignore storage errors in private browsing modes.
+        }
+      };
+
+      const fallbackTrack = trackSelect.dataset.defaultTrackId || trackSelect.value;
+      let initialTrack = fallbackTrack;
+      try {
+        const savedTrack = localStorage.getItem(storageKey);
+        if (savedTrack && validIds.has(savedTrack)) initialTrack = savedTrack;
+      } catch {
+        // Ignore storage errors in private browsing modes.
+      }
+
+      if (!validIds.has(initialTrack) && validIds.has(fallbackTrack)) {
+        initialTrack = fallbackTrack;
+      }
+
+      showTrack(initialTrack);
+      trackSelect.addEventListener('change', () => {
+        if (validIds.has(trackSelect.value)) showTrack(trackSelect.value);
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (!visible.length) return;
+
+        const activeId = visible[0].target.getAttribute('id');
+        tocAnchors.forEach((anchor) => anchor.classList.remove('is-active'));
+        const activeAnchor = activeId ? anchorMap.get(activeId) : null;
+        if (activeAnchor) activeAnchor.classList.add('is-active');
+      },
+      { rootMargin: '-35% 0px -55% 0px', threshold: [0, 1] }
+    );
+
+    headingNodes.forEach((heading) => observer.observe(heading));
+  </script>
+</BaseLayout>

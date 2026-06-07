@@ -14,7 +14,7 @@ tags:
 status: published
 ---
 
-*← [Silent Outages](/posts/000033-silent-outages-data-corruption) | [Change as Primary Failure Source →](/posts/000035-change-primary-failure-source)*
+*← [Silent Outages](/book/reliability-survival-guide/000033-silent-outages-data-corruption) | [Change as Primary Failure Source →](/book/reliability-survival-guide/000035-change-primary-failure-source)*
 
 ---
 
@@ -310,6 +310,35 @@ Or: "User queries return in < 2 seconds 99% of the time."
 
 These metrics are related to SLA, but they are in business terms.
 
+---
+
+## Prevention by Design: Turn Each Illusion into a Control
+
+| Illusion | Design control |
+|---|---|
+| SLA theater | Use a reliability scorecard with availability, correctness, latency, and dependency health |
+| Untested recovery | Mandatory quarterly failover and failback exercise on production-like traffic |
+| Alert fatigue | Alert budget per service and quarterly threshold retuning with false-positive review |
+| Confidence of the untested | Chaos and fault-injection program on top business journeys |
+| Documentation equals knowledge | Runbook verification drills with people outside the original author group |
+| Efficiency equals resilience | Tiered architecture policy linking business tier to redundancy minimums |
+
+### Architect takeaway
+
+Design observability and recovery as architecture, not as operations afterthought.
+
+- Every critical dependency has a measured fallback path
+- Every critical journey has a correctness signal, not only availability
+- Every tier has a minimum redundancy requirement that can be audited
+
+### CTO takeaway
+
+Make false confidence expensive at governance level.
+
+- Require quarterly evidence for DR drills, not statements of readiness
+- Tie service-tier approval to demonstrated failover capability
+- Measure business-useful reliability, not only SLA percentages
+
 ## The uncomfortable truth
 
 The teams that have the most confidence in their reliability are usually the ones who are most vulnerable.
@@ -336,23 +365,23 @@ The team that says "we are so reliable we never test" is the team that is about 
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
-| [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
-| [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
-| [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
-| [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |
-| [Chapter 5](/posts/000022-provider-failures-status-pages) | Provider failures and status page reality |
-| [Chapter 6](/posts/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
-| [Chapter 5 (Alt)](/posts/000032-identity-tier-zero-spof) | Identity as a Tier-0 failure domain |
-| [Chapter 6 (Alt)](/posts/000033-silent-outages-data-corruption) | Silent outages and data corruption |
-| **Chapter 7 (Alt)** | **Reliability illusions and false confidence** |
-| [Chapter 7](/posts/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
-| [Chapter 8](/posts/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
-| [Chapter 9](/posts/000026-reliability-governance-adr-ledger-indicators) | Governance system |
-| [Chapter 10](/posts/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
-| [Chapter 12](/posts/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
-| [Appendix](/posts/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
-| [Chapter 13](/posts/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
+| [Chapter 1](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 2](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
+| [Chapter 3](/book/reliability-survival-guide/000031-the-things-that-actually-break) | The things that actually break |
+| [Shared Responsibility](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
+| [Chapter 4](/book/reliability-survival-guide/000021-reliability-equation-financial-model) | The financial model |
+| [Chapter 5](/book/reliability-survival-guide/000022-provider-failures-status-pages) | Provider failures and status page reality |
+| [Chapter 6](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
+| [Identity Domain](/book/reliability-survival-guide/000032-identity-tier-zero-spof) | Identity as a Tier-0 failure domain |
+| [Silent Outage Domain](/book/reliability-survival-guide/000033-silent-outages-data-corruption) | Silent outages and data corruption |
+| **Current chapter** | **Reliability illusions and false confidence** |
+| [Chapter 7](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
+| [Chapter 8](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
+| [Chapter 9](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | Governance system |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+| [Chapter 12](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
+| [Appendix](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
+| [Chapter 13](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
 
 ---
 

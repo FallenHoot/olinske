@@ -848,4 +848,4 @@ done
 
 ---
 
-*← [Appendix B: Operational Artifacts](/posts/APPENDIX-B-operational-artifacts)*
+*← [Appendix B: Operational Artifacts](/book/reliability-survival-guide/appendix-b-operational-artifacts)*

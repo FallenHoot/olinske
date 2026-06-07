@@ -14,7 +14,7 @@ tags:
 status: published
 ---
 
-*← [Hard Truths](/posts/000031-the-things-that-actually-break) | [Silent Outages →](/posts/000033-silent-outages-data-corruption)*
+*← [Hard Truths](/book/reliability-survival-guide/000031-the-things-that-actually-break) | [Silent Outages →](/book/reliability-survival-guide/000033-silent-outages-data-corruption)*
 
 ---
 
@@ -211,16 +211,6 @@ Until you have a fallback, a local cache, or a secondary provider, you are betti
 That is the vulnerability that identity failures exploit.
 
 ---
-
-## Key architecture principle
-
-**Identity should not have an unmitigated single point of failure you do not control.**
-
-If your only identity source is a third-party API:
-- You have accepted SLA-bound uptime
-- You have accepted their failure modes
-- You have accepted their recovery time
-- You have no option to make it faster
 
 ### 8. Implement monitoring for identity failures
 
@@ -571,6 +561,87 @@ That is the vulnerability that identity failures exploit.
 
 ---
 
+## Identity architecture: resilience patterns
+
+The failure modes above name the problems. This section names the architectural patterns that address them.
+
+### Token cache layering
+
+Do not rely on a single token validation path. Layer caches to reduce identity provider dependency.
+
+**Client-side cache.** The calling service or browser holds a token until near-expiry. Reduces identity provider calls significantly but creates a window where revoked tokens remain valid.
+
+**Service-side cache.** Server-side middleware caches validated token results for a short window (30 to 300 seconds depending on security requirements). Protects against identity provider latency spikes and short outages.
+
+**Edge cache.** For read-heavy workloads, a CDN or API gateway can validate tokens against a cached public key set, allowing auth decisions without reaching the origin identity provider at all.
+
+The key design decision is the revocation window: how long can a revoked or expired token remain valid across each cache layer? Define this explicitly and match it to the workload's security and reliability requirements.
+
+---
+
+### Managed identity versus application identity tradeoffs
+
+Both options exist for service-to-service authentication in cloud environments.
+
+**Managed identity** (Azure Managed Identity, AWS IAM Roles for EC2 and ECS, GCP Service Accounts):
+- No secret rotation required
+- Identity lifecycle managed by the platform
+- Scoped to the resource, not the application
+- Failure mode: if the control plane is degraded, token acquisition fails regardless of application health
+
+**Application identity** (client credentials, service principals, API keys):
+- Explicit rotation required and an engineering responsibility
+- More portable across environments and providers
+- Failure mode: secret rotation errors cause authentication failures; no platform fallback
+
+**The practical tradeoff.** Managed identity removes human-operated rotation overhead and reduces secret sprawl. The cost is a new dependency on the control plane's token issuance path. If your SLO requires independence from the control plane during outages, managed identity introduces a structural exposure that requires explicit planning.
+
+---
+
+### Multiple authentication paths
+
+Design authentication to degrade gracefully rather than fail completely.
+
+**Primary path:** Live validation against the identity provider.
+
+**Secondary path:** Validation against a local token cache or read-only replica of the identity store.
+
+**Degraded path:** Accept tokens validated within the last N minutes (configurable) when the identity provider is unreachable, with degraded-mode flagging logged and visible to operators.
+
+The degraded path does not mean unlimited access. It means the system remains partially functional for existing sessions while new logins are held until the identity provider recovers. Define the degraded window explicitly. Common values are 30 minutes to 2 hours depending on the workload's security posture.
+
+---
+
+### Regional token validation independence
+
+If your system spans multiple regions, token validation must work independently per region during a cross-region event.
+
+**The problem.** Token validation that routes through a single region creates a single point of failure. If that region is impaired, token validation fails everywhere, even if compute and storage in other regions are healthy.
+
+**The pattern:**
+- Deploy identity provider replicas or caching proxies in each region
+- Validate tokens locally against regional caches of the public key set (for JWT-based tokens, this is the JWKS endpoint)
+- Refresh key sets on a schedule rather than on every request
+- Ensure that a regional identity replica failure does not block authentication in other regions
+
+**Azure-specific.** Azure Entra ID is globally distributed. Token validation using the published JWKS endpoint works regionally without routing through a single control plane. The failure mode to plan for is the JWKS refresh path during high-load events. Cache the key set aggressively and refresh on a schedule rather than on each validation request.
+
+---
+
+### Separating control plane auth from application auth
+
+This distinction is critical and frequently overlooked.
+
+**Control plane authentication:** The identity required to manage, deploy, configure, and scale infrastructure. This is usually platform-managed (Azure Resource Manager, AWS Management Console, GCP IAM).
+
+**Application authentication:** The identity required for users and services to call your application.
+
+These should have independent failure modes. A control plane authentication impairment (you cannot deploy or scale) should not cascade into application authentication failure (users cannot log in). An application identity provider outage should not require control plane intervention to remediate.
+
+In practice, coupling these paths is common. Service principals used for both deployment pipelines and application authentication create exactly this coupling. The fix is explicit separation: different credentials, different token paths, different failure domains.
+
+---
+
 ## Key architecture principle
 
 **Identity should not have an unmitigated single point of failure you do not control.**
@@ -585,25 +656,38 @@ That is a structural choice. Make it intentionally, not by accident.
 
 ---
 
+## Chapter bridge
+
+This chapter affects three system properties simultaneously:
+
+- **SLO definition.** Your composite SLO must account for identity provider availability as a separate failure domain. An identity SLI should be tracked independently from the application SLI.
+- **Failure domain modeling.** Identity is a Tier-0 failure domain. It belongs in the dependency graph that Chapter 4 uses to build the financial model. Price an identity outage there.
+- **Governance.** The token cache strategy, degraded-mode policy, and secret rotation procedure should be architecture decisions with ADRs. Chapter 9 provides the ledger structure.
+
+This chapter connects forward to:
+- **Chapter 6a (Partial Failure):** Identity failures are often partial, not complete. The degraded-mode authentication pattern in this chapter is the identity-specific application of the partial-failure design model in Chapter 6a.
+- **Chapter 7b (Change):** Secret rotation and federation upgrades are the most common sources of identity outages caused by change. Chapter 7b's change management model applies here directly.
+- **Chapter 9 (Governance):** The identity ADR should be a first-class entry in the reliability ledger, updated whenever the token strategy or provider configuration changes.
+
 ## Chapter index
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
-| [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
-| [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
-| [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
-| [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |
-| [Chapter 5](/posts/000022-provider-failures-status-pages) | Provider failures and status page reality |
-| [Chapter 6](/posts/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
+| [Chapter 1](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 2](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
+| [Chapter 3](/book/reliability-survival-guide/000031-the-things-that-actually-break) | The things that actually break |
+| [Shared Responsibility](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
+| [Chapter 4](/book/reliability-survival-guide/000021-reliability-equation-financial-model) | The financial model |
+| [Chapter 5](/book/reliability-survival-guide/000022-provider-failures-status-pages) | Provider failures and status page reality |
+| [Chapter 6](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
 | **Chapter 5 (Alt)** | **Identity as a Tier-0 failure domain** |
-| [Chapter 7](/posts/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
-| [Chapter 8](/posts/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
-| [Chapter 9](/posts/000026-reliability-governance-adr-ledger-indicators) | Governance system |
-| [Chapter 10](/posts/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
-| [Chapter 12](/posts/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
-| [Appendix](/posts/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
-| [Chapter 13](/posts/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
+| [Chapter 7](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
+| [Chapter 8](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
+| [Chapter 9](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | Governance system |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+| [Chapter 12](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
+| [Appendix](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
+| [Chapter 13](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
 
 ---
 

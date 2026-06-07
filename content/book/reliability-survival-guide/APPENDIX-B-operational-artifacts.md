@@ -870,4 +870,4 @@ Before you deploy these to your service:
 
 ---
 
-*← [Appendix A: Crisis Reference Cards](/posts/APPENDIX-A-crisis-reference-cards) | [Appendix C: Field Playbooks →](/posts/APPENDIX-C-field-playbooks)*
+*← [Appendix A: Crisis Reference Cards](/book/reliability-survival-guide/appendix-a-crisis-reference-cards) | [Appendix C: Field Playbooks →](/book/reliability-survival-guide/appendix-c-field-playbooks)*

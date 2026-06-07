@@ -14,7 +14,7 @@ tags:
 status: published
 ---
 
-*← [How You See (and Miss) Reality](/posts/000034-reliability-illusions) | [The Hidden Cost of Observability →](/posts/000024-hidden-cost-reliability-tooling)*
+*← [How You See (and Miss) Reality](/book/reliability-survival-guide/000034-reliability-illusions) | [The Hidden Cost of Observability →](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling)*
 
 ---
 
@@ -27,6 +27,9 @@ Your network is fine.
 Yet you just deployed code at 2 PM on a Tuesday and now 30% of requests are timing out.
 
 Change is the failure domain you deploy yourself.
+
+> "Most losses come from movement without cover, not from standing still."  
+> Reliability lesson from modern and historical warfare: uncontrolled movement in contested conditions is where systems break.
 
 Yet most teams treat deployment like a checkbox: "Did we deploy?" instead of "Did we deploy safely?"
 
@@ -45,6 +48,9 @@ Specifically:
 Each of these creates a window where the system is in a state it has never been in before.
 
 In incident analysis, change is often the trigger, not always the deepest root cause. Incentives, architecture constraints, and operational readiness still determine blast radius.
+
+> "No operation should begin without a prepared withdrawal path."  
+> Reliability lesson from campaign planning: every deployment needs a tested rollback and a clearly defined authority to execute it.
 
 ## The failure modes of change
 
@@ -600,6 +606,37 @@ If detection takes 5 minutes and decision takes 3 minutes, your rollback is 2 mi
 
 ---
 
+## Prevention by Design: Build Systems That Tolerate Change
+
+Response quality protects you today. Change architecture determines whether the same incident repeats next month.
+
+| Change failure pattern | Prevention architecture |
+|---|---|
+| Untested code path in production | Progressive delivery with canary guardrails and automated rollback criteria |
+| Configuration drift | Immutable configuration pipeline with policy checks and drift detection |
+| Rollback creates cascade | Backward-compatible API and schema contract window |
+| Cross-service deployment coupling | Consumer-driven contract tests and explicit deployment-order policy |
+| Migration paralysis | Expand-migrate-contract pattern with coexistence period |
+| Dependency upgrade cascade | Full-system integration tests with dependency fault injection |
+
+### Architect takeaway
+
+Design for safe change, not only fast change.
+
+- Every critical service needs one rollback path and one kill switch
+- Every schema or API change needs a compatibility window
+- Every deployment needs measurable stop conditions linked to user impact
+
+### CTO takeaway
+
+Treat deployment safety as a product capability.
+
+- Fund platform capabilities for canary, feature flags, and policy checks
+- Track incidents per deployment as a board-level reliability metric
+- Require quarterly proof that rollback and migration paths work under load
+
+---
+
 ## Key architecture principle
 
 **Change is one of the failure domains you control most directly.**
@@ -616,24 +653,24 @@ That is where your reliability is actually built.
 
 | Chapter | Topic |
 |---|---|
-| [Chapter 1](/posts/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
-| [Chapter 2](/posts/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
-| [Chapter 3](/posts/000031-the-things-that-actually-break) | The things that actually break |
-| [Shared Responsibility](/posts/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
-| [Chapter 4](/posts/000021-reliability-equation-financial-model) | The financial model |
-| [Chapter 5](/posts/000022-provider-failures-status-pages) | Provider failures and status page reality |
-| [Chapter 5 (Alt)](/posts/000032-identity-tier-zero-spof) | Identity – The System Kill Switch |
-| [Chapter 6](/posts/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
-| [Chapter 6 (Alt)](/posts/000033-silent-outages-data-corruption) | Silent outages and data corruption |
-| **Chapter 7b (Alt)** | **Change – The Failure You Deploy Yourself** |
-| [Chapter 7](/posts/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
-| [Chapter 7b (Alt)](/posts/000034-reliability-illusions) | How You See (and Miss) Reality |
-| [Chapter 8](/posts/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
-| [Chapter 9](/posts/000026-reliability-governance-adr-ledger-indicators) | Governance system |
-| [Chapter 10](/posts/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
-| [Chapter 12](/posts/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
-| [Appendix](/posts/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
-| [Chapter 13](/posts/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
+| [Chapter 1](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | Opening thesis: reliability as economic decision |
+| [Chapter 2](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives) | Incentives and organizational failure |
+| [Chapter 3](/book/reliability-survival-guide/000031-the-things-that-actually-break) | The things that actually break |
+| [Shared Responsibility](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum) | Shared responsibility and accountability vacuum |
+| [Chapter 4](/book/reliability-survival-guide/000021-reliability-equation-financial-model) | The financial model |
+| [Chapter 5](/book/reliability-survival-guide/000022-provider-failures-status-pages) | Provider failures and status page reality |
+| [Identity Domain](/book/reliability-survival-guide/000032-identity-tier-zero-spof) | Identity - The System Kill Switch |
+| [Chapter 6](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures) | Partial failures and degraded-state design |
+| [Silent Outage Domain](/book/reliability-survival-guide/000033-silent-outages-data-corruption) | Silent outages and data corruption |
+| **Current chapter** | **Change - The Failure You Deploy Yourself** |
+| [Chapter 7](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling) | Hidden cost of observability tooling |
+| [Chapter 7b (Alt)](/book/reliability-survival-guide/000034-reliability-illusions) | How You See (and Miss) Reality |
+| [Chapter 8](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops) | Trade-offs: on-call, FinOps, and human cost |
+| [Chapter 9](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators) | Governance system |
+| [Chapter 10](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | Execution and the next quarter |
+| [Chapter 12](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap) | Reliability pricing and the SaaS margin trap |
+| [Appendix](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates) | Operating artifacts and policy templates |
+| [Chapter 13](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption) | Maturity and organizational adoption |
 
 ---
 

@@ -44,7 +44,7 @@ This book is different. It covers the work that has to happen before an SRE team
 
 If you have an SRE team, this book is the briefing they need on how your organization actually works. If you do not have one yet, this book is the groundwork that makes one viable.
 
-**Note:** This book uses technical terms. See the [Glossary](/posts/GLOSSARY-reliability-terms) for definitions.
+**Note:** This book uses technical terms. See the [Glossary](/book/reliability-survival-guide/glossary-reliability-terms) for definitions.
 
 This is what you need to know when:
 - Cost pressure fights reliability ambitions
@@ -59,6 +59,34 @@ Each chapter does four things: **names an uncomfortable truth, explains a model 
 This principle runs through every page:
 
 > Reliability is not purchased at deployment. Your team continuously makes tradeoffs between reliability features, business incentives, and time pressure.
+
+## Design Targets Drive Architecture: A Concrete Frame
+
+Before the philosophy, one concrete anchor is needed. Everything in this book ultimately traces back to three numbers.
+
+**SLO (Service Level Objective):** The uptime or correctness target you hold yourself to internally. Example: 99.95% successful checkout transactions per rolling 30-day window.
+
+**RTO (Recovery Time Objective):** How long you can afford to be down before business impact becomes unacceptable. Example: 15 minutes before SLA breach triggers.
+
+**RPO (Recovery Point Objective):** How much data loss you can accept. Example: 5 minutes, meaning you can lose at most the last 5 minutes of writes.
+
+These three numbers are not abstract. They directly determine architecture.
+
+| Target | Architecture implication |
+|---|---|
+| SLO 99.9% | Single region with availability zones is defensible |
+| SLO 99.95% | Multi-zone with active health checking is required |
+| SLO 99.99% | Multi-region active-passive minimum; active-active for most paths |
+| RTO 15 minutes | Automated detection, tested runbooks, and one-click failover required |
+| RTO 4 hours | Manual runbooks may be sufficient if team availability is guaranteed |
+| RPO 5 minutes | Synchronous or near-synchronous data replication required |
+| RPO 1 hour | Asynchronous replication with backup validation is sufficient |
+
+**The practical consequence.** A checkout service targeting 99.95% SLO with 15-minute RTO and 5-minute RPO requires multi-zone minimum deployment, likely multi-region depending on revenue exposure, synchronous data replication, tested failover procedures, and an on-call engineer with a clear runbook who can act without seeking approval.
+
+Most organizations arrive at these targets after the first serious incident. The rest of this book explains why that happens and what to do instead.
+
+**Azure SLA clarification.** Azure SLAs apply to the service itself under its documented configuration. They do not cover your architecture, your integration choices, or your composite availability across multiple services. Your SLO is yours to define and yours to build. The Azure SLA is your starting point, not your destination.
 
 ## How to Read Claims in This Guide
 
@@ -100,16 +128,16 @@ Most production incidents involve multiple domains. One problem rarely explains 
 ## Part 1: The Truth
 ### Why Reliability Fails Before Infrastructure Fails
 
-**[Chapter 1: Reliability Is an Economic Decision](/posts/000017-reliability-is-an-economic-decision)**
+**[Chapter 1: Reliability Is an Economic Decision](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision)**
 Money buys reliability. But only if you understand what reliability actually costs. Most organizations spend on the wrong things.
 
-**[Chapter 2: Systems Fail According to Incentives](/posts/000019-systems-fail-according-to-incentives)**
+**[Chapter 2: Systems Fail According to Incentives](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives)**
 Your system does not fail because it is poorly engineered. It fails because someone is incentivized to make a choice that leads to failure. Find whose incentive is creating the problem.
 
-**[Chapter 3: The Things That Actually Break](/posts/000031-the-things-that-actually-break)**
+**[Chapter 3: The Things That Actually Break](/book/reliability-survival-guide/000031-the-things-that-actually-break)**
 The specific failure modes that wake your on-call engineer at 3 AM. No abstractions. What actually breaks, not what you think will break.
 
-**[Chapter 3b: Shared Responsibility, Accountability Vacuum](/posts/000020-shared-responsibility-accountability-vacuum)**
+**[Chapter 3b: Shared Responsibility, Accountability Vacuum](/book/reliability-survival-guide/000020-shared-responsibility-accountability-vacuum)**
 When reliability becomes "everyone's job", it becomes "no one's job". This chapter explains why, and what structure works instead.
 
 ---
@@ -119,13 +147,13 @@ When reliability becomes "everyone's job", it becomes "no one's job". This chapt
 
 Control plane reliability does not equal customer reliability. The database is healthy but customers cannot log in. This distinction shows up in every chapter.
 
-**[Chapter 4: The Reliability Equation—A Financial Model](/posts/000021-reliability-equation-financial-model)**
+**[Chapter 4: The Reliability Equation—A Financial Model](/book/reliability-survival-guide/000021-reliability-equation-financial-model)**
 How to think about reliability using recovery time, data loss, and business impact. This model runs through the rest of the book.
 
-**[Chapter 5a: Provider Failures as System Constraints](/posts/000022-provider-failures-status-pages)**
+**[Chapter 5a: Provider Failures as System Constraints](/book/reliability-survival-guide/000022-provider-failures-status-pages)**
 Your cloud provider's 99.9% uptime is your starting point, not your destination. Understand what this SLA does NOT promise.
 
-**[Chapter 5b: Identity—The System Kill Switch](/posts/000032-identity-tier-zero-spof)**
+**[Chapter 5b: Identity—The System Kill Switch](/book/reliability-survival-guide/000032-identity-tier-zero-spof)**
 In modern systems, identity is often the most critical part. When login breaks, everything breaks. This chapter shows why and what to do.
 
 ---
@@ -133,16 +161,16 @@ In modern systems, identity is often the most critical part. When login breaks, 
 ## Part 3: The Reality
 ### What Actually Breaks in Production
 
-**[Chapter 6a: Partial Failure and Control Plane Failures](/posts/000023-partial-failure-control-plane-failures)**
+**[Chapter 6a: Partial Failure and Control Plane Failures](/book/reliability-survival-guide/000023-partial-failure-control-plane-failures)**
 Systems do not fail completely. They fail partially, unpredictably, and in ways that surprise everyone.
 
-**[Chapter 6b: Silent Outages—When Data Corruption Looks Like Success](/posts/000033-silent-outages-data-corruption)**
+**[Chapter 6b: Silent Outages—When Data Corruption Looks Like Success](/book/reliability-survival-guide/000033-silent-outages-data-corruption)**
 Your system returns OK. Error rate is near zero. Your data is corrupted. The most dangerous failures look like success.
 
-**[Chapter 7a: How You See (and Miss) Reality](/posts/000034-reliability-illusions)**
+**[Chapter 7a: How You See (and Miss) Reality](/book/reliability-survival-guide/000034-reliability-illusions)**
 You have not failed in 18 months. Your uptime is 99.9%. You are exactly when you are most vulnerable. This chapter breaks your confidence before teaching you to rebuild it.
 
-**[Chapter 7b: Change—The Failure You Deploy Yourself](/posts/000035-change-primary-failure-source)**
+**[Chapter 7b: Change—The Failure You Deploy Yourself](/book/reliability-survival-guide/000035-change-primary-failure-source)**
 Deployments, config changes, migrations. Change is the most common cause of outages. This chapter explains how to make change safer.
 
 ---
@@ -150,10 +178,10 @@ Deployments, config changes, migrations. Change is the most common cause of outa
 ## Part 4: The Trade-offs
 ### Where Cost, Burnout, and Reliability Start Fighting
 
-**[Chapter 7c: The Hidden Cost of Reliability Tooling](/posts/000024-hidden-cost-reliability-tooling)**
+**[Chapter 7c: The Hidden Cost of Reliability Tooling](/book/reliability-survival-guide/000024-hidden-cost-reliability-tooling)**
 Faster detection costs more money. Better monitoring needs more storage. Every reliability improvement costs something.
 
-**[Chapter 8: Reliability Trade-offs—On-Call, FinOps, and the Negotiation](/posts/000025-reliability-tradeoffs-on-call-finops)**
+**[Chapter 8: Reliability Trade-offs—On-Call, FinOps, and the Negotiation](/book/reliability-survival-guide/000025-reliability-tradeoffs-on-call-finops)**
 You cannot optimize for reliability, cost, AND human burnout at the same time. This chapter shows the tradeoffs your organization is making.
 
 ---
@@ -161,13 +189,13 @@ You cannot optimize for reliability, cost, AND human burnout at the same time. T
 ## Part 5: The System
 ### What to Implement If You Want Reliability to Be Governable
 
-**[Chapter 9: Reliability Governance—ADRs, Ledgers, and Indicators](/posts/000026-reliability-governance-adr-ledger-indicators)**
+**[Chapter 9: Reliability Governance—ADRs, Ledgers, and Indicators](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators)**
 You cannot govern what you do not measure. You cannot measure what you do not define. This chapter builds the governance system that makes reliability decisions repeatable.
 
-**[Chapter 12: Reliability Pricing and the SaaS Margin Trap](/posts/000029-reliability-pricing-saas-margin-trap)**
+**[Chapter 12: Reliability Pricing and the SaaS Margin Trap](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap)**
 The moment you commoditize reliability in your pricing is the moment you lock yourself into a reliability cost. This chapter explains why, and what SaaS companies get wrong about margin.
 
-**[Chapter 13: Reliability Maturity and Organizational Adoption](/posts/000030-reliability-maturity-organizational-adoption)**
+**[Chapter 13: Reliability Maturity and Organizational Adoption](/book/reliability-survival-guide/000030-reliability-maturity-organizational-adoption)**
 The hardest part: getting an organization to actually adopt a reliability system. This chapter maps the 4 phases of adoption, why organizations reject systems, and how adoption actually happens.
 
 ---
@@ -175,10 +203,10 @@ The hardest part: getting an organization to actually adopt a reliability system
 ## Part 6: The Execution
 ### What to Do Starting This Quarter
 
-**[Chapter 10: Reliability Execution—The Quarterly Plan](/posts/000027-reliability-execution-quarterly-plan)**
+**[Chapter 10: Reliability Execution—The Quarterly Plan](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan)**
 Theory is useless. This chapter is your operational checklist: what to do in the next 90 days to move the needle on reliability in your organization.
 
-**[Appendix: Operating Artifacts and Policy Templates](/posts/000028-reliability-operating-artifacts-and-policy-templates)**
+**[Appendix: Operating Artifacts and Policy Templates](/book/reliability-survival-guide/000028-reliability-operating-artifacts-and-policy-templates)**
 Drop-in templates, policy language, and worked examples you can adopt Monday morning: SLO policies, on-call policies, incident post-mortems, tiering frameworks, ADR templates.
 
 ---
@@ -206,6 +234,23 @@ These examples are included because this is the environment I know best. The und
 - **Example 2: Identity dependency concentration (Azure).** If Managed Identity token acquisition degrades, authentication and authorization paths can fail even when application code is healthy. Equivalent identity dependency risks exist with IAM and token services in every major cloud.
 
 - **Example 3: Region strategy confusion (Azure).** Paired-region and zone-redundant options are implementation choices, not business strategy. The strategy is still your declared RTO, RPO, and tested failover and failback path. The same discipline applies in AWS and GCP multi-region designs.
+
+---
+
+## Chapter bridge
+
+This overview establishes the model's frame: reliability as an economic negotiation constrained by design, incentives, and time.
+
+The SLO/RTO/RPO table above connects forward to every subsequent chapter:
+
+- **Chapter 1 through 4** derive the incentive failures, financial models, and organizational dynamics that prevent those targets from being met.
+- **Chapter 5a** shows how provider SLAs and regional architecture decisions bound your reachable SLO ceiling.
+- **Chapter 5b** shows how identity architecture failures can invalidate your SLO even when compute and storage are healthy.
+- **Chapter 6a and 6b** show the failure modes (partial failure, silent corruption) that make measuring your SLO harder than it appears.
+- **Chapter 7b** shows that change is the most common path through which a previously-met SLO is violated.
+- **Chapter 9** builds the governance system that makes SLO tracking repeatable and decision-making visible.
+
+If you read nothing else, read Chapters 1, 4, and 9. They are the minimum viable model for treating reliability as an economic decision rather than a hope.
 
 ---
 

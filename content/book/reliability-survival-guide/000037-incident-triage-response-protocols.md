@@ -19,9 +19,9 @@ commercialUsePermitted: false
 
 # Chapter 11: Incident Triage and Response Protocols
 
-*← [Chapter 10: Execution and the Next Quarter](/posts/000027-reliability-execution-quarterly-plan) | [Chapter 12: Reliability Pricing →](/posts/000029-reliability-pricing-saas-margin-trap)*
+*← [Chapter 10: Execution and the Next Quarter](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | [Chapter 12: Reliability Pricing →](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap)*
 
-**Note:** This chapter uses technical terms. See the [Glossary](/posts/GLOSSARY-reliability-terms) for definitions.
+**Note:** This chapter uses technical terms. See the [Glossary](/book/reliability-survival-guide/glossary-reliability-terms) for definitions.
 
 ---
 
@@ -30,6 +30,9 @@ commercialUsePermitted: false
 Chapter 0 teaches you the immediate response. This chapter teaches you **why** the decisions work and **what goes wrong** when they fail.
 
 Fast recovery is not luck. It is decision quality under pressure.
+
+> "Decision cadence under uncertainty is a capability, not a personality trait."  
+> Reliability lesson from WWII air and naval command loops: teams that run observe-orient-decide-act faster, with disciplined role clarity, recover sooner.
 
 Most reliability books assume you have time to think. Real incidents do not give you that. This chapter is about making good decisions in minutes with incomplete information.
 
@@ -50,6 +53,9 @@ A military pilot named John Boyd discovered this pattern. It applies to incident
 ```
 
 The team that cycles through this loop fastest recovers fastest. Speed matters more than perfect decisions.
+
+> "Perfection too late is failure in a different uniform."  
+> Reliability lesson from operational history: an 80% decision now is often better than a 100% decision after the blast radius has doubled.
 
 **Why:**
 - A fast decision that is 80% right works better than a perfect decision that comes 5 minutes too late
@@ -550,6 +556,47 @@ This is not genius. It is pattern recognition through experience.
 
 ---
 
+## Prevention Architecture Loop: Decision Quality to Fewer Incidents
+
+This chapter explains decision quality under pressure. To become architecturally complete, each recurring incident pattern must map to a prevention design.
+
+Use this loop after every postmortem:
+
+1. Identify the failure class that triggered the incident.
+2. Identify the design control that would have reduced blast radius.
+3. Add the control to architecture backlog with an owner and a date.
+4. Verify control efficacy in a simulation, not only in documentation.
+
+| Repeated incident pattern | Prevention design upgrade |
+|---|---|
+| Rollback caused a secondary outage | Backward-compatible contracts and deployment-order enforcement |
+| Failover decision delayed by uncertainty | Tested active-passive runbook with objective cutover criteria |
+| Escalation confusion | Single-commander authority model with pre-assigned deputies |
+| Data incident discovered late | Continuous integrity checks and tiered data correctness SLOs |
+| Identity dependency failure | Token cache layers and degraded read-only operating mode |
+
+### Architect takeaway
+
+Your objective is not perfect incident decisions. Your objective is fewer hard decisions in production.
+
+Design for that objective:
+
+- Encode rollback safety in API and schema contract policy
+- Encode failover criteria in measurable thresholds, not judgment alone
+- Encode dependency behavior in explicit timeout and fallback contracts
+
+### CTO takeaway
+
+Incidents should change architecture investment priorities in the same quarter.
+
+Treat this as portfolio governance:
+
+- Incident class frequency determines funded prevention themes
+- Prevention themes must have named owners and simulation dates
+- Quarterly scorecard should include prevention completion rate, not only incident MTTR
+
+---
+
 ## Summary: Decisions That Matter
 
 This chapter teaches three things:
@@ -568,4 +615,4 @@ That judgment is worth more than any runbook.
 
 ---
 
-*← [Chapter 10: Execution and the Next Quarter](/posts/000027-reliability-execution-quarterly-plan) | [Chapter 12: Reliability Pricing →](/posts/000029-reliability-pricing-saas-margin-trap)*
+*← [Chapter 10: Execution and the Next Quarter](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan) | [Chapter 12: Reliability Pricing →](/book/reliability-survival-guide/000029-reliability-pricing-saas-margin-trap)*

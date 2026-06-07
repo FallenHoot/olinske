@@ -25,7 +25,7 @@ commercialUsePermitted: false
 
 This chapter is not theory. It is procedure. Read it now, before your pager goes off at 2 AM. Print Appendix A and laminate it.
 
-**Note:** This chapter uses technical terms. See the [Glossary](/posts/GLOSSARY-reliability-terms) for definitions of unfamiliar words.
+**Note:** This chapter uses technical terms. See the [Glossary](/book/reliability-survival-guide/glossary-reliability-terms) for definitions of unfamiliar words.
 
 ---
 
@@ -42,6 +42,9 @@ The next hour is for **understanding what happened**. Figure out what went wrong
 Everything after that is for **preventing it again**. Make sure it does not happen next time.
 
 This chapter teaches the first 10 minutes.
+
+> "In war, first reports are wrong, and delay is fatal. Triage first, explanation second."  
+> Reliability lesson from WWII command practice: teams that classify the battlefield quickly can recover faster even with incomplete data.
 
 ---
 
@@ -60,6 +63,9 @@ HOUR 4+:        VALIDATION (is it actually safe?)
 
 Teams that follow this sequence recover faster. Teams that skip to finding the root cause often make things worse.
 
+> "The side that restores operational tempo first usually wins the day."  
+> Reliability lesson from WWII and later coalition operations: speed of coordinated action matters more than perfect certainty in minute zero.
+
 The sequence feels wrong when you are panicking. Your first instinct is to find the problem immediately. But fighting that instinct is the only way to recover fast.
 
 ---
@@ -70,7 +76,7 @@ The decision tree below answers: **What kind of failure is this?**
 
 Use it step-by-step. Ask yes/no questions. You make better decisions based on facts, not emotion.
 
-**What does "cascade" mean?** When one service breaks, it causes other services to break, which breaks more services. Like dominoes falling. [See Glossary: Cascade](/posts/GLOSSARY-reliability-terms#c)
+**What does "cascade" mean?** When one service breaks, it causes other services to break, which breaks more services. Like dominoes falling. [See Glossary: Cascade](/book/reliability-survival-guide/glossary-reliability-terms#c)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -730,6 +736,44 @@ Output:    Document decision points and follow-up actions
 
 ---
 
+## Prevention by Design: Remove the Same Incident Next Quarter
+
+This chapter is about the first 24 hours. Reliability maturity requires converting repeated incident classes into design controls.
+
+Use this mapping after every incident:
+
+| Failure class observed in triage | Prevention design control | Validation cadence |
+|---|---|---|
+| Cascade failure | Explicit service isolation boundaries, per-hop timeout budgets, circuit breakers, retry budgets | Quarterly chaos tests that kill one dependency and verify no cross-service collapse |
+| Bad deployment | Progressive delivery (canary or blue-green), feature flag kill switch, contract compatibility checks | Every production deployment with rollback drill monthly |
+| Dependency failure | Local fallback behavior, cached read paths, asynchronous buffering for non-critical writes | Monthly game day with dependency outage simulation |
+| Regional provider event | Multi-zone baseline and pre-planned active-passive failover for Tier 0 and Tier 1 workloads | Quarterly full failover and failback exercise |
+| Data corruption | Write-path validation, reconciliation jobs, immutable recovery checkpoints | Daily integrity checks and quarterly restoration test |
+| Identity outage | Token cache layering, degraded read-only mode, separate human and service auth paths | Quarterly token-refresh and IdP dependency simulation |
+
+### Architect takeaway
+
+Design explicit failure boundaries before the next quarter begins. Incident speed is useful, but architecture determines how many incidents happen.
+
+Minimum architecture package for high-impact systems:
+
+- Dependency timeout and retry budgets documented per critical call path
+- Circuit breaker and fallback behavior documented per external dependency
+- Progressive deployment plus rollback kill switch for every user-facing service
+- Regional failover strategy tied to declared RTO and RPO targets
+
+### CTO takeaway
+
+Treat repeated incident classes as capital allocation signals.
+
+If the same class appears three or more times in one quarter, fund prevention work as mandatory platform investment, not discretionary backlog.
+
+- Fund one reliability platform owner per critical product area
+- Reserve dedicated quarterly capacity for reliability architecture, not only incident response
+- Tie leadership review to prevention metrics: repeated incident class count, failover drill pass rate, and rollback success rate
+
+---
+
 ## Summary: The Discipline That Saves Time
 
 This chapter teaches discipline. Discipline feels slower when you are panicking. It is actually faster.
@@ -754,4 +798,4 @@ Print Appendix A. Laminate it. Use it. This chapter saves time by removing the t
 
 ---
 
-*← [Introduction](/posts/000017-reliability-is-an-economic-decision) | [Chapter 1: What Actually Kills Systems →](/posts/000031-the-things-that-actually-break)*
+*← [Introduction](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision) | [Chapter 1: What Actually Kills Systems →](/book/reliability-survival-guide/000031-the-things-that-actually-break)*

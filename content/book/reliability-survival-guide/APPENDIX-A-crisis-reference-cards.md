@@ -24,7 +24,7 @@ Print these cards. Laminate them. Put them in your incident command area.
 
 **What are these NOT?** They don't replace Chapters 0 and 11. Read those chapters first. Use these cards when you are in crisis and need instant guidance.
 
-**Note:** For term definitions, see [Glossary](/posts/GLOSSARY-reliability-terms).
+**Note:** For term definitions, see [Glossary](/book/reliability-survival-guide/glossary-reliability-terms).
 
 ---
 
@@ -714,4 +714,4 @@ NEXT STEP: Schedule postmortem
 
 ---
 
-*← [Chapter 0: The First 24 Hours](/posts/000036-first-24-hours-incident-triage) | [Chapter 11: Incident Triage and Response →](/posts/000037-incident-triage-response-protocols)*
+*← [Chapter 0: The First 24 Hours](/book/reliability-survival-guide/000036-first-24-hours-incident-triage) | [Chapter 11: Incident Triage and Response →](/book/reliability-survival-guide/000037-incident-triage-response-protocols)*

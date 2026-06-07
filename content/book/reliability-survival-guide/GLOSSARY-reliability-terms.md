@@ -448,4 +448,4 @@ If you find a term that should be here, let us know.
 
 ---
 
-*← [Back to Table of Contents](/posts/000000-table-of-contents)*
+*← [Back to Table of Contents](/book/reliability-survival-guide/000000-table-of-contents)*

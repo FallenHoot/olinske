@@ -31,22 +31,23 @@ const GUIDE_SLUGS = [
   'glossary-reliability-terms',
 ] as const;
 
-const publishedPosts = await getCollection('posts', ({ data }) =>
+const bookChapters = await getCollection('book', ({ data }) =>
   data.status === 'published' || data.status === 'scheduled'
 );
 
-const postBySlug = new Map(
-  publishedPosts.map((post) => [post.data.slug ?? post.id.replace(/\.md$/, ''), post])
+const chapterByShortSlug = new Map(
+  bookChapters.map((c) => [
+    c.id.replace(/^reliability-survival-guide\//, '').replace(/\.md$/, ''),
+    c,
+  ])
 );
 
 const guidePosts = GUIDE_SLUGS
-  .map((slug) => postBySlug.get(slug))
+  .map((slug) => chapterByShortSlug.get(slug))
   .filter(Boolean);
 
 const firstGuidePost = guidePosts[0];
-const firstGuideSlug = firstGuidePost
-  ? (firstGuidePost.data.slug ?? firstGuidePost.id.replace(/\.md$/, ''))
-  : null;
+const BOOK_BASE = '/book/reliability-survival-guide';
 const bookLandingHref = '/reliability-survival-guide/';
 ---
 
@@ -62,7 +63,7 @@ const bookLandingHref = '/reliability-survival-guide/';
     </section>
 
     {
-      firstGuideSlug ? (
+      firstGuidePost ? (
         <a
           class="hero-panel fade-in fade-delay-1"
           style="margin-top:1rem; display:block; text-decoration:none; color:inherit;"
@@ -99,9 +100,9 @@ const bookLandingHref = '/reliability-survival-guide/';
           </article>
         ) : (
           guidePosts.map((post) => {
-            const slug = post.data.slug ?? post.id.replace(/\.md$/, '');
+            const shortSlug = post.id.replace(/^reliability-survival-guide\//, '').replace(/\.md$/, '');
             return (
-              <a class="v-card scroll-reveal" href={`/posts/${slug}/`}>
+              <a class="v-card scroll-reveal" href={`${BOOK_BASE}/${shortSlug}/`}>
                 <div class="v-card-thumb" aria-hidden="true"></div>
                 <div class="v-card-body">
                   <p class="v-card-meta">

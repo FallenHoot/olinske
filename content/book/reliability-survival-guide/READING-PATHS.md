@@ -22,7 +22,7 @@ Not everyone reads a reliability book the same way. An on-call engineer needs ac
 
 **Pick your role. Read the chapters in order. You will have the insights you need.**
 
-**Note:** For term definitions, see [Glossary](/posts/GLOSSARY-reliability-terms).
+**Note:** For term definitions, see [Glossary](/book/reliability-survival-guide/glossary-reliability-terms).
 
 ---
 
@@ -38,7 +38,7 @@ Not everyone reads a reliability book the same way. An on-call engineer needs ac
 
 ### START HERE: The Crisis Reference Cards
 
-[**Appendix A: Crisis Reference Cards**](/posts/APPENDIX-A-crisis-reference-cards)
+[**Appendix A: Crisis Reference Cards**](/book/reliability-survival-guide/appendix-a-crisis-reference-cards)
 
 Print these. Laminate them. Put them in your pocket.
 
@@ -50,7 +50,7 @@ This is everything you need to triage an incident in the first 2 minutes. Triage
 
 ### NEXT: The Field Playbooks
 
-[**Appendix C: Field Playbooks**](/posts/APPENDIX-C-field-playbooks)
+[**Appendix C: Field Playbooks**](/book/reliability-survival-guide/appendix-c-field-playbooks)
 
 Five specific failure scenarios you will encounter:
 - Identity system down
@@ -67,7 +67,7 @@ Each one is a step-by-step procedure. Follow them in order.
 
 ### THEN: The Immediate Response Guide
 
-[**Chapter 0: The First 24 Hours – Incident Triage and Immediate Action**](/posts/000036-first-24-hours-incident-triage)
+[**Chapter 0: The First 24 Hours – Incident Triage and Immediate Action**](/book/reliability-survival-guide/000036-first-24-hours-incident-triage)
 
 This is your full incident response playbook. Decision trees. Immediate actions (minutes 0-10). Role definitions. Decision matrices for rollback and failover. Escalation procedures. Common playbooks. Recovery checklist.
 
@@ -77,7 +77,7 @@ This is your full incident response playbook. Decision trees. Immediate actions 
 
 ### OPTIONAL: The Operational Artifacts
 
-[**Appendix B: Operational Artifacts and Templates**](/posts/APPENDIX-B-operational-artifacts)
+[**Appendix B: Operational Artifacts and Templates**](/book/reliability-survival-guide/appendix-b-operational-artifacts)
 
 Use this to build your service's runbooks, dependency maps, and monitoring queries.
 
@@ -109,7 +109,7 @@ When pager goes off:
 
 ### START HERE: The Economics Foundation
 
-[**Chapter 1: Reliability is an Economic Decision**](/posts/000017-reliability-is-an-economic-decision)
+[**Chapter 1: Reliability is an Economic Decision**](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision)
 
 Skip the rest of the book if you only read one chapter. This explains why you are designing for reliability. Not because it is virtuous. Because it is profitable.
 
@@ -126,7 +126,7 @@ Understand the trade-offs:
 
 Read these three chapters in sequence. They explain what actually breaks:
 
-[**Chapter 3: The Things That Actually Break**](/posts/000031-the-things-that-actually-break)
+[**Chapter 3: The Things That Actually Break**](/book/reliability-survival-guide/000031-the-things-that-actually-break)
 
 Not what you think breaks. What actually does break in production. Based on real incidents.
 
@@ -134,7 +134,7 @@ Not what you think breaks. What actually does break in production. Based on real
 
 ---
 
-[**Chapter 5a: Identity – The System Kill Switch**](/posts/000032-identity-tier-zero-spof)
+[**Chapter 5a: Identity – The System Kill Switch**](/book/reliability-survival-guide/000032-identity-tier-zero-spof)
 
 Identity failures disable everything downstream. Yet most teams miss identity as a Tier-0 failure domain. This chapter shows why and how to design for identity resilience.
 
@@ -149,7 +149,7 @@ Learn:
 
 ---
 
-[**Chapter 6b: Silent Outages – When Data Corruption Looks Like Success**](/posts/000033-silent-outages-data-corruption)
+[**Chapter 6b: Silent Outages – When Data Corruption Looks Like Success**](/book/reliability-survival-guide/000033-silent-outages-data-corruption)
 
 The most dangerous failures are silent: data corruption, inconsistency, partial writes. Your system looks fine while integrity degrades.
 
@@ -166,7 +166,7 @@ Learn:
 
 ### THEN: The Change/Deployment Pattern
 
-[**Chapter 7b: Change – The Failure You Deploy Yourself**](/posts/000035-change-primary-failure-source)
+[**Chapter 7b: Change – The Failure You Deploy Yourself**](/book/reliability-survival-guide/000035-change-primary-failure-source)
 
 Most outages are caused by change: deployments, configuration updates, operational decisions. This chapter shows why and how to design for safe change.
 
@@ -211,7 +211,7 @@ Before you ship a new service, verify:
 
 ### START HERE: The Economic Thesis
 
-[**Chapter 1: Reliability is an Economic Decision**](/posts/000017-reliability-is-an-economic-decision)
+[**Chapter 1: Reliability is an Economic Decision**](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision)
 
 This is your foundation. Understand why you invest in reliability and where to draw the line.
 
@@ -223,7 +223,7 @@ This chapter alone will change how your org talks about reliability.
 
 ### THEN: Understanding Your Organization
 
-[**Chapter 2: Systems Fail According to Incentives**](/posts/000019-systems-fail-according-to-incentives)
+[**Chapter 2: Systems Fail According to Incentives**](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives)
 
 Your team is not building unreliable systems. Your incentives are rewarding unreliable systems. This chapter shows the incentive structures that lead to failure.
 
@@ -237,7 +237,7 @@ Learn:
 
 ---
 
-[**Chapter 4: The Financial Model**](/posts/000021-reliability-equation-financial-model)
+[**Chapter 4: The Financial Model**](/book/reliability-survival-guide/000021-reliability-equation-financial-model)
 
 Put numbers to reliability. How do you calculate the economics? What levers do you have?
 
@@ -253,7 +253,7 @@ Learn:
 
 ### THEN: Understand What Actually Breaks
 
-[**Chapter 3: The Things That Actually Break**](/posts/000031-the-things-that-actually-break)
+[**Chapter 3: The Things That Actually Break**](/book/reliability-survival-guide/000031-the-things-that-actually-break)
 
 You need to know what your org is optimizing for. This chapter shows what actually fails in production.
 
@@ -263,7 +263,7 @@ You need to know what your org is optimizing for. This chapter shows what actual
 
 ### THEN: Build Governance Systems
 
-[**Chapter 9: Governance and Risk**](/posts/000026-reliability-governance-adr-ledger-indicators)
+[**Chapter 9: Governance and Risk**](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators)
 
 You cannot just hope for reliability. You need systems that make it automatic. Architecture decision records. Audit logs. Indicators that flag risk early.
 
@@ -279,7 +279,7 @@ Learn:
 
 ### THEN: Execution
 
-[**Chapter 10: Quarterly Execution**](/posts/000027-reliability-execution-quarterly-plan)
+[**Chapter 10: Quarterly Execution**](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan)
 
 Reliability improvements need to be planned and tracked. This chapter shows how to weave reliability into your normal quarterly planning.
 
@@ -329,7 +329,7 @@ Then the deep-dive chapters on specific domains.
 
 ### PHASE 1: Incident Response (2 hours)
 
-[**Chapter 0: The First 24 Hours**](/posts/000036-first-24-hours-incident-triage)
+[**Chapter 0: The First 24 Hours**](/book/reliability-survival-guide/000036-first-24-hours-incident-triage)
 
 Your North Star for incident response. This is what your team should be doing.
 
@@ -337,7 +337,7 @@ Your North Star for incident response. This is what your team should be doing.
 
 ---
 
-[**Chapter 11: Incident Triage & Response Protocols**](/posts/000037-incident-triage-response-protocols)
+[**Chapter 11: Incident Triage & Response Protocols**](/book/reliability-survival-guide/000037-incident-triage-response-protocols)
 
 The advanced playbook. OODA loops. Medical triage models. Decision matrices. Escalation procedures. Role clarity.
 
@@ -349,7 +349,7 @@ Use this to train your team on how to make decisions under pressure.
 
 ### PHASE 2: Operational Artifacts (2-3 hours)
 
-[**Appendix A: Crisis Reference Cards**](/posts/APPENDIX-A-crisis-reference-cards)
+[**Appendix A: Crisis Reference Cards**](/book/reliability-survival-guide/appendix-a-crisis-reference-cards)
 
 Use these as a template for building your org's laminate-able cards.
 
@@ -357,7 +357,7 @@ Use these as a template for building your org's laminate-able cards.
 
 ---
 
-[**Appendix B: Operational Artifacts**](/posts/APPENDIX-B-operational-artifacts)
+[**Appendix B: Operational Artifacts**](/book/reliability-survival-guide/appendix-b-operational-artifacts)
 
 This is your toolkit. Templates for:
 - Service runbooks
@@ -374,7 +374,7 @@ Adapt each template for your services. This is where the theoretical knowledge b
 
 ---
 
-[**Appendix C: Field Playbooks**](/posts/APPENDIX-C-field-playbooks)
+[**Appendix C: Field Playbooks**](/book/reliability-survival-guide/appendix-c-field-playbooks)
 
 Five specific failure scenarios. Use these to train your team. Run gamedays based on these.
 
@@ -388,7 +388,7 @@ Pick the chapters that apply to your biggest current pain:
 
 ---
 
-[**Chapter 5a: Identity Resilience**](/posts/000032-identity-tier-zero-spof)
+[**Chapter 5a: Identity Resilience**](/book/reliability-survival-guide/000032-identity-tier-zero-spof)
 
 If your org has identity issues:
 - Detection queries (code examples)
@@ -400,7 +400,7 @@ If your org has identity issues:
 
 ---
 
-[**Chapter 6b: Silent Outages**](/posts/000033-silent-outages-data-corruption)
+[**Chapter 6b: Silent Outages**](/book/reliability-survival-guide/000033-silent-outages-data-corruption)
 
 If your org has data integrity issues:
 - 50+ detection queries by database type
@@ -414,7 +414,7 @@ This chapter is heavy. Use it to build your data consistency monitoring.
 
 ---
 
-[**Chapter 7b: Safe Deployment**](/posts/000035-change-primary-failure-source)
+[**Chapter 7b: Safe Deployment**](/book/reliability-survival-guide/000035-change-primary-failure-source)
 
 If your org has frequent deployment incidents:
 - 3-phase safe deployment checklist
@@ -452,7 +452,7 @@ After reading, build:
 
 ### START HERE: The Economics
 
-[**Chapter 1: Reliability is an Economic Decision**](/posts/000017-reliability-is-an-economic-decision)
+[**Chapter 1: Reliability is an Economic Decision**](/book/reliability-survival-guide/000017-reliability-is-an-economic-decision)
 
 You need to understand why you are investing in reliability. Use this chapter to educate your team on the economic thinking behind reliability decisions.
 
@@ -462,7 +462,7 @@ You need to understand why you are investing in reliability. Use this chapter to
 
 ### THEN: Understand Incentives
 
-[**Chapter 2: Systems Fail According to Incentives**](/posts/000019-systems-fail-according-to-incentives)
+[**Chapter 2: Systems Fail According to Incentives**](/book/reliability-survival-guide/000019-systems-fail-according-to-incentives)
 
 Your team's behavior is driven by incentives. Make sure you are not rewarding unreliable systems.
 
@@ -474,7 +474,7 @@ Use this to audit your team's KPIs and sprint goals.
 
 ### THEN: Know What Breaks
 
-[**Chapter 3: The Things That Actually Break**](/posts/000031-the-things-that-actually-break)
+[**Chapter 3: The Things That Actually Break**](/book/reliability-survival-guide/000031-the-things-that-actually-break)
 
 What are your team's actual risks? What breaks in your systems?
 
@@ -486,7 +486,7 @@ Have your team read this and identify your top 5 failure modes.
 
 ### THEN: Build Team Execution Rituals
 
-[**Chapter 9: Governance**](/posts/000026-reliability-governance-adr-ledger-indicators)
+[**Chapter 9: Governance**](/book/reliability-survival-guide/000026-reliability-governance-adr-ledger-indicators)
 
 How do you make reliability automatic, not aspirational? This chapter shows governance patterns.
 
@@ -496,7 +496,7 @@ How do you make reliability automatic, not aspirational? This chapter shows gove
 
 ### THEN: Plan Quarterly Work
 
-[**Chapter 10: Quarterly Execution**](/posts/000027-reliability-execution-quarterly-plan)
+[**Chapter 10: Quarterly Execution**](/book/reliability-survival-guide/000027-reliability-execution-quarterly-plan)
 
 How do you weave reliability into sprint planning? This chapter shows how to make it part of your normal cadence.
 

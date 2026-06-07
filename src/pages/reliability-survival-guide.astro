@@ -31,19 +31,23 @@ const GUIDE_SLUGS = [
   'glossary-reliability-terms',
 ] as const;
 
-const publishedPosts = await getCollection('posts', ({ data }) =>
+const bookChapters = await getCollection('book', ({ data }) =>
   data.status === 'published' || data.status === 'scheduled'
 );
 
-const postBySlug = new Map(
-  publishedPosts.map((post) => [post.data.slug ?? post.id.replace(/\.md$/, ''), post])
+const chapterByShortSlug = new Map(
+  bookChapters.map((c) => [
+    c.id.replace(/^reliability-survival-guide\//, '').replace(/\.md$/, ''),
+    c,
+  ])
 );
 
 const guidePosts = GUIDE_SLUGS
-  .map((slug) => postBySlug.get(slug))
+  .map((slug) => chapterByShortSlug.get(slug))
   .filter(Boolean);
 
 const chapterCount = guidePosts.length;
+const BOOK_BASE = '/book/reliability-survival-guide';
 const sampleSlug = '000036-first-24-hours-incident-triage';
 ---
 
@@ -61,9 +65,9 @@ const sampleSlug = '000036-first-24-hours-incident-triage';
         and incident-time uncertainty.
       </p>
       <div class="hero-actions">
-        <a class="btn-link" href="/posts/000000-table-of-contents/">Read the full table of contents</a>
-        <a class="btn-link" href={`/posts/${sampleSlug}/`}>Read a sample chapter</a>
-        <a class="btn-link" href="/posts/READING-PATHS/">Choose a reading path</a>
+        <a class="btn-link" href={`${BOOK_BASE}/000000-table-of-contents/`}>Read the full table of contents</a>
+        <a class="btn-link" href={`${BOOK_BASE}/${sampleSlug}/`}>Read a sample chapter</a>
+        <a class="btn-link" href={`${BOOK_BASE}/reading-paths/`}>Choose a reading path</a>
       </div>
       <p class="post-meta" style="margin-top:0.8rem;">Current published entries in the guide package: {chapterCount}</p>
     </section>

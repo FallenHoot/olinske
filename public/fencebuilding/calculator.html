@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FenceBuilding Calculator - Choose Fence Type & Calculate Costs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-content h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header-content .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .unit-toggle, .lang-toggle {
+            background: #e0e0e0;
+            color: #333;
+            border: 2px solid transparent;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .unit-toggle.active, .lang-toggle.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .unit-toggle:hover, .lang-toggle:hover {
+            transform: translateY(-2px);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+            }
+            .controls {
+                width: 100%;
+            }
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .material-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 120px 80px;
+            gap: 12px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            align-items: center;
+            font-size: 0.95em;
+        }
+
+        .material-row strong {
+            color: #333;
+        }
+
+        .material-row .quantity {
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .material-row .unit-price {
+            text-align: right;
+            color: #666;
+        }
+
+        .material-row .total {
+            text-align: right;
+            font-weight: 600;
+            color: #764ba2;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            padding: 10px 0;
+            font-size: 1em;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+            padding-top: 15px;
+            margin-top: 10px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .summary-row.subtotal {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 15px;
+            color: #856404;
+            font-size: 0.9em;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .fence-ascii {
+            font-family: monospace;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 0.85em;
+            color: #667eea;
+            overflow-x: auto;
+        }
+
+        #emptyState {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+
+        .unit-label {
+            font-size: 0.8em;
+            color: #999;
+            font-weight: normal;
+            display: block;
+            margin-top: 3px;
+        }
+
+        .breadcrumb {
+            font-size: 0.85em;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/fencebuilding/" data-en="FenceBuilding" data-no="Gjerdebygging">FenceBuilding</a> /
+            <span data-en="Calculator" data-no="Kalkulator">Calculator</span>
+        </div>
+
+        <div class="header">
+            <div class="header-content">
+                <h1>🪵 <span data-en="Decorative Picket Fence Calculator" data-no="Dekorativ gjerdekalkulator">Decorative Picket Fence Calculator</span></h1>
+                <p class="subtitle" data-en="Plan your double-sided picket fence with design elements" data-no="Planlegg ditt todelt gjerde med designelementer">Plan your double-sided picket fence with design elements</p>
+            </div>
+            <div class="controls">
+                <div>
+                    <button id="metricBtn" class="unit-toggle active" onclick="setUnits('metric')">📏 Metric</button>
+                    <button id="usBtn" class="unit-toggle" onclick="setUnits('us')">📐 US Std</button>
+                </div>
+                <div>
+                    <button id="enBtn" class="lang-toggle active" onclick="setLanguage('en')">🇺🇸 English</button>
+                    <button id="noBtn" class="lang-toggle" onclick="setLanguage('no')">🇳🇴 Norsk</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Input Section -->
+            <div class="section">
+                <h2 data-en="Fence Specifications" data-no="Gjerdespesifikasjoner">Fence Specifications</h2>
+                
+                <div class="form-group">
+                    <label for="fenceLength">
+                        <span data-en="Total Fence Length (meters)" data-no="Total gjerde lengde (meter)" id="label-fenceLength">Total Fence Length (meters)</span>
+                        <span class="unit-label" data-en="(m)" data-no="(m)" id="sublabel-fenceLength">(m)</span>
+                    </label>
+                    <input type="number" id="fenceLength" value="30" min="3" max="300" step="0.1">
+                    <p class="help-text" data-en="The linear distance you want to fence" data-no="Den lineære avstanden du ønsker å gjerde" id="hint-fenceLength">The linear distance you want to fence</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="fenceHeight">
+                        <span data-en="Fence Height (centimeters)" data-no="Gjerdehøyde (centimeter)" id="label-fenceHeight">Fence Height (centimeters)</span>
+                        <span class="unit-label" data-en="(cm)" data-no="(cm)" id="sublabel-fenceHeight">(cm)</span>
+                    </label>
+                    <input type="number" id="fenceHeight" value="120" min="60" max="180" step="1">
+                    <p class="help-text" data-en="Picket height (90–120 cm is typical)" data-no="Gjerdepålhøyde (90–120 cm er typisk)" id="hint-fenceHeight">Picket height (90–120 cm is typical)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="postSpacing">
+                        <span data-en="Post Spacing (meters)" data-no="Stolpeavstand (meter)" id="label-postSpacing">Post Spacing (meters)</span>
+                        <span class="unit-label" data-en="(m)" data-no="(m)" id="sublabel-postSpacing">(m)</span>
+                    </label>
+                    <input type="number" id="postSpacing" value="1.8" min="1.2" max="2.4" step="0.1">
+                    <p class="help-text" data-en="Distance between posts (1.8–2.4 m is standard)" data-no="Avstand mellom stolper (1,8–2,4 m er standard)" id="hint-postSpacing">Distance between posts (1.8–2.4 m is standard)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="picketSpacing">
+                        <span data-en="Picket Spacing (centimeters)" data-no="Gjerdepallavstand (centimeter)" id="label-picketSpacing">Picket Spacing (centimeters)</span>
+                        <span class="unit-label" data-en="(cm)" data-no="(cm)" id="sublabel-picketSpacing">(cm)</span>
+                    </label>
+                    <input type="number" id="picketSpacing" value="11.5" min="5" max="15" step="0.5">
+                    <p class="help-text" data-en="Gap between pickets (adds to picket width)" data-no="Gap mellom gjerdepal (legger til gjerdepalbredde)" id="hint-picketSpacing">Gap between pickets (adds to picket width)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="picketWidth">
+                        <span data-en="Picket Width (centimeters)" data-no="Gjerdepalbredde (centimeter)" id="label-picketWidth">Picket Width (centimeters)</span>
+                        <span class="unit-label" data-en="(cm)" data-no="(cm)" id="sublabel-picketWidth">(cm)</span>
+                    </label>
+                    <input type="number" id="picketWidth" value="14" min="8" max="20" step="0.5">
+                    <p class="help-text" data-en="Standard picket is 14 cm wide" data-no="Standard gjerdepal er 14 cm bred" id="hint-picketWidth">Standard picket is 14 cm wide</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="railWidth">
+                        <span data-en="Rail Width (centimeters)" data-no="Skerubredde (centimeter)" id="label-railWidth">Rail Width (centimeters)</span>
+                        <span class="unit-label" data-en="(cm)" data-no="(cm)" id="sublabel-railWidth">(cm)</span>
+                    </label>
+                    <input type="number" id="railWidth" value="14" min="8" max="20" step="0.5">
+                    <p class="help-text" data-en="Top and bottom rails (2×6 boards)" data-no="Øvre og nedre skinner (2×6 brett)" id="hint-railWidth">Top and bottom rails (2×6 boards)</p>
+                </div>
+
+                <h2 data-en="Material Costs" data-no="Materialkostnader" style="margin-top: 30px;">Material Costs</h2>
+
+                <div class="form-group">
+                    <label for="picketCost" data-en="Cost per Picket ($)" data-no="Kostnad per gjerdepal ($)">Cost per Picket ($)</label>
+                    <input type="number" id="picketCost" value="2.50" min="0.5" max="10" step="0.10">
+                </div>
+
+                <div class="form-group">
+                    <label for="railCost" data-en="Cost per Linear Meter - Rails ($)" data-no="Kostnad per lineær meter - skinner ($)">Cost per Linear Meter - Rails ($)</label>
+                    <input type="number" id="railCost" value="1.25" min="0.5" max="5" step="0.10">
+                </div>
+
+                <div class="form-group">
+                    <label for="postCost" data-en="Cost per Post ($)" data-no="Kostnad per stolpe ($)">Cost per Post ($)</label>
+                    <input type="number" id="postCost" value="15.00" min="5" max="50" step="0.50">
+                </div>
+
+                <div class="form-group">
+                    <label for="concreteCost" data-en="Cost per Concrete Bag ($)" data-no="Kostnad per betongsekk ($)">Cost per Concrete Bag ($)</label>
+                    <input type="number" id="concreteCost" value="5.31" min="2" max="15" step="0.10">
+                </div>
+
+                <div class="form-group">
+                    <label for="screwsCost" data-en="Cost per Box of Screws ($)" data-no="Kostnad per esker skruer ($)">Cost per Box of Screws ($)</label>
+                    <input type="number" id="screwsCost" value="16.11" min="5" max="40" step="0.10">
+                    <p class="help-text" data-en="Box of 100 - 3&quot; screws" data-no="Eske med 100 - 3&quot; skruer">Box of 100 - 3" screws</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="bracketsPerPost" data-en="Brackets per Post ($)" data-no="Braketter per stolpe ($)">Brackets per Post ($)</label>
+                    <input type="number" id="bracketsPerPost" value="1.00" min="0" max="5" step="0.10">
+                    <p class="help-text" data-en="Optional: for structural reinforcement" data-no="Valgfritt: for strukturell forsterkning">Optional: for structural reinforcement</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="laborPerFoot" data-en="Labor Cost per Linear Meter ($)" data-no="Lønnskostnad per lineær meter ($)">Labor Cost per Linear Meter ($)</label>
+                    <input type="number" id="laborPerFoot" value="0" min="0" max="50" step="1">
+                    <p class="help-text" data-en="Leave 0 if DIY" data-no="La være 0 hvis DIY">Leave 0 if DIY</p>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="calculateFence()" data-en="Calculate" data-no="Beregn">Calculate</button>
+                    <button class="secondary" onclick="resetForm()" data-en="Reset" data-no="Tilbakestill">Reset</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="section">
+                <h2 data-en="Materials & Costs" data-no="Materialer og kostnader">Materials & Costs</h2>
+                
+                <div id="results" style="display: none;">
+                    <h3 style="color: #333; margin-bottom: 15px;" data-en="Material Breakdown" data-no="Materialsammensetning">Material Breakdown</h3>
+                    
+                    <div id="materialsContainer"></div>
+
+                    <div class="summary">
+                        <div class="summary-row subtotal">
+                            <span data-en="Materials Subtotal:" data-no="Materialer Subtotal:">Materials Subtotal:</span>
+                            <span id="materialSubtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row" style="margin-top: 8px;">
+                            <span data-en="Labor:" data-no="Arbeidskraft:">Labor:</span>
+                            <span id="laborCost">$0.00</span>
+                        </div>
+                        <div class="summary-row tax" style="margin-top: 8px; font-weight: 600; color: #666;">
+                            <span data-en="Estimated Sales Tax (10%):" data-no="Estimert merverdiavgift (10%):">Estimated Sales Tax (10%):</span>
+                            <span id="taxAmount">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span data-en="TOTAL COST:" data-no="TOTAL KOSTNAD:">TOTAL COST:</span>
+                            <span id="totalCost">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="diagram">
+                        <h3 style="color: #333; margin-bottom: 10px;" data-en="Fence Layout Diagram" data-no="Gjerdeoppsett diagram">Fence Layout Diagram</h3>
+                        <div class="fence-ascii">
+                            <pre id="diagramText"></pre>
+                        </div>
+                        <div style="color: #666; font-size: 0.9em; line-height: 1.6;">
+                            <p><strong data-en="Design:" data-no="Design:">Design:</strong> <span data-en="Double-sided decorative picket fence" data-no="Dobbelt-sidig dekorativ gjerdepal">Double-sided decorative picket fence</span></p>
+                            <p style="margin-top: 8px;">
+                               • <span data-en="Top and bottom rails run the full length" data-no="Øvre og nedre skinner løper hele lengden">Top and bottom rails run the full length</span><br>
+                               • <span data-en="Pickets with design elements spaced between" data-no="Gjerdepal med designelementer mellom">Pickets with design elements spaced between</span><br>
+                               • <span data-en="Posts support the structure every 1.8-2.4 m" data-no="Stolper støtter strukturen hver 1,8-2,4 m">Posts support the structure every 1.8-2.4 m</span><br>
+                               • <span data-en="Looks good from both sides" data-no="Ser bra ut fra begge sider">Looks good from both sides</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="note">
+                        <strong>💡 <span data-en="Tips:" data-no="Tips:">Tips:</span></strong><br>
+                        • <span data-en="Add 10-15% extra materials for cuts and waste" data-no="Legg til 10-15% ekstra materialer for snitt og avfall">Add 10-15% extra materials for cuts and waste</span><br>
+                        • <span data-en="Pressure-treated wood lasts 15–20 years" data-no="Trykk-impregnert tre varer 15–20 år">Pressure-treated wood lasts 15–20 years</span><br>
+                        • <span data-en="Post holes should be 75 cm deep, 25 cm diameter" data-no="Stolpehull bør være 75 cm dypt, 25 cm diameter" id="tip-postDepth">Post holes should be 75 cm deep, 25 cm diameter</span><br>
+                        • <span data-en="Concrete sets in 24–48 hours before hanging pickets" data-no="Betong setter seg på 24–48 timer før hengeplakater">Concrete sets in 24–48 hours before hanging pickets</span>
+                    </div>
+                </div>
+
+                <div id="emptyState" style="text-align: center; color: #999; padding: 40px 20px;">
+                    <p style="font-size: 1.2em; margin-bottom: 10px;">📋</p>
+                    <p data-en="Enter your fence specifications and click &quot;Calculate&quot; to see materials and costs" data-no="Skriv inn gjerdespesifikasjoner og klikk &quot;Beregn&quot; for å se materialer og kostnader">Enter your fence specifications and click "Calculate" to see materials and costs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUnit = 'metric';
+        let currentLanguage = 'en';
+
+        const translations = {
+            'Material Breakdown': { no: 'Materialsammensetning' },
+            'Materials Subtotal:': { no: 'Materialer Subtotal:' },
+            'Labor:': { no: 'Arbeidskraft:' },
+            'Estimated Sales Tax (10%):': { no: 'Estimert merverdiavgift (10%):' },
+            'TOTAL COST:': { no: 'TOTAL KOSTNAD:' },
+            'Pickets': { no: 'Gjerdepal' },
+            'Rails (top & bottom)': { no: 'Skinner (øvre og nedre)' },
+            'Posts': { no: 'Stolper' },
+            'Concrete Bags (60 kg)': { no: 'Betongsekker (60 kg)' },
+            'Screw Boxes (3", 100ct)': { no: 'Skrueesker (3", 100ct)' },
+            'Brackets (optional)': { no: 'Braketter (valgfritt)' },
+        };
+
+        const unitLabels = {
+            metric: {
+                'label-fenceLength': { en: 'Total Fence Length (meters)', no: 'Total gjerde lengde (meter)' },
+                'sublabel-fenceLength': { en: '(m)', no: '(m)' },
+                'label-fenceHeight': { en: 'Fence Height (centimeters)', no: 'Gjerdehøyde (centimeter)' },
+                'sublabel-fenceHeight': { en: '(cm)', no: '(cm)' },
+                'label-postSpacing': { en: 'Post Spacing (meters)', no: 'Stolpeavstand (meter)' },
+                'sublabel-postSpacing': { en: '(m)', no: '(m)' },
+                'label-picketSpacing': { en: 'Picket Spacing (centimeters)', no: 'Gjerdepallavstand (centimeter)' },
+                'sublabel-picketSpacing': { en: '(cm)', no: '(cm)' },
+                'label-picketWidth': { en: 'Picket Width (centimeters)', no: 'Gjerdepalbredde (centimeter)' },
+                'sublabel-picketWidth': { en: '(cm)', no: '(cm)' },
+                'label-railWidth': { en: 'Rail Width (centimeters)', no: 'Skerubredde (centimeter)' },
+                'sublabel-railWidth': { en: '(cm)', no: '(cm)' },
+            },
+            us: {
+                'label-fenceLength': { en: 'Total Fence Length (feet)', no: 'Total gjerde lengde (fot)' },
+                'sublabel-fenceLength': { en: '(ft)', no: '(ft)' },
+                'label-fenceHeight': { en: 'Fence Height (inches)', no: 'Gjerdehøyde (tommer)' },
+                'sublabel-fenceHeight': { en: '(in)', no: '(in)' },
+                'label-postSpacing': { en: 'Post Spacing (feet)', no: 'Stolpeavstand (fot)' },
+                'sublabel-postSpacing': { en: '(ft)', no: '(ft)' },
+                'label-picketSpacing': { en: 'Picket Spacing (inches)', no: 'Gjerdepallavstand (tommer)' },
+                'sublabel-picketSpacing': { en: '(in)', no: '(in)' },
+                'label-picketWidth': { en: 'Picket Width (inches)', no: 'Gjerdepalbredde (tommer)' },
+                'sublabel-picketWidth': { en: '(in)', no: '(in)' },
+                'label-railWidth': { en: 'Rail Width (inches)', no: 'Skerubredde (tommer)' },
+                'sublabel-railWidth': { en: '(in)', no: '(in)' },
+            }
+        };
+
+        // Conversion functions
+        function metersToFeet(m) { return m * 3.28084; }
+        function feetToMeters(ft) { return ft / 3.28084; }
+        function cmToInches(cm) { return cm / 2.54; }
+        function inchesToCm(in_) { return in_ * 2.54; }
+
+        function updateUIText() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const text = currentLanguage === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-no');
+                if (text && !el.querySelector('*')) { // Only if element has no children with text content
+                    el.textContent = text;
+                }
+            });
+            document.documentElement.setAttribute('lang', currentLanguage === 'no' ? 'no' : 'en');
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById('enBtn').classList.toggle('active', lang === 'en');
+            document.getElementById('noBtn').classList.toggle('active', lang === 'no');
+            updateUIText();
+        }
+
+        function setUnits(unit) {
+            currentUnit = unit;
+            document.getElementById('metricBtn').classList.toggle('active', unit === 'metric');
+            document.getElementById('usBtn').classList.toggle('active', unit === 'us');
+
+            // Update labels
+            Object.entries(unitLabels[unit]).forEach(([id, labels]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = labels[currentLanguage];
+            });
+
+            // Convert input values
+            const fenceLength = parseFloat(document.getElementById('fenceLength').value);
+            const fenceHeight = parseFloat(document.getElementById('fenceHeight').value);
+            const postSpacing = parseFloat(document.getElementById('postSpacing').value);
+            const picketSpacing = parseFloat(document.getElementById('picketSpacing').value);
+            const picketWidth = parseFloat(document.getElementById('picketWidth').value);
+            const railWidth = parseFloat(document.getElementById('railWidth').value);
+
+            if (unit === 'us') {
+                document.getElementById('fenceLength').value = metersToFeet(fenceLength).toFixed(2);
+                document.getElementById('fenceHeight').value = cmToInches(fenceHeight).toFixed(1);
+                document.getElementById('postSpacing').value = metersToFeet(postSpacing).toFixed(2);
+                document.getElementById('picketSpacing').value = cmToInches(picketSpacing).toFixed(2);
+                document.getElementById('picketWidth').value = cmToInches(picketWidth).toFixed(2);
+                document.getElementById('railWidth').value = cmToInches(railWidth).toFixed(2);
+
+                document.getElementById('fenceLength').min = '10';
+                document.getElementById('fenceLength').max = '1000';
+                document.getElementById('postSpacing').min = '4';
+                document.getElementById('postSpacing').max = '8';
+            } else {
+                document.getElementById('fenceLength').value = feetToMeters(fenceLength).toFixed(1);
+                document.getElementById('fenceHeight').value = inchesToCm(fenceHeight).toFixed(0);
+                document.getElementById('postSpacing').value = feetToMeters(postSpacing).toFixed(1);
+                document.getElementById('picketSpacing').value = inchesToCm(picketSpacing).toFixed(1);
+                document.getElementById('picketWidth').value = inchesToCm(picketWidth).toFixed(1);
+                document.getElementById('railWidth').value = inchesToCm(railWidth).toFixed(1);
+
+                document.getElementById('fenceLength').min = '3';
+                document.getElementById('fenceLength').max = '300';
+                document.getElementById('postSpacing').min = '1.2';
+                document.getElementById('postSpacing').max = '2.4';
+            }
+        }
+
+        function calculateFence() {
+            let fenceLength = parseFloat(document.getElementById('fenceLength').value);
+            let fenceHeight = parseFloat(document.getElementById('fenceHeight').value);
+            let postSpacing = parseFloat(document.getElementById('postSpacing').value);
+            let picketSpacing = parseFloat(document.getElementById('picketSpacing').value);
+            let picketWidth = parseFloat(document.getElementById('picketWidth').value);
+
+            // Convert to metric for calculations
+            if (currentUnit === 'us') {
+                fenceLength = feetToMeters(fenceLength);
+                fenceHeight = inchesToCm(fenceHeight);
+                postSpacing = feetToMeters(postSpacing);
+                picketSpacing = inchesToCm(picketSpacing);
+                picketWidth = inchesToCm(picketWidth);
+            }
+
+            if (!fenceLength || fenceLength <= 0) {
+                alert(currentLanguage === 'no' ? 'Vennligst skriv inn en gyldig gjerde lengde' : 'Please enter a valid fence length');
+                return;
+            }
+
+            const numPosts = Math.ceil(fenceLength / postSpacing) + 1;
+            const totalRailLength = fenceLength * 4; // 2 rails on top, 2 on bottom
+            const concreteBagsPerPost = 2;
+            const totalConcreteBags = numPosts * concreteBagsPerPost;
+
+            const picketCenterSpacing = picketWidth + picketSpacing;
+            const picketsPerMeter = 100 / picketCenterSpacing;
+            const totalPickets = Math.ceil(fenceLength * picketsPerMeter);
+
+            const screwsNeeded = totalPickets * 4;
+            const screw3InchBoxes = Math.ceil(screwsNeeded / 100);
+            const bracketsNeeded = numPosts;
+
+            const costs = {
+                pickets: totalPickets * parseFloat(document.getElementById('picketCost').value),
+                rails: totalRailLength * parseFloat(document.getElementById('railCost').value),
+                posts: numPosts * parseFloat(document.getElementById('postCost').value),
+                concrete: totalConcreteBags * parseFloat(document.getElementById('concreteCost').value),
+                screws: screw3InchBoxes * parseFloat(document.getElementById('screwsCost').value),
+                brackets: bracketsNeeded * parseFloat(document.getElementById('bracketsPerPost').value)
+            };
+
+            const materialSubtotal = Object.values(costs).reduce((a, b) => a + b, 0);
+            let laborCost = 0;
+            if (currentUnit === 'metric') {
+                laborCost = fenceLength * parseFloat(document.getElementById('laborPerFoot').value);
+            } else {
+                laborCost = metersToFeet(fenceLength) * parseFloat(document.getElementById('laborPerFoot').value);
+            }
+            const taxAmount = materialSubtotal * 0.10;
+            const totalCost = materialSubtotal + laborCost + taxAmount;
+
+            displayResults({
+                totalPickets,
+                numPosts,
+                totalRailLength,
+                totalConcreteBags,
+                screw3InchBoxes,
+                bracketsNeeded,
+                costs,
+                materialSubtotal,
+                laborCost,
+                taxAmount,
+                totalCost,
+                fenceLength,
+                postSpacing
+            });
+        }
+
+        function displayResults(data) {
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+
+            const lengthUnit = currentUnit === 'metric' ? 'm' : 'ft';
+            const lengthValue = currentUnit === 'metric' ? data.totalRailLength : metersToFeet(data.totalRailLength);
+            const displayFenceLength = currentUnit === 'metric' ? data.fenceLength : metersToFeet(data.fenceLength);
+
+            const itemLabels = {
+                'Pickets': currentLanguage === 'no' ? 'Gjerdepal' : 'Pickets',
+                'Rails (top & bottom)': currentLanguage === 'no' ? 'Skinner (øvre og nedre)' : 'Rails (top & bottom)',
+                'Posts': currentLanguage === 'no' ? 'Stolper' : 'Posts',
+                'Concrete Bags (60 kg)': currentLanguage === 'no' ? 'Betongsekker (60 kg)' : 'Concrete Bags (60 kg)',
+                'Screw Boxes (3", 100ct)': 'Screw Boxes (3", 100ct)',
+                'Brackets (optional)': currentLanguage === 'no' ? 'Braketter (valgfritt)' : 'Brackets (optional)',
+            };
+
+            const materialsHtml = `
+                <div class="material-row">
+                    <strong>${itemLabels['Pickets']}</strong>
+                    <div class="quantity">${data.totalPickets}</div>
+                    <div class="unit-price">@ $${parseFloat(document.getElementById('picketCost').value).toFixed(2)}</div>
+                    <div class="total">$${data.costs.pickets.toFixed(2)}</div>
+                </div>
+                <div class="material-row">
+                    <strong>${itemLabels['Rails (top & bottom)']}</strong>
+                    <div class="quantity">${lengthValue.toFixed(0)} ${lengthUnit}</div>
+                    <div class="unit-price">@ $${parseFloat(document.getElementById('railCost').value).toFixed(2)}/${lengthUnit}</div>
+                    <div class="total">$${data.costs.rails.toFixed(2)}</div>
+                </div>
+                <div class="material-row">
+                    <strong>${itemLabels['Posts']}</strong>
+                    <div class="quantity">${data.numPosts}</div>
+                    <div class="unit-price">@ $${parseFloat(document.getElementById('postCost').value).toFixed(2)}</div>
+                    <div class="total">$${data.costs.posts.toFixed(2)}</div>
+                </div>
+                <div class="material-row">
+                    <strong>${itemLabels['Concrete Bags (60 kg)']}</strong>
+                    <div class="quantity">${data.totalConcreteBags}</div>
+                    <div class="unit-price">@ $${parseFloat(document.getElementById('concreteCost').value).toFixed(2)}</div>
+                    <div class="total">$${data.costs.concrete.toFixed(2)}</div>
+                </div>
+                <div class="material-row">
+                    <strong>${itemLabels['Screw Boxes (3", 100ct)']}</strong>
+                    <div class="quantity">${data.screw3InchBoxes}</div>
+                    <div class="unit-price">@ $${parseFloat(document.getElementById('screwsCost').value).toFixed(2)}</div>
+                    <div class="total">$${data.costs.screws.toFixed(2)}</div>
+                </div>
+                <div class="material-row">
+                    <strong>${itemLabels['Brackets (optional)']}</strong>
+                    <div class="quantity">${data.bracketsNeeded}</div>
+                    <div class="unit-price">@ $${parseFloat(document.getElementById('bracketsPerPost').value).toFixed(2)}</div>
+                    <div class="total">$${data.costs.brackets.toFixed(2)}</div>
+                </div>
+            `;
+            document.getElementById('materialsContainer').innerHTML = materialsHtml;
+
+            document.getElementById('materialSubtotal').textContent = `$${data.materialSubtotal.toFixed(2)}`;
+            document.getElementById('laborCost').textContent = `$${data.laborCost.toFixed(2)}`;
+            document.getElementById('taxAmount').textContent = `$${data.taxAmount.toFixed(2)}`;
+            document.getElementById('totalCost').textContent = `$${data.totalCost.toFixed(2)}`;
+
+            const diagramText = generateDiagram(data.postSpacing, displayFenceLength);
+            document.getElementById('diagramText').textContent = diagramText;
+        }
+
+        function generateDiagram(postSpacing, fenceLength) {
+            const sections = Math.ceil(fenceLength / postSpacing);
+            const unit = currentUnit === 'metric' ? 'm' : 'ft';
+            let diagram = '                    Rail (top)\n';
+            diagram += '     ╱─────────────────────────────────────╲\n';
+            diagram += '    │  ' + '│ ▲ │'.repeat(Math.min(sections, 5)) + (sections > 5 ? '...' : '') + '\n';
+            diagram += '    │  ' + '│ ║ │'.repeat(Math.min(sections, 5)) + (sections > 5 ? '...' : '') + '\n';
+            diagram += '    │  ' + '│ ▼ │'.repeat(Math.min(sections, 5)) + (sections > 5 ? '...' : '') + '\n';
+            diagram += '     ╲─────────────────────────────────────╱\n';
+            diagram += `     Post (${unit})    Pickets    Rail (${unit}) (bottom)`;
+            return diagram;
+        }
+
+        function resetForm() {
+            if (currentUnit === 'metric') {
+                document.getElementById('fenceLength').value = '30';
+                document.getElementById('fenceHeight').value = '120';
+                document.getElementById('postSpacing').value = '1.8';
+                document.getElementById('picketSpacing').value = '11.5';
+                document.getElementById('picketWidth').value = '14';
+                document.getElementById('railWidth').value = '14';
+            } else {
+                document.getElementById('fenceLength').value = '100';
+                document.getElementById('fenceHeight').value = '48';
+                document.getElementById('postSpacing').value = '6';
+                document.getElementById('picketSpacing').value = '4.5';
+                document.getElementById('picketWidth').value = '5.5';
+                document.getElementById('railWidth').value = '5.5';
+            }
+            document.getElementById('picketCost').value = '2.50';
+            document.getElementById('railCost').value = '1.25';
+            document.getElementById('postCost').value = '15.00';
+            document.getElementById('concreteCost').value = '5.31';
+            document.getElementById('screwsCost').value = '16.11';
+            document.getElementById('bracketsPerPost').value = '1.00';
+            document.getElementById('laborPerFoot').value = '0';
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+        }
+
+        // Calculate on Enter key
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateFence();
+            }
+        });
+    </script>
+</body>
+</html>

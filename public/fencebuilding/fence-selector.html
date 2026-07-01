@@ -28,12 +28,30 @@
             --font-mono: "IBM Plex Mono", Consolas, monospace;
         }
 
+        html[data-theme="dark"] {
+            --bg: #111317;
+            --bg-2: #1b2028;
+            --surface: #181d24;
+            --surface-2: #222933;
+            --text: #f2f5f9;
+            --muted: #a1afbf;
+            --accent: #ff7e2c;
+            --accent-2: #58b4e3;
+            --border: rgba(242, 245, 249, 0.2);
+            --ring: rgba(255, 126, 44, 0.55);
+            --shadow: 0 22px 52px rgba(0, 0, 0, 0.48);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); color: var(--text); background: linear-gradient(165deg, var(--bg), var(--bg-2)); min-height: 100vh; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
         .header { background: linear-gradient(140deg, #c8dff7 0%, #eef3f9 60%, #dce8f5 100%); color: var(--text); padding: 40px; text-align: center; border-bottom: 1px solid var(--border); }
+        html[data-theme="dark"] .header { background: linear-gradient(145deg, #1c1f27 0%, #111317 55%, #151922 100%); }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
         .header p { color: var(--muted); }
+        .header-tools { margin-top: 16px; display: flex; justify-content: center; }
+        .theme-toggle { border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); border-radius: 999px; padding: 8px 14px; font-size: 0.9rem; font-family: var(--font-display); font-weight: 600; cursor: pointer; }
+        .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
         .content { padding: 40px; }
         .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid var(--border); }
         .tab-button { padding: 12px 20px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-size: 1em; color: var(--muted); transition: all 0.3s; font-weight: 600; font-family: var(--font-display); }
@@ -46,9 +64,11 @@
         .fence-card { border: 2px solid var(--border); border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; text-align: center; background: var(--surface); }
         .fence-card:hover { border-color: var(--accent); box-shadow: 0 5px 15px rgba(47,124,168,0.2); }
         .fence-card.selected { border-color: var(--accent); background: #f0f7fb; box-shadow: 0 8px 25px rgba(47,124,168,0.25); }
+        html[data-theme="dark"] .fence-card.selected { background: #263241; }
         .fence-card h3 { color: var(--text); margin-bottom: 8px; font-size: 1.15em; font-family: var(--font-display); }
         .fence-card .emoji { font-size: 2.5em; margin-bottom: 10px; }
         .fence-card .price { color: var(--accent-2); font-weight: 700; font-size: 1.2em; font-family: var(--font-display); }
+        .fence-card .desc { color: var(--muted); font-size: 0.9em; margin-bottom: 15px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .form-row.full { grid-template-columns: 1fr; }
         @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
@@ -80,18 +100,44 @@
         .comparison-table thead { background: var(--accent); color: #fff; }
         .comparison-table th, .comparison-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
         .comparison-table tr:hover { background: #f0f7fb; }
+        html[data-theme="dark"] .comparison-table tr:hover { background: #252e3a; }
         .comparison-table .selected { background: #e7f2f9; font-weight: 600; }
+        html[data-theme="dark"] .comparison-table .selected { background: #263241; }
         .instruction { margin-bottom: 25px; padding: 20px; background: var(--surface); border-radius: 6px; border-left: 4px solid var(--accent); box-shadow: 0 2px 4px rgba(18,38,55,0.06); }
         .instruction h4 { color: var(--accent); margin-bottom: 10px; font-family: var(--font-display); }
         .instruction ul { margin-left: 20px; color: var(--text); line-height: 1.6; }
         .instruction li { margin-bottom: 8px; }
-        .footer-note { background: #fffbea; border-left: 4px solid #ffc107; padding: 15px; border-radius: 6px; color: var(--text); }
+        .footer-wrap { padding: 40px; background: var(--surface-2); border-top: 1px solid var(--border); }
+        .footer-note { background: #fffbea; border-left: 4px solid #ffc107; padding: 15px; border-radius: 6px; color: #3b2f00 !important; }
+        html[data-theme="dark"] .footer-note { background: #3a3320; color: #f6e9b6; border-left-color: #ffb300; }
         .map-tool { margin-bottom: 25px; }
         .map-search { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 10px; }
         @media (max-width: 768px) { .map-search { grid-template-columns: 1fr; } }
         #fenceMap { height: 360px; border-radius: 8px; border: 2px solid var(--border); overflow: hidden; }
         .map-status { margin-top: 10px; padding: 10px 12px; background: #f0f7fb; border-left: 4px solid var(--accent); border-radius: 6px; color: var(--text); font-size: 0.95em; }
+        html[data-theme="dark"] .map-status { background: #252e3a; }
+        .map-status.is-error { border-left-color: #d32f2f; background: #fff5f5; }
+        html[data-theme="dark"] .map-status.is-error { background: #3d2323; border-left-color: #ff6b6b; }
+        .formula-callout { background: #f0f4ff; padding: 15px; border-radius: 6px; color: #1e2f44; }
+        .formula-callout.mono { font-family: var(--font-mono); }
+        html[data-theme="dark"] .formula-callout { background: #243044; color: #d6e7f7; }
         code { font-family: var(--font-mono); font-size: 0.95em; }
+        .quick-help { background: #f0f7fb; border-left: 4px solid var(--accent); padding: 10px 12px; border-radius: 6px; margin-bottom: 18px; color: var(--text); }
+        .quick-help a { font-weight: 600; color: var(--accent); text-decoration: none; }
+        html[data-theme="dark"] .quick-help { background: #252e3a; }
+        .summary-note { font-size: 0.9em; color: var(--muted); margin-top: 15px; }
+        .safety-callout { background: #e8f4ff; border-left: 4px solid #1e88e5; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #113355; }
+        html[data-theme="dark"] .safety-callout { background: #223447; color: #d8e9f8; border-left-color: #64b5f6; }
+        .progressive-panel { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); }
+        .progressive-panel summary { cursor: pointer; list-style: none; padding: 14px 16px; font-family: var(--font-display); font-weight: 700; color: var(--accent); }
+        .progressive-panel summary::-webkit-details-marker { display: none; }
+        .progressive-panel-body { padding: 0 16px 16px; }
+        .next-steps { background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+        .next-steps h3 { margin-bottom: 10px; color: var(--accent); font-family: var(--font-display); }
+        .next-steps p { margin-bottom: 12px; color: var(--muted); }
+        .next-steps-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .next-step-btn { background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-family: var(--font-display); font-weight: 600; cursor: pointer; }
+        .next-step-btn:hover { border-color: var(--accent); color: var(--accent); }
     </style>
 </head>
 <body>
@@ -99,6 +145,9 @@
         <div class="header">
             <h1>🪵 Fence Calculator | Gjerdekalkulator</h1>
             <p>DIY fence cost and materials planner with map-based line drawing</p>
+            <div class="header-tools">
+                <button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()">Toggle dark mode</button>
+            </div>
         </div>
 
         <div class="content">
@@ -113,8 +162,8 @@
 
             <!-- CALCULATOR TAB -->
             <div id="calculator" class="tab-content active">
-                <div style="background:#f0f7fb; border-left:4px solid var(--accent); padding:10px 12px; border-radius:6px; margin-bottom:18px; color:var(--text);">
-                    New here? <a href="#" onclick="activateTab('how-it-works'); return false;" style="font-weight:600; color:var(--accent); text-decoration:none;">See How It Works</a>
+                <div class="quick-help">
+                    New here? <a href="#" onclick="activateTab('how-it-works'); return false;">See How It Works</a>
                 </div>
                 <h2 class="section-title">Step 1: Choose Fence Type</h2>
                 <div class="fence-grid" id="fenceGrid"></div>
@@ -164,6 +213,24 @@
                     </div>
                 </div>
 
+                <details id="safetyDetails" class="progressive-panel">
+                    <summary>Step 3b (Optional): Safety Profile for Dogs / Kids</summary>
+                    <div class="progressive-panel-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Containment Priority</label>
+                                <select id="containmentProfile" onchange="calculateMaterials()">
+                                    <option value="standard" selected>Standard yard use (default)</option>
+                                    <option value="smallDog">Small dog (squeeze risk)</option>
+                                    <option value="diggerDog">Digger / escape-prone dog</option>
+                                    <option value="youngChild">Young child (roughly 2-6 years)</option>
+                                </select>
+                                <div class="help-text">Adjusts bottom gap and anti-escape recommendations in your results.</div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
                 <h2 class="section-title">Step 4: Pricing</h2>
                 <div class="form-row full">
                     <div class="form-group">
@@ -179,10 +246,24 @@
                     </div>
                 </div>
 
-                <div class="material-section" id="priceInputs"></div>
+                <details id="advancedPricing" class="progressive-panel">
+                    <summary>Advanced: Customize Material Prices</summary>
+                    <div class="progressive-panel-body">
+                        <div class="material-section" id="priceInputs"></div>
+                    </div>
+                </details>
 
                 <h2 class="section-title">Step 5: Your Result</h2>
                 <div class="material-section" id="quickSummary"></div>
+
+                <div id="nextSteps" class="next-steps" hidden>
+                    <h3>Recommended Next Steps</h3>
+                    <p>You have a baseline estimate. Add safety and gate details only if they apply to your project.</p>
+                    <div class="next-steps-actions">
+                        <button type="button" class="next-step-btn" onclick="openSafetyProfile()">Protect pets / kids</button>
+                        <button type="button" class="next-step-btn" onclick="activateTab('instructions')">Build a gate that will not sag</button>
+                    </div>
+                </div>
 
                 <h2 class="section-title">Build In Phases (Budget Friendly)</h2>
                 <div class="material-section" id="phaseSummary"></div>
@@ -290,7 +371,7 @@
 
                 <div class="instruction">
                     <h4>❓ Concrete vs Ground Screws: Which Should You Use?</h4>
-                    <p style="background: #f0f4ff; padding: 15px; border-radius: 6px;">
+                    <p class="formula-callout">
                         <strong>Choose CONCRETE if:</strong> You have soft soil, want maximum durability (20+ years), or are on a budget<br><br>
                         <strong>Choose GROUND SCREWS if:</strong> You have rocky soil, need quick installation, or plan to relocate the fence later<br><br>
                         <strong>Best practice in Norway:</strong> Concrete is the standard for permanent fences. Ground screws are growing in popularity for DIY projects and removable installations.
@@ -320,7 +401,7 @@
 
                 <div class="instruction">
                     <h4>💡 Quick Estimation Formula</h4>
-                    <p style="background: #f0f4ff; padding: 15px; border-radius: 6px; font-family: monospace;">
+                    <p class="formula-callout mono">
                         <strong>For a 10m fence, 1.2m high:</strong><br><br>
                         Posts: 10m ÷ 2m spacing = 5 posts + 1 extra = 6 posts<br>
                         Concrete: 6 posts × 2 bags = 12 bags<br>
@@ -425,7 +506,7 @@
             </div>
         </div>
 
-        <div style="padding: 40px; background: #f9f9f9; border-top: 1px solid #e0e0e0;">
+        <div class="footer-wrap">
             <div class="footer-note">
                 ℹ️ <strong>Note:</strong> Prices are planning estimates and may differ by store, region, and season. Verify current local prices before purchase. Add 10-15% extra for waste and breakage.
             </div>
@@ -444,11 +525,11 @@
         };
 
         const pricing = {
-            NOK: { posts: 500, rail: 150, pickets: 35, boards: 80, screws: 250, concrete: 15 },
-            EUR: { posts: 50, rail: 15, pickets: 3.5, boards: 8, screws: 25, concrete: 1.5 },
-            USD: { posts: 55, rail: 18, pickets: 4, boards: 9, screws: 28, concrete: 1.75 },
-            GBP: { posts: 45, rail: 13, pickets: 3, boards: 7, screws: 22, concrete: 1.3 },
-            SEK: { posts: 480, rail: 140, pickets: 32, boards: 75, screws: 240, concrete: 14 }
+            NOK: { posts: 500, rail: 150, pickets: 35, boards: 80, screws: 250, concrete: 15, gatePost: 650, hingeKit: 180, latchKit: 220, braceKit: 120, gateFrame: 300 },
+            EUR: { posts: 50, rail: 15, pickets: 3.5, boards: 8, screws: 25, concrete: 1.5, gatePost: 65, hingeKit: 18, latchKit: 22, braceKit: 12, gateFrame: 30 },
+            USD: { posts: 55, rail: 18, pickets: 4, boards: 9, screws: 28, concrete: 1.75, gatePost: 70, hingeKit: 20, latchKit: 24, braceKit: 14, gateFrame: 34 },
+            GBP: { posts: 45, rail: 13, pickets: 3, boards: 7, screws: 22, concrete: 1.3, gatePost: 58, hingeKit: 16, latchKit: 19, braceKit: 10, gateFrame: 26 },
+            SEK: { posts: 480, rail: 140, pickets: 32, boards: 75, screws: 240, concrete: 14, gatePost: 620, hingeKit: 170, latchKit: 205, braceKit: 110, gateFrame: 285 }
         };
 
         const instructions = {
@@ -550,22 +631,156 @@
         let drawnItems = null;
         let drawnLengthMeters = null;
         let searchMarker = null;
+        let hasSeenFirstEstimate = false;
+        let skipFirstAutoReveal = true;
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const toggle = document.getElementById('themeToggle');
+            if (toggle) {
+                toggle.textContent = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+            }
+        }
+
+        function initTheme() {
+            const stored = localStorage.getItem('fenceTheme');
+            if (stored === 'dark' || stored === 'light') {
+                applyTheme(stored);
+                return;
+            }
+
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            localStorage.setItem('fenceTheme', next);
+        }
 
         function init() {
+            initTheme();
             renderFenceTypes();
             updateDimensions();
             updatePrices();
             calculateMaterials();
             initMapTool();
-            document.getElementById('instructionsContent').innerHTML = instructions[currentType] || instructions.picket;
+            renderInstructions();
+        }
+
+        function openSafetyProfile() {
+            const details = document.getElementById('safetyDetails');
+            if (details) details.open = true;
+            const profile = document.getElementById('containmentProfile');
+            if (profile) profile.focus();
+        }
+
+        function handleFirstEstimateExperience() {
+            if (hasSeenFirstEstimate) return;
+            hasSeenFirstEstimate = true;
+            const nextSteps = document.getElementById('nextSteps');
+            if (nextSteps) nextSteps.hidden = false;
+            openSafetyProfile();
+        }
+
+        function getGateBuildGuide(singleDoors, doubleDoors) {
+            const totalOpenings = (singleDoors || 0) + (doubleDoors || 0);
+            const activeNote = totalOpenings > 0
+                ? `<p><strong>Active in your current plan:</strong> ${singleDoors || 0} single gate(s), ${doubleDoors || 0} double gate(s).</p>`
+                : '<p><strong>Optional:</strong> You currently have 0 gate openings. Add doors in Step 1 to include gate hardware and cost lines automatically.</p>';
+
+            return `
+                <div class="instruction">
+                    <h4>🚪 Build an Amazing Gate (Single or Double)</h4>
+                    ${activeNote}
+
+                    <p><strong>Simple 5-step blueprint (use for both gate types):</strong></p>
+                    <ol>
+                        <li><strong>Set strong hinge posts first.</strong> They carry most of the load, so go deeper and heavier than normal fence posts.</li>
+                        <li><strong>Build a square frame.</strong> Measure diagonals corner-to-corner, both distances should match before cladding.</li>
+                        <li><strong>Add anti-sag brace correctly.</strong> Run brace from <strong>bottom hinge corner to top latch corner</strong>.</li>
+                        <li><strong>Hang and tune hardware.</strong> Install adjustable heavy-duty hinges, then set latch after final alignment.</li>
+                        <li><strong>Leave weather clearance.</strong> Keep 50-75 mm at bottom so seasonal movement does not jam the gate.</li>
+                    </ol>
+
+                    <p><strong>Single gate (typical 0.9 m opening):</strong></p>
+                    <ul>
+                        <li>Use a reinforced hinge post (minimum 100x100 mm) and set it deeper than standard fence posts.</li>
+                        <li>Build one rectangular gate leaf with square corners before cladding.</li>
+                        <li>Use 2-3 heavy-duty hinges depending on gate weight.</li>
+                        <li>Install heavy-duty adjustable hinges, then latch hardware after alignment.</li>
+                        <li>Keep 50-75 mm ground clearance to reduce seasonal binding.</li>
+                    </ul>
+
+                    <p><strong>Double gate (typical 1.8 m opening):</strong></p>
+                    <ul>
+                        <li>Use larger hinge-side posts (125x125 mm preferred) and deeper embed depth.</li>
+                        <li>Build two equal leaves, each with its own diagonal brace in the same anti-sag direction.</li>
+                        <li>Install a center stop so both leaves close consistently.</li>
+                        <li>Add a drop rod/cane bolt to one leaf for wind stability and secure parking.</li>
+                        <li>Set latch and hinge tension only after both leaves swing freely and meet at center.</li>
+                    </ul>
+
+                    <p><strong>Pro finish tips (the "amazing" part):</strong></p>
+                    <ul>
+                        <li>Use a straightedge on top of both posts before hanging leaves to avoid twist.</li>
+                        <li>Pre-drill hardware holes near board ends to prevent splitting.</li>
+                        <li>Seal all cut ends immediately, then do full stain/paint after first alignment check.</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function renderInstructions(singleDoors, doubleDoors) {
+            const base = instructions[currentType] || instructions.picket;
+            const single = Number.isFinite(singleDoors) ? singleDoors : (parseInt(document.getElementById('numSingleDoors')?.value, 10) || 0);
+            const dual = Number.isFinite(doubleDoors) ? doubleDoors : (parseInt(document.getElementById('numDoubleDoors')?.value, 10) || 0);
+            const container = document.getElementById('instructionsContent');
+            if (!container) return;
+            container.innerHTML = `${base}${getGateBuildGuide(single, dual)}`;
+        }
+
+        function getContainmentGuidance(profile, effectiveLen) {
+            const runLen = Math.max(0, effectiveLen).toFixed(1);
+            const base = '<div class="safety-callout"><strong>🐾 Family Safety / Containment Guidance</strong><br>';
+
+            if (profile === 'smallDog') {
+                return `${base}
+                    Keep bottom gap around <strong>25-40 mm</strong> max where possible.<br>
+                    Add tight infill near grade so small dogs cannot squeeze through.<br>
+                    Walk the full ${runLen} m perimeter and close any local dips under panels.
+                </div>`;
+            }
+
+            if (profile === 'diggerDog') {
+                return `${base}
+                    Keep bottom gap around <strong>40-60 mm</strong> for drainage, then add anti-dig protection.<br>
+                    Add a buried mesh apron along the fence line (recommended depth: <strong>300-450 mm</strong>, or L-shaped outward apron).<br>
+                    Prioritize corners and gate sides first. Those are common escape points.
+                </div>`;
+            }
+
+            if (profile === 'youngChild') {
+                return `${base}
+                    Aim for a bottom gap around <strong>50-75 mm</strong> and avoid climb-friendly horizontal footholds on the outside.<br>
+                    Use child-safe latch height and consider self-closing hinges on active gates.<br>
+                    Ensure no sharp edges, protruding screws, or finger pinch points near latches.
+                </div>`;
+            }
+
+            return `${base}
+                Typical bottom gap is <strong>50-75 mm</strong> for drainage and seasonal movement.<br>
+                If pets or young children use the yard, select a matching Safety Profile in Step 3b.
+            </div>`;
         }
 
         function updateMapStatus(message, isError = false) {
             const status = document.getElementById('mapStatus');
             if (!status) return;
             status.textContent = message;
-            status.style.borderLeftColor = isError ? '#d32f2f' : '#667eea';
-            status.style.background = isError ? '#fff5f5' : '#f6f8ff';
+            status.classList.toggle('is-error', isError);
         }
 
         function lineLengthMeters(latlngs) {
@@ -578,12 +793,24 @@
         }
 
         function syncLengthInputFromMap() {
-            const lengthInput = document.getElementById('length');
-            if (!lengthInput || drawnLengthMeters === null) return;
-            const uiLen = currentUnit === 'metric' ? drawnLengthMeters : (drawnLengthMeters / 0.3048);
-            lengthInput.value = uiLen.toFixed(1);
-            calculateMaterials();
-            updateMapStatus(`Fence total captured: ${drawnLengthMeters.toFixed(1)} m (${(drawnLengthMeters / 0.3048).toFixed(1)} ft). Length field was updated.`);
+            if (drawnLengthMeters === null) return;
+
+            const applyLength = () => {
+                const lengthInput = document.getElementById('length');
+                if (!lengthInput) {
+                    // Length input is dynamically re-rendered on unit switch.
+                    requestAnimationFrame(applyLength);
+                    return;
+                }
+
+                const uiLen = currentUnit === 'metric' ? drawnLengthMeters : (drawnLengthMeters / 0.3048);
+                lengthInput.value = uiLen.toFixed(1);
+                lengthInput.dispatchEvent(new Event('input', { bubbles: true }));
+                calculateMaterials();
+                updateMapStatus(`Fence total captured: ${drawnLengthMeters.toFixed(1)} m (${(drawnLengthMeters / 0.3048).toFixed(1)} ft). Length field was updated.`);
+            };
+
+            applyLength();
         }
 
         function captureDrawnLength() {
@@ -721,7 +948,7 @@
                 html += `<div class="fence-card ${cls}" onclick="selectType('${k}')">
                     <div class="emoji">${v.emoji}</div>
                     <h3>${v.name}</h3>
-                    <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">${v.desc}</p>
+                    <p class="desc">${v.desc}</p>
                     <p class="price">~${cost} ${document.getElementById('currency').value}/${unit}</p>
                 </div>`;
             });
@@ -733,7 +960,7 @@
             renderFenceTypes();
             // Dimensions stay the same, only fence type changes
             calculateMaterials();
-            document.getElementById('instructionsContent').innerHTML = instructions[t] || instructions.picket;
+            renderInstructions();
         }
 
         function updateDimensions() {
@@ -749,7 +976,7 @@
         function updatePrices() {
             const cur = document.getElementById('currency').value;
             const p = pricing[cur];
-            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete'];
+            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete', 'gatePost', 'hingeKit', 'latchKit', 'braceKit', 'gateFrame'];
             let html = '<div class="pricing-header"><h3>Material Prices</h3><button class="price-reset-btn" onclick="resetPricesToDefault()">Reset to Defaults</button></div>';
             html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">';
             keys.forEach(k => {
@@ -781,7 +1008,7 @@
 
         function resetPricesToDefault() {
             const cur = document.getElementById('currency').value;
-            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete'];
+            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete', 'gatePost', 'hingeKit', 'latchKit', 'braceKit', 'gateFrame'];
             keys.forEach(k => {
                 localStorage.removeItem(`price_${k}_${cur}`);
                 document.getElementById(`p_${k}`).value = pricing[cur][k];
@@ -806,10 +1033,12 @@
             const cur = document.getElementById('currency').value;
             const numSingleDoors = parseInt(document.getElementById('numSingleDoors').value) || 0;
             const numDoubleDoors = parseInt(document.getElementById('numDoubleDoors').value) || 0;
+            const containmentProfile = document.getElementById('containmentProfile')?.value || 'standard';
             const postSpacing = parseFloat(document.getElementById('postSpacing').value) || 2.0;
             
             // Calculate total door opening width in meters
             const totalDoorOpening = (numSingleDoors * 0.9) + (numDoubleDoors * 1.8);
+            const totalGateLeaves = numSingleDoors + (numDoubleDoors * 2);
             
             // Effective fence length for materials (draw or enter only what you need to build)
             const effectiveLen = Math.max(0, lenMeters - totalDoorOpening);
@@ -861,6 +1090,14 @@
                 };
             }
 
+            if (totalGateLeaves > 0) {
+                materials['Gate Posts (heavy duty)'] = { qty: totalGateLeaves, price: 'gatePost' };
+                materials['Hinge Kits'] = { qty: totalGateLeaves, price: 'hingeKit' };
+                materials['Latch/Drop Rod Kits'] = { qty: numSingleDoors + numDoubleDoors, price: 'latchKit' };
+                materials['Gate Braces (diagonal)'] = { qty: totalGateLeaves, price: 'braceKit' };
+                materials['Gate Frame Lumber Sets'] = { qty: totalGateLeaves, price: 'gateFrame' };
+            }
+
             let total = 0, mats = '';
             let structureSubtotal = 0;
             let infillSubtotal = 0;
@@ -872,9 +1109,18 @@
                     <strong>🚪 Door Openings:</strong><br>
                     ${numSingleDoors > 0 ? `• ${numSingleDoors} single door${numSingleDoors > 1 ? 's' : ''} (${numSingleDoors * 0.9}m)<br>` : ''}
                     ${numDoubleDoors > 0 ? `• ${numDoubleDoors} double door${numDoubleDoors > 1 ? 's' : ''} (${numDoubleDoors * 1.8}m)<br>` : ''}
-                    <strong>Total opening:</strong> ${totalDoorOpening}m | <strong>Fence to fill:</strong> ${effectiveLen}m
+                    <strong>Total opening:</strong> ${totalDoorOpening}m | <strong>Fence to fill:</strong> ${effectiveLen}m<br>
+                    <strong>Quick gate rule:</strong> Brace runs from bottom hinge side to top latch side.
+                </div>`;
+
+                mats += `<div style="background: #ffe8d8; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #ff7e2c;">
+                    <strong>🛠️ Gate setup summary:</strong> Reinforced hinge posts, deeper post embed, adjustable heavy-duty hinges, and 50-75 mm bottom clearance.<br>
+                    For full single vs double build steps, open <a href="#" onclick="activateTab('instructions'); return false;" style="font-weight: 600;">Build Instructions</a>.
                 </div>`;
             }
+
+            mats += getContainmentGuidance(containmentProfile, effectiveLen);
+
             Object.entries(materials).forEach(([name, info]) => {
                 const p = parseFloat(document.getElementById('p_' + info.price).value);
                 const itemTotal = info.qty * p;
@@ -920,7 +1166,7 @@
                 <div class="summary-row"><span>Subtotal</span><span>${total.toFixed(0)} ${cur}</span></div>
                 <div class="summary-row"><span>Tax (${(taxRate * 100).toFixed(0)}%)</span><span>${tax.toFixed(0)} ${cur}</span></div>
                 <div class="summary-row total"><span>Total</span><span>${grand.toFixed(0)} ${cur}</span></div>
-                <div class="summary-row" style="font-size: 0.9em; color: #666; margin-top: 15px;"><span>Cost per meter</span><span>${(grand / Math.max(lenMeters, 0.1)).toFixed(0)} ${cur}</span></div>
+                <div class="summary-row summary-note"><span>Cost per meter</span><span>${(grand / Math.max(lenMeters, 0.1)).toFixed(0)} ${cur}</span></div>
             `;
 
             updateHowItWorksExample({
@@ -932,6 +1178,14 @@
                 cur,
                 grand
             });
+
+            renderInstructions(numSingleDoors, numDoubleDoors);
+
+            if (skipFirstAutoReveal) {
+                skipFirstAutoReveal = false;
+            } else {
+                handleFirstEstimateExperience();
+            }
 
             updateComparison(lenMeters);
         }
@@ -994,9 +1248,90 @@
         }
 
         function saveQuote() {
-            const len = document.getElementById('length').value;
-            const summary = document.getElementById('summary').innerText;
-            const quote = `FenceBuilding Quote\n${fenceTypes[currentType].name}\nLength: ${len} ${currentUnit === 'metric' ? 'meters' : 'feet'}\nCurrency: ${document.getElementById('currency').value}\n\n${summary}\n\nGenerated: ${new Date().toLocaleDateString()}`;
+            const len = parseFloat(document.getElementById('length').value) || 0;
+            const height = parseFloat(document.getElementById('height').value) || 0;
+            const cur = document.getElementById('currency').value;
+            const singleDoors = parseInt(document.getElementById('numSingleDoors').value) || 0;
+            const doubleDoors = parseInt(document.getElementById('numDoubleDoors').value) || 0;
+            const postSpacing = parseFloat(document.getElementById('postSpacing').value) || 0;
+
+            const readSummaryRows = (containerId) => {
+                const container = document.getElementById(containerId);
+                if (!container) return [];
+                const rows = [];
+                container.querySelectorAll('.summary-row').forEach(row => {
+                    const spans = row.querySelectorAll('span');
+                    if (spans.length >= 2) {
+                        rows.push(`${spans[0].innerText.trim()}: ${spans[1].innerText.trim()}`);
+                    }
+                });
+                return rows;
+            };
+
+            const materialLines = [];
+            document.querySelectorAll('#materials .material-item').forEach(item => {
+                const name = item.querySelector('strong')?.innerText?.trim() || 'Item';
+                const qty = item.querySelector('.qty')?.innerText?.trim() || '-';
+                const price = item.querySelector('.price')?.innerText?.trim() || '-';
+                const total = item.querySelector('.total')?.innerText?.trim() || '-';
+                materialLines.push(`- ${name}: qty ${qty}, unit ${price}, line total ${total}`);
+            });
+
+            const quickSummary = readSummaryRows('quickSummary');
+            const phaseSummary = readSummaryRows('phaseSummary');
+            const costSummary = readSummaryRows('summary');
+
+            const unitLabel = currentUnit === 'metric' ? 'meters' : 'feet';
+            const heightLabel = currentUnit === 'metric' ? 'cm' : 'inches';
+            const mapNote = drawnLengthMeters !== null
+                ? `Map drawn length total: ${drawnLengthMeters.toFixed(1)} m (${(drawnLengthMeters / 0.3048).toFixed(1)} ft)`
+                : 'Map drawn length total: not used';
+
+            const quote = [
+                'Fence Calculator | Gjerdekalkulator - Itemized Quote',
+                '===================================================',
+                '',
+                `Fence type: ${fenceTypes[currentType].name}`,
+                `Currency: ${cur}`,
+                `Length input: ${len.toFixed(1)} ${unitLabel}`,
+                `Height input: ${height.toFixed(1)} ${heightLabel}`,
+                `Post spacing: ${postSpacing.toFixed(1)} m`,
+                `Single doors: ${singleDoors}`,
+                `Double doors: ${doubleDoors}`,
+                `Containment profile: ${document.getElementById('containmentProfile')?.value || 'standard'}`,
+                mapNote,
+                '',
+                'Quick Build Summary',
+                '-------------------',
+                ...(quickSummary.length ? quickSummary : ['No quick summary available']),
+                '',
+                'Phase Cost Breakdown',
+                '--------------------',
+                ...(phaseSummary.length ? phaseSummary : ['No phase summary available']),
+                '',
+                'Itemized Materials',
+                '------------------',
+                ...(materialLines.length ? materialLines : ['No material line items available']),
+                '',
+                'Total Cost Summary',
+                '------------------',
+                ...(costSummary.length ? costSummary : ['No total summary available']),
+                '',
+                'Assumptions',
+                '-----------',
+                '- Add 10-15% extra material for waste and breakage.',
+                '- Verify local prices before purchase.',
+                                ...(singleDoors + doubleDoors > 0
+                                        ? [
+                                                '- Anti-sag gate setup: brace from bottom hinge side to top latch side.',
+                                                '- Use reinforced gate posts and deeper embed depth for hinge posts.',
+                                                '- Double gates need a center stop and drop rod/cane bolt.',
+                                            ]
+                                        : []),
+                '',
+                `Generated: ${new Date().toLocaleString()}`,
+            ].join('\n');
+
             const blob = new Blob([quote], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');

@@ -45,4 +45,11 @@ export const toolsRegistry: ToolEntry[] = [
     href: '/tools/compound-interest/',
     status: 'Live',
   },
+  {
+    slug: 'fence-calculator-gjerdekalkulator',
+    title: 'Fence Calculator | Gjerdekalkulator',
+    description: 'Plan DIY fence projects with map-based length drawing, post spacing, materials, phased costs, and bilingual guidance.',
+    href: '/tools/fence-calculator.html',
+    status: 'Live',
+  },
 ];

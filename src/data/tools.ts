@@ -52,4 +52,11 @@ export const toolsRegistry: ToolEntry[] = [
     href: '/tools/fence-calculator.html',
     status: 'Live',
   },
+  {
+    slug: 'gjerdekalkulator-norsk',
+    title: 'Gjerdekalkulator (Norsk)',
+    description: 'Norsk inngang til gjerdekalkulator for materialer, kostnad og planlegging.',
+    href: '/tools/gjerdekalkulator.html',
+    status: 'Live',
+  },
 ];

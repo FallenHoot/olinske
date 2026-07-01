@@ -231,6 +231,41 @@
                     </div>
                 </details>
 
+                <details id="livestockDetails" class="progressive-panel" hidden>
+                    <summary>Step 3c (Livestock): Wire Fence Settings</summary>
+                    <div class="progressive-panel-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Animal Type</label>
+                                <select id="livestockAnimal" onchange="calculateMaterials()">
+                                    <option value="cattle" selected>Cattle</option>
+                                    <option value="horse">Horse</option>
+                                    <option value="sheepGoat">Sheep / Goat</option>
+                                    <option value="mixed">Mixed livestock</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Line Post Spacing (meters)</label>
+                                <input type="number" id="livestockPostSpacing" min="2" max="6" step="0.5" value="3.5" oninput="calculateMaterials()">
+                                <div class="help-text">Typical range: 3-5 m depending on terrain and wire tension.</div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Wire Strands</label>
+                                <input type="number" id="livestockStrands" min="2" max="8" step="1" value="4" oninput="calculateMaterials()">
+                            </div>
+                            <div class="form-group">
+                                <label>Electric Fence</label>
+                                <select id="livestockElectric" onchange="calculateMaterials()">
+                                    <option value="yes" selected>Yes (recommended for most livestock)</option>
+                                    <option value="no">No (physical wire only)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
                 <h2 class="section-title">Step 4: Pricing</h2>
                 <div class="form-row full">
                     <div class="form-group">
@@ -521,15 +556,16 @@
             privacy: { name: 'Privacy Screen', emoji: '🔒', desc: 'Full-height solid privacy fence, opaque both sides', cost: { metric: 800, imperial: 250 } },
             postRail: { name: 'Post & Rail', emoji: '🤠', desc: '2-3 horizontal rails, open design, classic ranch', cost: { metric: 400, imperial: 130 } },
             shadowbox: { name: 'Shadow Box', emoji: '🌓', desc: 'Staggered boards on alternate sides for modern privacy', cost: { metric: 700, imperial: 230 } },
-            slat: { name: 'Horizontal Slat', emoji: '📦', desc: 'Modern horizontal boards, contemporary aesthetic', cost: { metric: 900, imperial: 300 } }
+            slat: { name: 'Horizontal Slat', emoji: '📦', desc: 'Modern horizontal boards, contemporary aesthetic', cost: { metric: 900, imperial: 300 } },
+            livestockWire: { name: 'Livestock Wire', emoji: '🐄', desc: 'Wire fence layout for cattle, horse, sheep, and goat paddocks', cost: { metric: 280, imperial: 90 } }
         };
 
         const pricing = {
-            NOK: { posts: 500, rail: 150, pickets: 35, boards: 80, screws: 250, concrete: 15, gatePost: 650, hingeKit: 180, latchKit: 220, braceKit: 120, gateFrame: 300 },
-            EUR: { posts: 50, rail: 15, pickets: 3.5, boards: 8, screws: 25, concrete: 1.5, gatePost: 65, hingeKit: 18, latchKit: 22, braceKit: 12, gateFrame: 30 },
-            USD: { posts: 55, rail: 18, pickets: 4, boards: 9, screws: 28, concrete: 1.75, gatePost: 70, hingeKit: 20, latchKit: 24, braceKit: 14, gateFrame: 34 },
-            GBP: { posts: 45, rail: 13, pickets: 3, boards: 7, screws: 22, concrete: 1.3, gatePost: 58, hingeKit: 16, latchKit: 19, braceKit: 10, gateFrame: 26 },
-            SEK: { posts: 480, rail: 140, pickets: 32, boards: 75, screws: 240, concrete: 14, gatePost: 620, hingeKit: 170, latchKit: 205, braceKit: 110, gateFrame: 285 }
+            NOK: { posts: 500, rail: 150, pickets: 35, boards: 80, screws: 250, concrete: 15, gatePost: 650, hingeKit: 180, latchKit: 220, braceKit: 120, gateFrame: 300, wireRoll: 950, linePost: 160, cornerPost: 520, braceAssembly: 480, insulatorPack: 220, energizer: 2200, groundRodSet: 450 },
+            EUR: { posts: 50, rail: 15, pickets: 3.5, boards: 8, screws: 25, concrete: 1.5, gatePost: 65, hingeKit: 18, latchKit: 22, braceKit: 12, gateFrame: 30, wireRoll: 95, linePost: 16, cornerPost: 52, braceAssembly: 48, insulatorPack: 22, energizer: 220, groundRodSet: 45 },
+            USD: { posts: 55, rail: 18, pickets: 4, boards: 9, screws: 28, concrete: 1.75, gatePost: 70, hingeKit: 20, latchKit: 24, braceKit: 14, gateFrame: 34, wireRoll: 105, linePost: 18, cornerPost: 56, braceAssembly: 52, insulatorPack: 24, energizer: 240, groundRodSet: 50 },
+            GBP: { posts: 45, rail: 13, pickets: 3, boards: 7, screws: 22, concrete: 1.3, gatePost: 58, hingeKit: 16, latchKit: 19, braceKit: 10, gateFrame: 26, wireRoll: 85, linePost: 14, cornerPost: 45, braceAssembly: 40, insulatorPack: 18, energizer: 190, groundRodSet: 38 },
+            SEK: { posts: 480, rail: 140, pickets: 32, boards: 75, screws: 240, concrete: 14, gatePost: 620, hingeKit: 170, latchKit: 205, braceKit: 110, gateFrame: 285, wireRoll: 900, linePost: 150, cornerPost: 500, braceAssembly: 460, insulatorPack: 210, energizer: 2100, groundRodSet: 430 }
         };
 
         const instructions = {
@@ -622,6 +658,28 @@
                     <h4>3. Advanced Finishing</h4>
                     <ul><li>Sand all edges for safety</li><li>Two-tone stain for modern look</li><li>Rounded edges for premium finish</li></ul>
                 </div>
+            `,
+            livestockWire: `
+                <div class="instruction">
+                    <h4>1. Corner and End Structure First</h4>
+                    <ul><li>Set all corner/end posts first and brace them before pulling wire.</li><li>Use deeper set and stronger posts at load points and gate openings.</li></ul>
+                </div>
+                <div class="instruction">
+                    <h4>2. Install Line Posts</h4>
+                    <ul><li>Typical spacing is 3-5 meters depending on terrain.</li><li>Reduce spacing on curves, soft ground, or high-pressure sections.</li></ul>
+                </div>
+                <div class="instruction">
+                    <h4>3. Run and Tension Wire Strands</h4>
+                    <ul><li>Keep strand heights consistent by animal class.</li><li>Tension in sections and re-check after 1-2 weeks.</li></ul>
+                </div>
+                <div class="instruction">
+                    <h4>4. Electric Option (Recommended)</h4>
+                    <ul><li>Use quality insulators and dedicated grounding rods.</li><li>Test voltage at far points and around gates.</li></ul>
+                </div>
+                <div class="instruction">
+                    <h4>5. Safety and Maintenance</h4>
+                    <ul><li>Inspect monthly for loose wire, leaning posts, and vegetation shorts.</li><li>Keep gates and brace points clear and tight.</li></ul>
+                </div>
             `
         };
 
@@ -668,6 +726,15 @@
             calculateMaterials();
             initMapTool();
             renderInstructions();
+            toggleModeSpecificPanels();
+        }
+
+        function toggleModeSpecificPanels() {
+            const livestock = currentType === 'livestockWire';
+            const livestockDetails = document.getElementById('livestockDetails');
+            const safetyDetails = document.getElementById('safetyDetails');
+            if (livestockDetails) livestockDetails.hidden = !livestock;
+            if (safetyDetails) safetyDetails.hidden = livestock;
         }
 
         function openSafetyProfile() {
@@ -682,7 +749,9 @@
             hasSeenFirstEstimate = true;
             const nextSteps = document.getElementById('nextSteps');
             if (nextSteps) nextSteps.hidden = false;
-            openSafetyProfile();
+            if (currentType !== 'livestockWire') {
+                openSafetyProfile();
+            }
         }
 
         function getGateBuildGuide(singleDoors, doubleDoors) {
@@ -739,7 +808,22 @@
             const dual = Number.isFinite(doubleDoors) ? doubleDoors : (parseInt(document.getElementById('numDoubleDoors')?.value, 10) || 0);
             const container = document.getElementById('instructionsContent');
             if (!container) return;
-            container.innerHTML = `${base}${getGateBuildGuide(single, dual)}`;
+            const gateSection = currentType === 'livestockWire' ? '' : getGateBuildGuide(single, dual);
+            container.innerHTML = `${base}${gateSection}`;
+        }
+
+        function getLivestockGuidance(animalType, strands, electric) {
+            const animalLabel = {
+                cattle: 'Cattle',
+                horse: 'Horse',
+                sheepGoat: 'Sheep / Goat',
+                mixed: 'Mixed livestock'
+            }[animalType] || 'Livestock';
+
+            return `<div class="safety-callout"><strong>🐄 Livestock Containment Guidance</strong><br>
+                Configured for <strong>${animalLabel}</strong> with <strong>${strands}</strong> strands.${electric === 'yes' ? ' Electric setup selected.' : ' Physical wire-only setup selected.'}<br>
+                Use tighter line-post spacing on slopes and around corners, and inspect brace points before seasonal weather changes.
+            </div>`;
         }
 
         function getContainmentGuidance(profile, effectiveLen) {
@@ -958,6 +1042,7 @@
         function selectType(t) {
             currentType = t;
             renderFenceTypes();
+            toggleModeSpecificPanels();
             // Dimensions stay the same, only fence type changes
             calculateMaterials();
             renderInstructions();
@@ -976,7 +1061,7 @@
         function updatePrices() {
             const cur = document.getElementById('currency').value;
             const p = pricing[cur];
-            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete', 'gatePost', 'hingeKit', 'latchKit', 'braceKit', 'gateFrame'];
+            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete', 'gatePost', 'hingeKit', 'latchKit', 'braceKit', 'gateFrame', 'wireRoll', 'linePost', 'cornerPost', 'braceAssembly', 'insulatorPack', 'energizer', 'groundRodSet'];
             let html = '<div class="pricing-header"><h3>Material Prices</h3><button class="price-reset-btn" onclick="resetPricesToDefault()">Reset to Defaults</button></div>';
             html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">';
             keys.forEach(k => {
@@ -1008,7 +1093,7 @@
 
         function resetPricesToDefault() {
             const cur = document.getElementById('currency').value;
-            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete', 'gatePost', 'hingeKit', 'latchKit', 'braceKit', 'gateFrame'];
+            const keys = ['posts', 'rail', 'pickets', 'boards', 'screws', 'concrete', 'gatePost', 'hingeKit', 'latchKit', 'braceKit', 'gateFrame', 'wireRoll', 'linePost', 'cornerPost', 'braceAssembly', 'insulatorPack', 'energizer', 'groundRodSet'];
             keys.forEach(k => {
                 localStorage.removeItem(`price_${k}_${cur}`);
                 document.getElementById(`p_${k}`).value = pricing[cur][k];
@@ -1034,6 +1119,10 @@
             const numSingleDoors = parseInt(document.getElementById('numSingleDoors').value) || 0;
             const numDoubleDoors = parseInt(document.getElementById('numDoubleDoors').value) || 0;
             const containmentProfile = document.getElementById('containmentProfile')?.value || 'standard';
+            const livestockAnimal = document.getElementById('livestockAnimal')?.value || 'cattle';
+            const livestockPostSpacing = parseFloat(document.getElementById('livestockPostSpacing')?.value) || 3.5;
+            const livestockStrands = Math.max(2, parseInt(document.getElementById('livestockStrands')?.value, 10) || 4);
+            const livestockElectric = document.getElementById('livestockElectric')?.value || 'yes';
             const postSpacing = parseFloat(document.getElementById('postSpacing').value) || 2.0;
             
             // Calculate total door opening width in meters
@@ -1042,7 +1131,8 @@
             
             // Effective fence length for materials (draw or enter only what you need to build)
             const effectiveLen = Math.max(0, lenMeters - totalDoorOpening);
-            const postCount = Math.ceil(lenMeters / postSpacing) + 1;
+            let postCount = Math.ceil(lenMeters / postSpacing) + 1;
+            let spacingForSummary = postSpacing;
             
             let materials = {};
 
@@ -1080,7 +1170,7 @@
                     'Concrete Bags': { qty: Math.ceil(postCount * 2), price: 'concrete' },
                     'Screw Boxes': { qty: Math.ceil((Math.ceil(effectiveLen * 10) * 2) / 100), price: 'screws' }
                 };
-            } else {
+            } else if (currentType === 'slat') {
                 materials = {
                     'Posts': { qty: postCount, price: 'posts' },
                     'Rails': { qty: Math.ceil(effectiveLen * 2), price: 'rail' },
@@ -1088,9 +1178,30 @@
                     'Concrete Bags': { qty: Math.ceil(postCount * 2), price: 'concrete' },
                     'Screw Boxes': { qty: Math.ceil((Math.ceil(effectiveLen * 15) * 2) / 100), price: 'screws' }
                 };
+            } else {
+                const linePostCount = Math.ceil(Math.max(lenMeters, 0.1) / livestockPostSpacing) + 1;
+                const cornerPostCount = Math.max(4, Math.ceil(lenMeters / 180) * 4);
+                const braceCount = Math.max(2, Math.ceil(cornerPostCount / 2));
+                const wireMeters = effectiveLen * livestockStrands * 1.1;
+                postCount = linePostCount;
+                spacingForSummary = livestockPostSpacing;
+
+                materials = {
+                    'Line Posts': { qty: linePostCount, price: 'linePost' },
+                    'Corner/End Posts': { qty: cornerPostCount, price: 'cornerPost' },
+                    'Brace Assemblies': { qty: braceCount, price: 'braceAssembly' },
+                    'Wire Rolls (200m)': { qty: Math.ceil(wireMeters / 200), price: 'wireRoll' },
+                    'Staple/Clip Packs': { qty: Math.ceil((linePostCount * livestockStrands) / 150), price: 'screws' }
+                };
+
+                if (livestockElectric === 'yes') {
+                    materials['Insulator Packs'] = { qty: Math.ceil((linePostCount * livestockStrands) / 100), price: 'insulatorPack' };
+                    materials['Energizer Unit'] = { qty: 1, price: 'energizer' };
+                    materials['Ground Rod Set'] = { qty: 1, price: 'groundRodSet' };
+                }
             }
 
-            if (totalGateLeaves > 0) {
+            if (totalGateLeaves > 0 && currentType !== 'livestockWire') {
                 materials['Gate Posts (heavy duty)'] = { qty: totalGateLeaves, price: 'gatePost' };
                 materials['Hinge Kits'] = { qty: totalGateLeaves, price: 'hingeKit' };
                 materials['Latch/Drop Rod Kits'] = { qty: numSingleDoors + numDoubleDoors, price: 'latchKit' };
@@ -1119,7 +1230,9 @@
                 </div>`;
             }
 
-            mats += getContainmentGuidance(containmentProfile, effectiveLen);
+            mats += currentType === 'livestockWire'
+                ? getLivestockGuidance(livestockAnimal, livestockStrands, livestockElectric)
+                : getContainmentGuidance(containmentProfile, effectiveLen);
 
             Object.entries(materials).forEach(([name, info]) => {
                 const p = parseFloat(document.getElementById('p_' + info.price).value);
@@ -1146,8 +1259,8 @@
             const grand = total + tax;
             document.getElementById('quickSummary').innerHTML = `
                 <div class="summary-row"><span>Fence Length to Build</span><span>${lenMeters.toFixed(1)} m</span></div>
-                <div class="summary-row"><span>Post Spacing</span><span>${postSpacing.toFixed(1)} m</span></div>
-                <div class="summary-row"><span>Posts Needed</span><span>${postCount}</span></div>
+                <div class="summary-row"><span>${currentType === 'livestockWire' ? 'Line Post Spacing' : 'Post Spacing'}</span><span>${spacingForSummary.toFixed(1)} m</span></div>
+                <div class="summary-row"><span>${currentType === 'livestockWire' ? 'Line Posts Needed' : 'Posts Needed'}</span><span>${postCount}</span></div>
                 <div class="summary-row total"><span>Estimated Total</span><span>${grand.toFixed(0)} ${cur}</span></div>
             `;
 

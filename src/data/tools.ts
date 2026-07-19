@@ -11,6 +11,13 @@ export interface ToolEntry {
 // Add future tools here. The Tools page renders this list automatically.
 export const toolsRegistry: ToolEntry[] = [
   {
+    slug: 'home-preparedness-onepager',
+    title: 'Home Preparedness One-Pager (NO/EN)',
+    description: 'Generate a printable household preparedness checklist in Norwegian and English with evacuation triggers, go-box tasks, and local contact fields.',
+    href: '/tools/home-preparedness-onepager/',
+    status: 'Live',
+  },
+  {
     slug: 'nek400-kursfortegnelse',
     title: 'NEK 400 Kursfortegnelse',
     description: 'Create a NEK 400-oriented kursfortegnelse with common load presets, local test cases, and Ib/In/Iz validation.',

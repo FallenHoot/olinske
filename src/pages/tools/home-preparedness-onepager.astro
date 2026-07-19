@@ -1,0 +1,461 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Home Preparedness One-Pager | Tools | Olinske"
+  description="Generate a printable home preparedness one-pager in Norwegian or English with evacuation triggers, go-box checklist, and local contact fields."
+>
+  <main class="site-shell">
+    <section class="container prep-shell">
+      <p class="eyebrow">Preparedness Tool</p>
+      <h1 class="hero-title">Home Preparedness One-Pager</h1>
+      <p class="hero-subtitle">
+        Print-ready household checklist based on DSB preparedness guidance. Switch between Norwegian and English,
+        fill local details, and print in A4 format.
+      </p>
+
+      <div class="controls" data-pagefind-ignore>
+        <div class="lang-switch" role="group" aria-label="Language selector">
+          <button id="btn-no" class="lang-btn is-active" type="button" aria-pressed="true">Norsk</button>
+          <button id="btn-en" class="lang-btn" type="button" aria-pressed="false">English</button>
+        </div>
+        <button id="print-btn" class="print-btn" type="button" data-label-no="Skriv ut A4" data-label-en="Print A4">Skriv ut A4</button>
+      </div>
+
+      <article id="sheet-no" class="sheet" lang="no">
+        <h2>HJEMMEBEREDSKAP - 72 TIMER</h2>
+        <p class="subtitle">En enkel sjekkliste for alle hjem</p>
+
+        <section>
+          <h3>LEAVE NOW / EVAKUER NÅR</h3>
+          <ul>
+            <li><input type="checkbox" /> Myndighetene gir evakueringsordre</li>
+            <li><input type="checkbox" /> Du ser gnister eller gnistregn i området</li>
+            <li><input type="checkbox" /> Brann er synlig i nærheten av boligen</li>
+            <li><input type="checkbox" /> Røyk/varme gjør det utrygt å bli</li>
+          </ul>
+          <p class="note">Viktig: Ikke forsink evakuering for å redde eiendeler.</p>
+        </section>
+
+        <section>
+          <h3>LOKALE OPPLYSNINGER (FYLL INN)</h3>
+          <div class="lines">
+            <div>Adresse: ______________________________</div>
+            <div>Møtepunkt for familien: ______________________________</div>
+            <div>Kommunens varslingskanal: ______________________________</div>
+            <div>Lokal brann-/beredskapskontakt: ______________________________</div>
+            <div>Trygg evakueringsrute: ______________________________</div>
+          </div>
+        </section>
+
+        <section>
+          <h3>BRANNSIKKERHET I HJEMMET</h3>
+          <ul>
+            <li><input type="checkbox" /> Røykvarsler i alle etasjer</li>
+            <li><input type="checkbox" /> Brannslukker / husbrannslange</li>
+            <li><input type="checkbox" /> Brannteppe på kjøkken</li>
+            <li><input type="checkbox" /> Rømningsplan og møtepunkt</li>
+            <li><input type="checkbox" /> Lommelykt ved soverom</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>72-TIMERS BEREDSKAP</h3>
+          <ul>
+            <li><input type="checkbox" /> Drikkevann for 3 døgn</li>
+            <li><input type="checkbox" /> Holdbar mat for 3 døgn</li>
+            <li><input type="checkbox" /> Manuell boksåpner</li>
+            <li><input type="checkbox" /> Førstehjelpsutstyr og faste medisiner</li>
+            <li><input type="checkbox" /> Varme klær og tepper</li>
+            <li><input type="checkbox" /> Hygieneartikler</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>STRØM OG KOMMUNIKASJON</h3>
+          <ul>
+            <li><input type="checkbox" /> Batteri- eller sveiveradio</li>
+            <li><input type="checkbox" /> Ekstra batterier</li>
+            <li><input type="checkbox" /> Ladet powerbank</li>
+            <li><input type="checkbox" /> Utskrevne nødkontakter</li>
+            <li><input type="checkbox" /> Mobil-ladere samlet på fast plass</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DOKUMENTER OG ØKONOMI</h3>
+          <ul>
+            <li><input type="checkbox" /> Kopi av ID og forsikringsinformasjon</li>
+            <li><input type="checkbox" /> Viktige helseopplysninger</li>
+            <li><input type="checkbox" /> Litt kontanter i små sedler</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>TEKNISK SIKKERHET</h3>
+          <ul>
+            <li><input type="checkbox" /> Vit hvor hovedkran for vann er</li>
+            <li><input type="checkbox" /> Vit hvor hovedsikring er</li>
+            <li><input type="checkbox" /> Enkel verktøykasse og arbeidshansker</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>HUSHOLDNINGSSPESIFIKT</h3>
+          <ul>
+            <li><input type="checkbox" /> Medisiner for barn/voksne</li>
+            <li><input type="checkbox" /> Utstyr for kjæledyr (mat, bur, bånd)</li>
+            <li><input type="checkbox" /> Behov ved redusert mobilitet / medisinsk utstyr</li>
+            <li><input type="checkbox" /> Plan for henting av barn / kontaktpersoner</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>TIDSBASERTE HANDLINGER</h3>
+          <ul>
+            <li><input type="checkbox" /> Før sesong: Rydd tørt, brennbart materiale nær huset</li>
+            <li><input type="checkbox" /> Rød dag: Lad telefoner og powerbank</li>
+            <li><input type="checkbox" /> Aktiv hendelse: Lukk vinduer, dører og ventilasjonsåpninger</li>
+            <li><input type="checkbox" /> Aktiv hendelse: Evakuer tidlig ved beskjed</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GO BOX (RASK Å TA MED)</h3>
+          <ul>
+            <li><input type="checkbox" /> Alle i husholdningen vet hvor den står</li>
+            <li><input type="checkbox" /> En person er ansvarlig for å ta den med ved evakuering</li>
+            <li><input type="checkbox" /> Oppdatert hver 6. måned</li>
+          </ul>
+        </section>
+
+        <p class="emergency">NØDNUMMER: 110 BRANN | 112 POLITI | 113 AMBULANSE</p>
+        <p class="source">Kilde: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/</p>
+      </article>
+
+      <article id="sheet-en" class="sheet hidden" lang="en">
+        <h2>HOME PREPAREDNESS - 72 HOURS</h2>
+        <p class="subtitle">A simple checklist for all homes</p>
+
+        <section>
+          <h3>LEAVE NOW IF</h3>
+          <ul>
+            <li><input type="checkbox" /> Authorities issue an evacuation order</li>
+            <li><input type="checkbox" /> You see embers or ember showers nearby</li>
+            <li><input type="checkbox" /> Fire is visible near your home</li>
+            <li><input type="checkbox" /> Smoke/heat makes it unsafe to stay</li>
+          </ul>
+          <p class="note">Important: Do not delay evacuation to save property.</p>
+        </section>
+
+        <section>
+          <h3>LOCAL DETAILS (FILL IN)</h3>
+          <div class="lines">
+            <div>Address: ______________________________</div>
+            <div>Family meeting point: ______________________________</div>
+            <div>Municipality warning channel: ______________________________</div>
+            <div>Local fire/emergency contact: ______________________________</div>
+            <div>Safe evacuation route: ______________________________</div>
+          </div>
+        </section>
+
+        <section>
+          <h3>FIRE SAFETY AT HOME</h3>
+          <ul>
+            <li><input type="checkbox" /> Smoke detectors on all floors</li>
+            <li><input type="checkbox" /> Fire extinguisher / indoor hose</li>
+            <li><input type="checkbox" /> Fire blanket in the kitchen</li>
+            <li><input type="checkbox" /> Escape plan and meeting point</li>
+            <li><input type="checkbox" /> Flashlight near bedrooms</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>72-HOUR PREPAREDNESS</h3>
+          <ul>
+            <li><input type="checkbox" /> Drinking water for 3 days</li>
+            <li><input type="checkbox" /> Non-perishable food for 3 days</li>
+            <li><input type="checkbox" /> Manual can opener</li>
+            <li><input type="checkbox" /> First aid kit and regular medications</li>
+            <li><input type="checkbox" /> Warm clothes and blankets</li>
+            <li><input type="checkbox" /> Hygiene supplies</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>POWER AND COMMUNICATION</h3>
+          <ul>
+            <li><input type="checkbox" /> Battery or wind-up radio</li>
+            <li><input type="checkbox" /> Extra batteries</li>
+            <li><input type="checkbox" /> Charged power bank</li>
+            <li><input type="checkbox" /> Printed emergency contacts</li>
+            <li><input type="checkbox" /> Phone chargers kept in one fixed place</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DOCUMENTS AND FINANCES</h3>
+          <ul>
+            <li><input type="checkbox" /> Copy of ID and insurance information</li>
+            <li><input type="checkbox" /> Critical medical details</li>
+            <li><input type="checkbox" /> Some cash in small bills</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>TECHNICAL SAFETY</h3>
+          <ul>
+            <li><input type="checkbox" /> Know where the main water valve is</li>
+            <li><input type="checkbox" /> Know where the main circuit breaker is</li>
+            <li><input type="checkbox" /> Basic toolbox and work gloves</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>HOUSEHOLD-SPECIFIC NEEDS</h3>
+          <ul>
+            <li><input type="checkbox" /> Medicines for adults/children</li>
+            <li><input type="checkbox" /> Pet supplies (food, carrier, leash)</li>
+            <li><input type="checkbox" /> Mobility or medical-equipment needs</li>
+            <li><input type="checkbox" /> Child pickup and backup contacts</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>TIME-BASED ACTIONS</h3>
+          <ul>
+            <li><input type="checkbox" /> Before season: Clear dry, flammable material near the house</li>
+            <li><input type="checkbox" /> High-risk day: Charge phones and power banks</li>
+            <li><input type="checkbox" /> Active incident: Close windows, doors, and ventilation openings</li>
+            <li><input type="checkbox" /> Active incident: Evacuate early when instructed</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GO BOX (FAST TO GRAB)</h3>
+          <ul>
+            <li><input type="checkbox" /> Everyone in the household knows where it is</li>
+            <li><input type="checkbox" /> One person is assigned to grab it during evacuation</li>
+            <li><input type="checkbox" /> Contents reviewed every 6 months</li>
+          </ul>
+        </section>
+
+        <p class="emergency">EMERGENCY NUMBERS: 110 FIRE | 112 POLICE | 113 AMBULANCE</p>
+        <p class="source">Source: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/</p>
+      </article>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const btnNo = document.getElementById('btn-no');
+  const btnEn = document.getElementById('btn-en');
+  const printBtn = document.getElementById('print-btn');
+  const noSheet = document.getElementById('sheet-no');
+  const enSheet = document.getElementById('sheet-en');
+  const storageKey = 'preparedness-onepager-lang';
+
+  function setLang(lang) {
+    const isNo = lang === 'no';
+    noSheet.classList.toggle('hidden', !isNo);
+    enSheet.classList.toggle('hidden', isNo);
+    btnNo.classList.toggle('is-active', isNo);
+    btnEn.classList.toggle('is-active', !isNo);
+    btnNo.setAttribute('aria-pressed', String(isNo));
+    btnEn.setAttribute('aria-pressed', String(!isNo));
+    const noLabel = printBtn?.getAttribute('data-label-no') || 'Skriv ut A4';
+    const enLabel = printBtn?.getAttribute('data-label-en') || 'Print A4';
+    if (printBtn) printBtn.textContent = isNo ? noLabel : enLabel;
+    try {
+      localStorage.setItem(storageKey, lang);
+    } catch {
+      // localStorage may be disabled
+    }
+  }
+
+  btnNo?.addEventListener('click', () => setLang('no'));
+  btnEn?.addEventListener('click', () => setLang('en'));
+  printBtn?.addEventListener('click', () => window.print());
+
+  try {
+    const storedLang = localStorage.getItem(storageKey);
+    if (storedLang === 'en' || storedLang === 'no') {
+      setLang(storedLang);
+    } else {
+      setLang('no');
+    }
+  } catch {
+    setLang('no');
+  }
+</script>
+
+<style>
+  .prep-shell {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .lang-switch {
+    display: inline-flex;
+    gap: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.2rem;
+    background: var(--surface);
+  }
+
+  .lang-btn,
+  .print-btn {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    color: var(--text);
+    font-family: var(--font-display);
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    cursor: pointer;
+  }
+
+  .lang-btn.is-active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+
+  .sheet {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .sheet h2 {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    letter-spacing: 0.01em;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .sheet section {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .sheet h3 {
+    margin: 0;
+    font-size: 1.07rem;
+  }
+
+  .sheet ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .sheet li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+  }
+
+  .sheet input[type='checkbox'] {
+    transform: translateY(1px);
+  }
+
+  .note {
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .lines {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 0.55rem;
+    display: grid;
+    gap: 0.2rem;
+    color: var(--muted);
+  }
+
+  .emergency {
+    margin: 0.2rem 0 0;
+    background: color-mix(in srgb, #9f2f2f 84%, var(--surface));
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.55rem 0.65rem;
+    font-family: var(--font-display);
+  }
+
+  .source {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media print {
+    .site-header,
+    .site-footer,
+    .controls,
+    .hero-title,
+    .hero-subtitle,
+    .eyebrow {
+      display: none !important;
+    }
+
+    .site-shell,
+    .container,
+    .prep-shell {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sheet {
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0.2in;
+      gap: 0.08in;
+    }
+
+    .sheet h2 {
+      font-size: 20pt;
+    }
+
+    .sheet h3 {
+      font-size: 12pt;
+    }
+
+    .sheet,
+    .sheet * {
+      color: #000 !important;
+    }
+
+    .emergency {
+      border: 1px solid #000;
+      background: #fff !important;
+      color: #000 !important;
+    }
+  }
+</style>

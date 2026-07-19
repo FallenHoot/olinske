@@ -53,6 +53,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </section>
         </div>
 
+        <section class="kid-card" aria-label="Barnas huskeregel">
+          <div class="kid-card-header">FOR BARN - HUSK 4 TING</div>
+          <div class="kid-steps">
+            <div class="kid-step"><span class="kid-badge">1</span><span>Stopp og hør på voksen.</span></div>
+            <div class="kid-step"><span class="kid-badge">2</span><span>Ta på sko og jakke.</span></div>
+            <div class="kid-step"><span class="kid-badge">3</span><span>Ta GO BOX hvis du får beskjed.</span></div>
+            <div class="kid-step"><span class="kid-badge">4</span><span>Gå til møtepunktet. Ikke løp tilbake.</span></div>
+          </div>
+        </section>
+
         <section class="block icon-housefire">
           <h3>BRANNSIKKERHET I HJEMMET</h3>
           <ul class="checklist two-col">
@@ -180,6 +190,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
               <p><strong>Finland/Estland:</strong> tenk 5 til 7 døgn, ikke bare 72 timer.</p>
               <p><strong>Japan:</strong> scenario-tenkning, ikke bare utstyrsliste.</p>
             </div>
+            <div class="helper-block">
+              <h4>Foreldre bør øve på</h4>
+              <p>Gå gjennom møtepunkt, hvem barna skal høre på, og hvordan de kjenner igjen GO BOX.</p>
+              <p>Øv en kort 60-sekunders evakuering 2 ganger i året.</p>
+            </div>
           </div>
         </section>
 
@@ -215,6 +230,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
         </section>
         </div>
+
+        <section class="kid-card" aria-label="Children's memory steps">
+          <div class="kid-card-header">FOR KIDS - REMEMBER 4 THINGS</div>
+          <div class="kid-steps">
+            <div class="kid-step"><span class="kid-badge">1</span><span>Stop and listen to the adult.</span></div>
+            <div class="kid-step"><span class="kid-badge">2</span><span>Put on shoes and jacket.</span></div>
+            <div class="kid-step"><span class="kid-badge">3</span><span>Take the GO BOX if you are told to.</span></div>
+            <div class="kid-step"><span class="kid-badge">4</span><span>Go to the meeting point. Do not go back.</span></div>
+          </div>
+        </section>
 
         <section class="block icon-housefire">
           <h3>FIRE SAFETY AT HOME</h3>
@@ -342,6 +367,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
               <p><strong>Sweden:</strong> total-defense framing and crisis mindset.</p>
               <p><strong>Finland/Estonia:</strong> think 5 to 7 days, not only 72 hours.</p>
               <p><strong>Japan:</strong> scenario-based action, not just supply lists.</p>
+            </div>
+            <div class="helper-block">
+              <h4>Parents should practice</h4>
+              <p>Go over the meeting point, which adult children should listen to, and how to recognize the GO BOX.</p>
+              <p>Practice one short 60-second evacuation drill twice a year.</p>
             </div>
           </div>
         </section>
@@ -1082,6 +1112,52 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     letter-spacing: 0.01em;
   }
 
+  .poster .kid-card {
+    border: 2px solid #e6c76a;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #fff9df 0%, #fff3bf 100%);
+    padding: 0.55rem 0.65rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .poster .kid-card-header {
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #3c2c00;
+  }
+
+  .poster .kid-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem 0.8rem;
+  }
+
+  .poster .kid-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    font-size: clamp(0.78rem, 1.1vw, 0.96rem);
+    line-height: 1.18;
+    font-weight: 700;
+    color: #172033;
+  }
+
+  .poster .kid-badge {
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    background: #b33a34;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 900;
+    flex: 0 0 1.4rem;
+  }
+
   .poster .helper-card {
     border: 2px solid #c8d0da;
     border-radius: 8px;
@@ -1154,6 +1230,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
 
     .poster .top-grid,
+    .poster .kid-steps,
     .poster .go-grid,
     .poster .checklist.two-col,
     .poster .war-card-grid,
@@ -1282,6 +1359,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     .sheet > h2,
     .sheet > .subtitle,
+    .sheet > .kid-card,
     .sheet > .war-card,
     .sheet > .helper-card,
     .sheet > .emergency,
@@ -1388,6 +1466,40 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       gap: 0.4mm;
     }
 
+    .kid-card {
+      border: 1px solid #777;
+      border-radius: 0;
+      background: #fff !important;
+      padding: 1.8mm 2.2mm;
+      gap: 0.9mm;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .kid-card-header {
+      font-size: 8.8pt;
+      letter-spacing: 0.05em;
+    }
+
+    .kid-steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9mm 2mm;
+    }
+
+    .kid-step {
+      font-size: 7.3pt;
+      gap: 1mm;
+      line-height: 1.15;
+    }
+
+    .kid-badge {
+      width: 4.4mm;
+      height: 4.4mm;
+      font-size: 6.8pt;
+      flex-basis: 4.4mm;
+    }
+
     .helper-card {
       border: 1px solid #777;
       border-radius: 0;
@@ -1465,6 +1577,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     .poster .war-card-grid,
     .poster .top-grid,
     .poster .checklist.two-col,
+    .poster .kid-steps,
     .poster .helper-grid {
       grid-template-columns: 1fr 1fr;
     }

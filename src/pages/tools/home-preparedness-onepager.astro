@@ -158,13 +158,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <p class="source">Kilde: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/ <span class="updated">Sist oppdatert: 2026-07-19</span></p>
       </article>
 
-      <article id="sheet-en" class="sheet hidden" lang="en">
+      <article id="sheet-en" class="sheet poster hidden" lang="en">
         <h2>HOME PREPAREDNESS - 72 HOURS</h2>
-        <p class="subtitle">A simple checklist for all homes</p>
+        <p class="subtitle">A simple household checklist for self-preparedness</p>
 
-        <section>
+        <div class="top-grid">
+        <section class="block icon-alert">
           <h3>LEAVE NOW IF</h3>
-          <ul>
+          <ul class="checklist">
             <li><input type="checkbox" /> Authorities issue an evacuation order</li>
             <li><input type="checkbox" /> You see embers or ember showers nearby</li>
             <li><input type="checkbox" /> Fire is visible near your home</li>
@@ -173,33 +174,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <p class="note">Important: Do not delay evacuation to save property.</p>
         </section>
 
-        <section>
+        <section class="block block-local">
           <h3>LOCAL DETAILS (FILL IN)</h3>
           <div class="lines">
             <div>Address: ______________________________</div>
             <div>Family meeting point: ______________________________</div>
-            <div>Municipality warning channel: ______________________________</div>
-            <div>Local fire/emergency contact: ______________________________</div>
+            <div>Emergency alert / municipality channel: ______________________________</div>
+            <div>Local emergency contact: ______________________________</div>
             <div>Safe evacuation route: ______________________________</div>
           </div>
         </section>
+        </div>
 
-        <section>
+        <section class="block icon-housefire">
           <h3>FIRE SAFETY AT HOME</h3>
-          <ul>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Smoke detectors on all floors</li>
-            <li><input type="checkbox" /> Fire extinguisher / indoor hose</li>
+            <li><input type="checkbox" /> Fire extinguisher</li>
             <li><input type="checkbox" /> Fire blanket in the kitchen</li>
             <li><input type="checkbox" /> Escape plan and meeting point</li>
             <li><input type="checkbox" /> Flashlight near bedrooms</li>
           </ul>
         </section>
 
-        <section>
+        <section class="block icon-clock">
           <h3>72-HOUR PREPAREDNESS</h3>
-          <ul>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Drinking water for 3 days</li>
-            <li><input type="checkbox" /> Non-perishable food for 3 days</li>
+            <li><input type="checkbox" /> Food with a long shelf life for 3 days</li>
             <li><input type="checkbox" /> Manual can opener</li>
             <li><input type="checkbox" /> First aid kit and regular medications</li>
             <li><input type="checkbox" /> Warm clothes and blankets</li>
@@ -207,66 +209,88 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </ul>
         </section>
 
-        <section>
-          <h3>POWER AND COMMUNICATION</h3>
-          <ul>
+        <section class="block icon-radio">
+          <h3>POWER AND INFORMATION</h3>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Battery or wind-up radio</li>
-            <li><input type="checkbox" /> Extra batteries</li>
-            <li><input type="checkbox" /> Charged power bank</li>
             <li><input type="checkbox" /> Printed emergency contacts</li>
+            <li><input type="checkbox" /> Extra batteries</li>
             <li><input type="checkbox" /> Phone chargers kept in one fixed place</li>
+            <li><input type="checkbox" /> Charged power bank</li>
           </ul>
         </section>
 
-        <section>
-          <h3>DOCUMENTS AND FINANCES</h3>
-          <ul>
+        <section class="block icon-folder">
+          <h3>DOCUMENTS AND PAYMENTS</h3>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Copy of ID and insurance information</li>
             <li><input type="checkbox" /> Critical medical details</li>
             <li><input type="checkbox" /> Some cash in small bills</li>
           </ul>
         </section>
 
-        <section>
-          <h3>TECHNICAL SAFETY</h3>
-          <ul>
-            <li><input type="checkbox" /> Know where the main water valve is</li>
-            <li><input type="checkbox" /> Know where the main circuit breaker is</li>
-            <li><input type="checkbox" /> Basic toolbox and work gloves</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>HOUSEHOLD-SPECIFIC NEEDS</h3>
-          <ul>
-            <li><input type="checkbox" /> Medicines for adults/children</li>
-            <li><input type="checkbox" /> Pet supplies (food, carrier, leash)</li>
-            <li><input type="checkbox" /> Mobility or medical-equipment needs</li>
-            <li><input type="checkbox" /> Child pickup and backup contacts</li>
-          </ul>
-        </section>
-
-        <section>
+        <section class="block icon-gear">
           <h3>TIME-BASED ACTIONS</h3>
-          <ul>
-            <li><input type="checkbox" /> Before season: Clear dry, flammable material near the house</li>
-            <li><input type="checkbox" /> High-risk day: Charge phones and power banks</li>
-            <li><input type="checkbox" /> Active incident: Close windows, doors, and ventilation openings</li>
-            <li><input type="checkbox" /> Active incident: Evacuate early when instructed</li>
+          <ul class="checklist">
+            <li><input type="checkbox" /> Shut off water or power only if authorities instruct you to do so</li>
+            <li><input type="checkbox" /> Do not spend time on technical steps if evacuation is urgent</li>
           </ul>
         </section>
 
-        <section>
-          <h3>GO BOX (FAST TO GRAB)</h3>
-          <ul>
-            <li><input type="checkbox" /> Everyone in the household knows where it is</li>
-            <li><input type="checkbox" /> One person is assigned to grab it during evacuation</li>
-            <li><input type="checkbox" /> Contents reviewed every 6 months</li>
-          </ul>
+        <section class="block icon-family go-box-block">
+          <h3>HOUSEHOLD-SPECIFIC<br />GO BOX (FAST TO GRAB)</h3>
+          <div class="go-grid">
+            <ul class="checklist compact two-col">
+              <li><input type="checkbox" /> IDs and document copies</li>
+              <li><input type="checkbox" /> Small cash bills</li>
+              <li><input type="checkbox" /> Insurance information and key list</li>
+              <li><input type="checkbox" /> USB with emergency documents</li>
+              <li><input type="checkbox" /> Medication list plus 3 to 7 days of essential medicine</li>
+              <li><input type="checkbox" /> Baby, pet, or disability-related essentials</li>
+            </ul>
+            <ol class="go-steps">
+              <li>Use a portable fire- and water-resistant case.</li>
+              <li>Store it near the exit, not hidden away.</li>
+              <li>Label it clearly: GO BOX.</li>
+              <li>Assign one person to grab it.</li>
+              <li>Practice a 60-second evacuation including the box.</li>
+              <li>Review contents every 6 months.</li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="war-card" aria-label="War preparedness card">
+          <div class="war-card-header">WAR PREPAREDNESS CARD</div>
+          <div class="war-card-grid">
+            <div class="war-card-line">
+              <span>Nearest shelter / protected place:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Alternate meeting point:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Nearest food distribution / aid site:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Out-of-area family contact:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Radio frequency / local channel:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Grab first:</span>
+              <strong>ID, medicine, water, phone, GO BOX</strong>
+            </div>
+          </div>
         </section>
 
         <p class="emergency">EMERGENCY NUMBERS: 110 FIRE | 112 POLICE | 113 AMBULANCE</p>
-        <p class="source">Source: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/</p>
+        <p class="source">Source: DSB Self-preparedness - https://www.dsb.no/en/safe-everyday-life/self-preparedness/ <span class="updated">English brochure: dsb-egenberedskap-engelsk-web.pdf</span></p>
       </article>
     </section>
   </main>
@@ -573,15 +597,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     top: 0.5rem;
     width: 2.85rem;
     height: 2.85rem;
-    border-radius: 999px;
-    border: 2px solid #1d2637;
-    background: linear-gradient(135deg, #f8fbff 0%, #dce8f8 100%);
-    display: grid;
-    place-items: center;
-    font-weight: 900;
-    color: #1d2637;
-    font-size: 1rem;
-    line-height: 1;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 
   .poster .block-local::before {
@@ -589,34 +607,46 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   .poster .icon-alert::before {
-    content: '!';
+    background-image: url('/images/preparedness/alert-evacuate.svg');
   }
 
   .poster .icon-housefire::before {
-    content: 'F';
+    background-image: url('/images/preparedness/house-fire.svg');
   }
 
   .poster .icon-clock::before {
-    content: '72';
-    font-size: 0.95rem;
+    background-image: url('/images/preparedness/timer-72.svg');
   }
 
   .poster .icon-radio::before {
-    content: 'R';
+    background-image: url('/images/preparedness/radio-power.svg');
   }
 
   .poster .icon-folder::before {
-    content: '$';
+    background-image: url('/images/preparedness/folder-cash.svg');
   }
 
   .poster .icon-gear::before {
-    content: '*';
-    font-size: 1.25rem;
+    background-image: url('/images/preparedness/gear.svg');
   }
 
   .poster .icon-family::before {
-    content: '+';
-    font-size: 1.2rem;
+    background-image: url('/images/preparedness/family-pet-medical.svg');
+  }
+
+  .poster .go-box-block::after {
+    content: '';
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.7rem;
+    width: 3.2rem;
+    height: 2.4rem;
+    background: center / contain no-repeat url('/images/preparedness/go-box.svg');
+    opacity: 0.96;
+  }
+
+  .poster .go-box-block {
+    padding-right: 4.6rem;
   }
 
   .poster .go-box-block h3 {
@@ -652,6 +682,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     letter-spacing: 0.01em;
     line-height: 1.08;
     padding: 0.34rem 0.5rem;
+    position: relative;
+  }
+
+  .poster .emergency::before {
+    content: '';
+    position: absolute;
+    right: 0.55rem;
+    bottom: 0.28rem;
+    width: 2.15rem;
+    height: 2.15rem;
+    background: center / contain no-repeat url('/images/preparedness/flame.svg');
   }
 
   .poster .war-card {
@@ -733,9 +774,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       top: 0.46rem;
     }
 
+    .poster .go-box-block {
+      padding-right: 3.65rem;
+    }
+
+    .poster .go-box-block::after {
+      width: 2.6rem;
+      height: 2rem;
+      right: 0.45rem;
+    }
+
     .poster .source {
       flex-direction: column;
       align-items: flex-start;
+    }
+
+    .poster .emergency {
+      padding-right: 2.8rem;
+    }
+
+    .poster .emergency::before {
+      width: 1.8rem;
+      height: 1.8rem;
+      right: 0.4rem;
+      bottom: 0.24rem;
     }
   }
 
@@ -860,6 +922,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       margin-top: 2mm;
       font-size: 10pt;
       padding: 2.4mm 3mm;
+    }
+
+    .poster .emergency::before,
+    .poster .go-box-block::after {
+      filter: grayscale(1);
     }
 
     .source {

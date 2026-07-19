@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">72 hour timer icon</title>
+  <desc id="desc">Stopwatch with the number 72 and red progress arc.</desc>
+  <circle cx="64" cy="71" r="39" fill="#fff" stroke="#172033" stroke-width="8"/>
+  <path fill="none" stroke="#b33a34" stroke-width="8" stroke-linecap="round" d="M88 39a38 38 0 0 1 10 27"/>
+  <path fill="none" stroke="#b33a34" stroke-width="8" stroke-linecap="round" d="M98 66a37 37 0 0 1-8 21"/>
+  <rect x="52" y="11" width="24" height="12" rx="4" fill="#172033"/>
+  <rect x="87" y="18" width="11" height="20" rx="4" transform="rotate(35 92.5 28)" fill="#172033"/>
+  <text x="64" y="83" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" font-weight="700" fill="#b33a34">72</text>
+  <g stroke="#172033" stroke-width="3" stroke-linecap="round">
+    <path d="M64 34v7"/><path d="M64 101v7"/><path d="M27 71h7"/><path d="M94 71h7"/>
+    <path d="m38 45 5 5"/><path d="m85 92 5 5"/><path d="m38 97 5-5"/><path d="m85 50 5-5"/>
+  </g>
+</svg>

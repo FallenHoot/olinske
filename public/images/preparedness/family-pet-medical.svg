@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Family pet medical icon</title>
+  <desc id="desc">Two adults, dog, and medical cross.</desc>
+  <circle cx="34" cy="28" r="10" fill="#172033"/>
+  <circle cx="61" cy="28" r="10" fill="#172033"/>
+  <path fill="#172033" d="M22 42c0-6 5-11 11-11h2c6 0 11 5 11 11v39H22zm28 0c0-6 5-11 11-11h2c6 0 11 5 11 11v40H50z"/>
+  <path fill="#172033" d="M68 77c12 0 21 8 24 18H53c2-9 7-14 15-18z"/>
+  <path fill="#172033" d="M86 83c8-8 18-12 26-12 4 0 7 2 8 6 1 5-1 9-6 11-2 8-7 14-14 18h-9l-5-10-9-2z"/>
+  <path fill="#b33a34" d="M100 9h12v12h12v12h-12v12h-12V33H88V21h12z"/>
+</svg>

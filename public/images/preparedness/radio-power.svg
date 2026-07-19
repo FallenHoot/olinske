@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Emergency radio icon</title>
+  <desc id="desc">Portable radio with lightning bolt.</desc>
+  <rect x="22" y="40" width="84" height="56" rx="8" fill="#172033"/>
+  <circle cx="45" cy="69" r="12" fill="none" stroke="#fff" stroke-width="4"/>
+  <path stroke="#fff" stroke-width="4" stroke-linecap="round" d="M66 60h26M66 70h26M66 80h18"/>
+  <path stroke="#172033" stroke-width="5" stroke-linecap="round" d="M40 40 81 24"/>
+  <circle cx="82" cy="23" r="4" fill="#172033"/>
+  <path fill="#b33a34" d="m95 23 13 3-9 15 11 2-20 20 5-17-10-3z"/>
+</svg>

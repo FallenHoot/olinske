@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">House fire icon</title>
+  <desc id="desc">House silhouette with flame in front.</desc>
+  <path fill="#172033" d="M19 60 61 22l42 38-7 8-10-9v37H35V59l-9 9z"/>
+  <path fill="#b33a34" d="M82 95c11-7 17-17 17-28 0-8-4-15-10-22 0 8-5 12-10 16-2-8-8-13-15-18 1 7-1 11-6 16-5 6-9 12-9 20 0 10 6 18 16 24 2 1 7 3 17 3z"/>
+  <path fill="#f4d5c8" d="M74 94c7-4 11-10 11-17 0-4-2-8-5-12 0 4-3 7-6 9-1-4-4-7-8-10 0 4 0 6-3 9-3 4-5 7-5 12 0 7 5 12 16 14z" opacity="0.18"/>
+</svg>

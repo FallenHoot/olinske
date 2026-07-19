@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Go box icon</title>
+  <desc id="desc">Portable emergency document box.</desc>
+  <path fill="#172033" d="M24 45h80v46H24z"/>
+  <path fill="#172033" opacity="0.92" d="M20 41 37 27h54l17 14v10H20z"/>
+  <path fill="#fff" d="M26 46 47 32h35l20 14-6 6-16-11H48L32 52z"/>
+  <rect x="59" y="74" width="10" height="13" rx="2" fill="#fff"/>
+</svg>

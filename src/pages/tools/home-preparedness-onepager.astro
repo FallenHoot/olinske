@@ -20,6 +20,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <button id="btn-no" class="lang-btn is-active" type="button" aria-pressed="true">Norsk</button>
           <button id="btn-en" class="lang-btn" type="button" aria-pressed="false">English</button>
         </div>
+        <button id="pdf-btn" class="print-btn" type="button" data-label-no="Last ned PDF" data-label-en="Download PDF">Last ned PDF</button>
         <button id="print-btn" class="print-btn" type="button" data-label-no="Skriv ut A4" data-label-en="Print A4">Skriv ut A4</button>
       </div>
 
@@ -299,21 +300,281 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 <script>
   const btnNo = document.getElementById('btn-no');
   const btnEn = document.getElementById('btn-en');
+  const pdfBtn = document.getElementById('pdf-btn');
   const printBtn = document.getElementById('print-btn');
   const noSheet = document.getElementById('sheet-no');
   const enSheet = document.getElementById('sheet-en');
   const storageKey = 'preparedness-onepager-lang';
 
+  let currentLang = 'no';
+
+  const posterContent = {
+    no: {
+      title: 'HJEMMEBEREDSKAP - 72 TIMER',
+      subtitle: 'En enkel sjekkliste for alle hjem',
+      evacTitle: 'LEAVE NOW / EVAKUER NAR',
+      evacItems: [
+        'Myndighetene gir',
+        'evakueringsordre',
+        'Du ser gnister eller',
+        'gnistregn i omradet',
+        'Brann er synlig i naerheten',
+        'av boligen',
+        'Royk/varme gjor det utrygt',
+        'a bli',
+      ],
+      evacNote: 'Viktig: Ikke forsink evakuering for a redde eiendeler.',
+      localTitle: 'LOKALE OPPLYSNINGER (FYLL INN)',
+      localLines: [
+        'Adresse:',
+        'Motepunkt for familien:',
+        'Kommunens varslingskanal:',
+        'Lokal brann-/beredskapskontakt:',
+        'Trygg evakueringsrute:',
+      ],
+      fireTitle: 'BRANNSIKKERHET I HJEMMET',
+      fireLeft: ['Roykvarslere i alle etasjer', 'Brannteppe pa kjokken', 'Brannteppe pa kjokken'],
+      fireRight: ['Brannslukker / husbrannslange', 'Romningsplan og motepunkt', 'Lommelykt ved soverom'],
+      prepTitle: '72-TIMERS BEREDSKAP',
+      prepLeft: ['Drikkevann for 3 dogn', 'Manuell boksapner', 'Varme klaer og tepper'],
+      prepRight: ['Holdbar mat for 3 dogn', 'Forstehjelpsutstyr + faste medisiner', 'Hygieneartikler'],
+      powerTitle: 'STROM OG KOMMUNIKASJON',
+      powerLeft: ['Batteri- eller sveiveradio', 'Ekstra batterier', 'Ladet powerbank'],
+      powerRight: ['Utskrevne nodkontakter', 'Mobil-ladere samlet pa fast plass'],
+      docsTitle: 'DOKUMENTER OG OKONOMI',
+      docsLeft: ['Kopi av ID og forsikringsinfo', 'Litt kontanter i sma sedler'],
+      docsRight: ['Viktige helseopplysninger'],
+      timeTitle: 'TIDSBASERTE HANDLINGER',
+      timeItems: ['Steng vann/strom kun hvis myndigheter instruerer', 'Ikke bruk tid pa tekniske tiltak dersom evakuering haster'],
+      goTitle: 'HUSHOLDNINGSSPESIFIKT',
+      goSub: 'GO BOX (FAST TO GRAB)',
+      goLeft: ['IDs og dokumentkopier', 'Forsikringsinfo og nøkkellister', 'Medisinliste + 3-7 dagers', 'nodvendige medisiner', 'Reservepakker'],
+      goRight: ['Sma', 'kontanter', 'USB med'],
+      goStepsTitle: 'Oppsett av Go Box:',
+      goSteps: [
+        '1. Bruk en brann- og vannbestandig baerbar koffert.',
+        '2. Oppbevar naer utgangen, ikke gjemt.',
+        '3. Merk den tydelig: GO BOX.',
+        '4. Tildel eierskap: hvem som tar den.',
+        '5. Ov pa en 60-sekunders evakuering inkl. boksen.',
+        '6. Gjennomga innhold hver 6. maned.',
+      ],
+      emergency: 'NODNUMMER 110 BRANN | 112 POLITI | 113 AMBULANSE',
+      source: 'Kilde: DSB Egenberedskap',
+      url: 'https://www.dsb.no/sikkerhverdag/egenberedskap/',
+      updated: 'Sist oppdatert: 2026-07-19',
+    },
+    en: {
+      title: 'HOME PREPAREDNESS - 72 HOURS',
+      subtitle: 'A simple household checklist for self-preparedness',
+      evacTitle: 'LEAVE NOW IF',
+      evacItems: [
+        'Authorities issue an',
+        'evacuation order',
+        'You see embers or ember',
+        'showers nearby',
+        'Fire is visible near',
+        'your home',
+        'Smoke or heat makes it',
+        'unsafe to stay',
+      ],
+      evacNote: 'Important: Do not delay evacuation to save property.',
+      localTitle: 'LOCAL DETAILS (FILL IN)',
+      localLines: [
+        'Address:',
+        'Family meeting point:',
+        'Emergency alert / municipality channel:',
+        'Local emergency contact:',
+        'Safe evacuation route:',
+      ],
+      fireTitle: 'FIRE SAFETY AT HOME',
+      fireLeft: ['Smoke detectors on all floors', 'Fire blanket in the kitchen'],
+      fireRight: ['Fire extinguisher', 'Escape plan and meeting point', 'Flashlight near bedrooms'],
+      prepTitle: '72-HOUR PREPAREDNESS',
+      prepLeft: ['Drinking water for 3 days', 'Manual can opener', 'Warm clothes and blankets'],
+      prepRight: ['Food with a long shelf life for 3 days', 'First aid kit + regular medications', 'Hygiene supplies'],
+      powerTitle: 'POWER AND INFORMATION',
+      powerLeft: ['Battery or wind-up radio', 'Extra batteries', 'Charged power bank'],
+      powerRight: ['Printed emergency contacts', 'Phone chargers kept in one place'],
+      docsTitle: 'DOCUMENTS AND PAYMENTS',
+      docsLeft: ['Copy of ID and insurance information', 'Some cash in small bills'],
+      docsRight: ['Critical medical details'],
+      timeTitle: 'TIME-BASED ACTIONS',
+      timeItems: ['Shut off water or power only if authorities instruct you', 'Do not spend time on technical steps if evacuation is urgent'],
+      goTitle: 'HOUSEHOLD-SPECIFIC',
+      goSub: 'GO BOX (FAST TO GRAB)',
+      goLeft: ['IDs and document copies', 'Insurance information and key list', 'Medication list + 3-7 days', 'of essential medicine', 'Baby, pet, or disability essentials'],
+      goRight: ['Small', 'cash bills', 'USB with'],
+      goStepsTitle: 'Go Box setup:',
+      goSteps: [
+        '1. Use a portable fire- and water-resistant case.',
+        '2. Store it near the exit, not hidden away.',
+        '3. Label it clearly: GO BOX.',
+        '4. Assign one person to grab it.',
+        '5. Practice a 60-second evacuation including the box.',
+        '6. Review contents every 6 months.',
+      ],
+      emergency: 'EMERGENCY NUMBERS 110 FIRE | 112 POLICE | 113 AMBULANCE',
+      source: 'Source: DSB Self-preparedness',
+      url: 'https://www.dsb.no/en/safe-everyday-life/self-preparedness/',
+      updated: 'English brochure: dsb-egenberedskap-engelsk-web.pdf',
+    },
+  };
+
+  function loadExternalScript(id, src) {
+    if (document.getElementById(id)) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.id = id;
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  function escapeXml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&apos;');
+  }
+
+  function checklistSvg(items, x, y, lineHeight, fontSize) {
+    return items.map((item, index) => {
+      const top = y + index * lineHeight;
+      return `
+        <rect x="${x}" y="${top - 12}" width="14" height="14" fill="#fff" stroke="#111827" stroke-width="2"/>
+        <text x="${x + 22}" y="${top}" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="700" fill="#111">${escapeXml(item)}</text>`;
+    }).join('');
+  }
+
+  function lineBlockSvg(lines, x, y, width, lineHeight, fontSize) {
+    return lines.map((line, index) => {
+      const top = y + index * lineHeight;
+      return `
+        <text x="${x}" y="${top}" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="600" fill="#111">${escapeXml(line)}</text>
+        <line x1="${x}" y1="${top + 5}" x2="${x + width}" y2="${top + 5}" stroke="#333" stroke-width="1"/>`;
+    }).join('');
+  }
+
+  function buildPosterSvg(lang) {
+    const c = posterContent[lang] ?? posterContent.no;
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" width="794" height="1123" viewBox="0 0 794 1123">
+        <rect width="794" height="1123" fill="#ffffff"/>
+        <text x="397" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#111">${escapeXml(c.title)}</text>
+        <text x="397" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#111">${escapeXml(c.subtitle)}</text>
+
+        <image href="${window.location.origin}/images/preparedness/alert-evacuate.svg" x="42" y="142" width="92" height="92"/>
+        <text x="164" y="168" font-family="Arial, sans-serif" font-size="22" font-weight="900" fill="#a23a2f">${escapeXml(c.evacTitle)}</text>
+        ${checklistSvg(c.evacItems, 164, 194, 27, 14)}
+        <text x="164" y="310" font-family="Arial, sans-serif" font-size="13" font-style="italic" font-weight="600" fill="#222">${escapeXml(c.evacNote)}</text>
+
+        <rect x="485" y="150" width="262" height="102" fill="#fff" stroke="#111" stroke-width="2"/>
+        <text x="497" y="176" font-family="Arial, sans-serif" font-size="14" font-weight="900" fill="#111">${escapeXml(c.localTitle)}</text>
+        ${lineBlockSvg(c.localLines, 497, 198, 220, 19, 11)}
+
+        <image href="${window.location.origin}/images/preparedness/house-fire.svg" x="44" y="258" width="92" height="92"/>
+        <text x="164" y="284" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#111">${escapeXml(c.fireTitle)}</text>
+        <line x1="164" y1="290" x2="652" y2="290" stroke="#888" stroke-width="1"/>
+        ${checklistSvg(c.fireLeft, 164, 318, 30, 16)}
+        ${checklistSvg(c.fireRight, 426, 318, 30, 16)}
+
+        <image href="${window.location.origin}/images/preparedness/timer-72.svg" x="44" y="372" width="92" height="92"/>
+        <text x="164" y="398" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#111">${escapeXml(c.prepTitle)}</text>
+        <line x1="164" y1="404" x2="652" y2="404" stroke="#888" stroke-width="1"/>
+        ${checklistSvg(c.prepLeft, 164, 432, 31, 16)}
+        ${checklistSvg(c.prepRight, 426, 432, 31, 16)}
+
+        <image href="${window.location.origin}/images/preparedness/radio-power.svg" x="46" y="500" width="90" height="90"/>
+        <text x="164" y="528" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#111">${escapeXml(c.powerTitle)}</text>
+        <line x1="164" y1="534" x2="652" y2="534" stroke="#888" stroke-width="1"/>
+        ${checklistSvg(c.powerLeft, 164, 562, 31, 16)}
+        ${checklistSvg(c.powerRight, 426, 562, 31, 16)}
+
+        <image href="${window.location.origin}/images/preparedness/folder-cash.svg" x="44" y="644" width="92" height="72"/>
+        <text x="164" y="672" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#111">${escapeXml(c.docsTitle)}</text>
+        <line x1="164" y1="678" x2="652" y2="678" stroke="#888" stroke-width="1"/>
+        ${checklistSvg(c.docsLeft, 164, 706, 31, 16)}
+        ${checklistSvg(c.docsRight, 525, 706, 31, 16)}
+
+        <image href="${window.location.origin}/images/preparedness/gear.svg" x="44" y="790" width="86" height="86"/>
+        <text x="164" y="816" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#111">${escapeXml(c.timeTitle)}</text>
+        <line x1="164" y1="822" x2="652" y2="822" stroke="#888" stroke-width="1"/>
+        ${checklistSvg(c.timeItems, 164, 850, 36, 16)}
+
+        <image href="${window.location.origin}/images/preparedness/family-pet-medical.svg" x="46" y="910" width="90" height="92"/>
+        <text x="164" y="936" font-family="Arial, sans-serif" font-size="25" font-weight="900" fill="#111">${escapeXml(c.goTitle)}</text>
+        <text x="164" y="972" font-family="Arial, sans-serif" font-size="24" font-weight="900" fill="#111">${escapeXml(c.goSub)}</text>
+        ${checklistSvg(c.goLeft, 164, 1000, 18, 10)}
+        ${checklistSvg(c.goRight, 324, 1000, 18, 10)}
+        <image href="${window.location.origin}/images/preparedness/go-box.svg" x="382" y="964" width="78" height="54"/>
+        <text x="470" y="950" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#222">${escapeXml(c.goStepsTitle)}</text>
+        ${c.goSteps.map((line, index) => `<text x="470" y="${966 + index * 17}" font-family="Arial, sans-serif" font-size="10.5" font-weight="600" fill="#222">${escapeXml(line)}</text>`).join('')}
+        <image href="${window.location.origin}/images/preparedness/flame.svg" x="700" y="918" width="58" height="82"/>
+
+        <rect x="44" y="1032" width="706" height="42" rx="3" fill="#a23a2f" stroke="#7b211a" stroke-width="2"/>
+        <text x="397" y="1060" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="900" fill="#fff">${escapeXml(c.emergency)}</text>
+        <text x="321" y="1096" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#111">${escapeXml(c.source)}</text>
+        <text x="321" y="1111" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#111">${escapeXml(c.url)}</text>
+        <text x="665" y="1104" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#111">${escapeXml(c.updated)}</text>
+      </svg>`;
+  }
+
+  async function svgToPngDataUrl(svgMarkup) {
+    const blob = new Blob([svgMarkup], { type: 'image/svg+xml;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    try {
+      const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Poster image failed to load.'));
+        img.src = blobUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1588;
+      canvas.height = 2246;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas context unavailable.');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/png');
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
+  }
+
+  async function downloadExactPosterPdf(lang) {
+    await loadExternalScript('preparedness-jspdf', 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+    const jsPDF = window.jspdf?.jsPDF;
+    if (!jsPDF) throw new Error('jsPDF failed to load.');
+    const posterSvg = buildPosterSvg(lang);
+    const pngDataUrl = await svgToPngDataUrl(posterSvg);
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    doc.addImage(pngDataUrl, 'PNG', 0, 0, 210, 297, undefined, 'FAST');
+    doc.save(lang === 'no' ? 'hjemmeberedskap-one-pager.pdf' : 'home-preparedness-one-pager.pdf');
+  }
+
   function setLang(lang) {
     const isNo = lang === 'no';
+    currentLang = isNo ? 'no' : 'en';
     noSheet.classList.toggle('hidden', !isNo);
     enSheet.classList.toggle('hidden', isNo);
     btnNo.classList.toggle('is-active', isNo);
     btnEn.classList.toggle('is-active', !isNo);
     btnNo.setAttribute('aria-pressed', String(isNo));
     btnEn.setAttribute('aria-pressed', String(!isNo));
+    const pdfNoLabel = pdfBtn?.getAttribute('data-label-no') || 'Last ned PDF';
+    const pdfEnLabel = pdfBtn?.getAttribute('data-label-en') || 'Download PDF';
     const noLabel = printBtn?.getAttribute('data-label-no') || 'Skriv ut A4';
     const enLabel = printBtn?.getAttribute('data-label-en') || 'Print A4';
+    if (pdfBtn) pdfBtn.textContent = isNo ? pdfNoLabel : pdfEnLabel;
     if (printBtn) printBtn.textContent = isNo ? noLabel : enLabel;
     try {
       localStorage.setItem(storageKey, lang);
@@ -324,6 +585,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   btnNo?.addEventListener('click', () => setLang('no'));
   btnEn?.addEventListener('click', () => setLang('en'));
+  pdfBtn?.addEventListener('click', async () => {
+    const originalText = pdfBtn.textContent;
+    pdfBtn.setAttribute('disabled', 'true');
+    pdfBtn.textContent = currentLang === 'no' ? 'Lager PDF...' : 'Building PDF...';
+    try {
+      await downloadExactPosterPdf(currentLang);
+    } catch (error) {
+      console.error('Preparedness PDF export failed', error);
+      alert(currentLang === 'no' ? 'PDF-eksport feilet. Proev igjen.' : 'PDF export failed. Please try again.');
+    } finally {
+      pdfBtn.removeAttribute('disabled');
+      pdfBtn.textContent = originalText || (currentLang === 'no' ? 'Last ned PDF' : 'Download PDF');
+    }
+  });
   printBtn?.addEventListener('click', () => window.print());
 
   try {

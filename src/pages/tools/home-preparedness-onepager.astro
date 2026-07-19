@@ -124,6 +124,36 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
         </section>
 
+        <section class="war-card" aria-label="War preparedness card">
+          <div class="war-card-header">KRIGSBEREDSKAPSKORT</div>
+          <div class="war-card-grid">
+            <div class="war-card-line">
+              <span>Nærmeste tilfluktsrom:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Alternativt oppmøtested:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Nærmeste matutdeling / hjelpesenter:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Familiekontakt utenfor området:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Radiofrekvens / lokal kanal:</span>
+              <strong>__________________</strong>
+            </div>
+            <div class="war-card-line">
+              <span>Ta med først:</span>
+              <strong>ID, medisiner, vann, telefon, GO BOX</strong>
+            </div>
+          </div>
+        </section>
+
         <p class="emergency">NØDNUMMER: 110 BRANN | 112 POLITI | 113 AMBULANSE</p>
         <p class="source">Kilde: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/ <span class="updated">Sist oppdatert: 2026-07-19</span></p>
       </article>
@@ -624,6 +654,46 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     padding: 0.34rem 0.5rem;
   }
 
+  .poster .war-card {
+    border: 2px dashed #6d7077;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #fbfbfb 0%, #f1f3f5 100%);
+    padding: 0.55rem 0.65rem;
+    display: grid;
+    gap: 0.38rem;
+  }
+
+  .poster .war-card-header {
+    font-size: clamp(0.95rem, 1.85vw, 1.3rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #1b1d22;
+  }
+
+  .poster .war-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem 0.8rem;
+  }
+
+  .poster .war-card-line {
+    display: grid;
+    gap: 0.12rem;
+    font-size: clamp(0.78rem, 1.2vw, 0.95rem);
+    line-height: 1.15;
+    font-weight: 600;
+  }
+
+  .poster .war-card-line span {
+    color: #2d3138;
+  }
+
+  .poster .war-card-line strong {
+    font-weight: 800;
+    letter-spacing: 0.01em;
+  }
+
   .poster .source {
     margin-top: 0.16rem;
     display: flex;
@@ -647,7 +717,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     .poster .top-grid,
     .poster .go-grid,
-    .poster .checklist.two-col {
+    .poster .checklist.two-col,
+    .poster .war-card-grid {
       grid-template-columns: 1fr;
     }
 
@@ -730,6 +801,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     .sheet > h2,
     .sheet > .subtitle,
+    .sheet > .war-card,
     .sheet > .emergency,
     .sheet > .source,
     .sheet > section:nth-of-type(-n + 2) {
@@ -801,6 +873,32 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       border-radius: 0;
       padding: 2.2mm 2.8mm;
       gap: 1.2mm;
+    }
+
+    .war-card {
+      border: 1px dashed #666;
+      border-radius: 0;
+      background: #fff !important;
+      padding: 2.5mm 3mm;
+      gap: 1.4mm;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .war-card-header {
+      font-size: 10pt;
+      letter-spacing: 0.06em;
+    }
+
+    .war-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.3mm 3mm;
+    }
+
+    .war-card-line {
+      font-size: 8.8pt;
+      gap: 0.4mm;
     }
   }
 </style>

@@ -23,13 +23,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <button id="print-btn" class="print-btn" type="button" data-label-no="Skriv ut A4" data-label-en="Print A4">Skriv ut A4</button>
       </div>
 
-      <article id="sheet-no" class="sheet" lang="no">
+      <article id="sheet-no" class="sheet poster" lang="no">
         <h2>HJEMMEBEREDSKAP - 72 TIMER</h2>
         <p class="subtitle">En enkel sjekkliste for alle hjem</p>
 
-        <section>
+        <div class="top-grid">
+        <section class="block icon-alert">
           <h3>LEAVE NOW / EVAKUER NÅR</h3>
-          <ul>
+          <ul class="checklist">
             <li><input type="checkbox" /> Myndighetene gir evakueringsordre</li>
             <li><input type="checkbox" /> Du ser gnister eller gnistregn i området</li>
             <li><input type="checkbox" /> Brann er synlig i nærheten av boligen</li>
@@ -38,7 +39,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <p class="note">Viktig: Ikke forsink evakuering for å redde eiendeler.</p>
         </section>
 
-        <section>
+        <section class="block block-local">
           <h3>LOKALE OPPLYSNINGER (FYLL INN)</h3>
           <div class="lines">
             <div>Adresse: ______________________________</div>
@@ -48,10 +49,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div>Trygg evakueringsrute: ______________________________</div>
           </div>
         </section>
+        </div>
 
-        <section>
+        <section class="block icon-housefire">
           <h3>BRANNSIKKERHET I HJEMMET</h3>
-          <ul>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Røykvarsler i alle etasjer</li>
             <li><input type="checkbox" /> Brannslukker / husbrannslange</li>
             <li><input type="checkbox" /> Brannteppe på kjøkken</li>
@@ -60,9 +62,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </ul>
         </section>
 
-        <section>
+        <section class="block icon-clock">
           <h3>72-TIMERS BEREDSKAP</h3>
-          <ul>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Drikkevann for 3 døgn</li>
             <li><input type="checkbox" /> Holdbar mat for 3 døgn</li>
             <li><input type="checkbox" /> Manuell boksåpner</li>
@@ -72,66 +74,58 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </ul>
         </section>
 
-        <section>
+        <section class="block icon-radio">
           <h3>STRØM OG KOMMUNIKASJON</h3>
-          <ul>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Batteri- eller sveiveradio</li>
-            <li><input type="checkbox" /> Ekstra batterier</li>
-            <li><input type="checkbox" /> Ladet powerbank</li>
             <li><input type="checkbox" /> Utskrevne nødkontakter</li>
+            <li><input type="checkbox" /> Ekstra batterier</li>
             <li><input type="checkbox" /> Mobil-ladere samlet på fast plass</li>
+            <li><input type="checkbox" /> Ladet powerbank</li>
           </ul>
         </section>
 
-        <section>
+        <section class="block icon-folder">
           <h3>DOKUMENTER OG ØKONOMI</h3>
-          <ul>
+          <ul class="checklist two-col">
             <li><input type="checkbox" /> Kopi av ID og forsikringsinformasjon</li>
             <li><input type="checkbox" /> Viktige helseopplysninger</li>
             <li><input type="checkbox" /> Litt kontanter i små sedler</li>
           </ul>
         </section>
 
-        <section>
-          <h3>TEKNISK SIKKERHET</h3>
-          <ul>
-            <li><input type="checkbox" /> Vit hvor hovedkran for vann er</li>
-            <li><input type="checkbox" /> Vit hvor hovedsikring er</li>
-            <li><input type="checkbox" /> Enkel verktøykasse og arbeidshansker</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>HUSHOLDNINGSSPESIFIKT</h3>
-          <ul>
-            <li><input type="checkbox" /> Medisiner for barn/voksne</li>
-            <li><input type="checkbox" /> Utstyr for kjæledyr (mat, bur, bånd)</li>
-            <li><input type="checkbox" /> Behov ved redusert mobilitet / medisinsk utstyr</li>
-            <li><input type="checkbox" /> Plan for henting av barn / kontaktpersoner</li>
-          </ul>
-        </section>
-
-        <section>
+        <section class="block icon-gear">
           <h3>TIDSBASERTE HANDLINGER</h3>
-          <ul>
-            <li><input type="checkbox" /> Før sesong: Rydd tørt, brennbart materiale nær huset</li>
-            <li><input type="checkbox" /> Rød dag: Lad telefoner og powerbank</li>
-            <li><input type="checkbox" /> Aktiv hendelse: Lukk vinduer, dører og ventilasjonsåpninger</li>
-            <li><input type="checkbox" /> Aktiv hendelse: Evakuer tidlig ved beskjed</li>
+          <ul class="checklist">
+            <li><input type="checkbox" /> Steng vann/strøm kun hvis myndigheter instruerer</li>
+            <li><input type="checkbox" /> Ikke bruk tid på tekniske tiltak dersom evakuering haster</li>
           </ul>
         </section>
 
-        <section>
-          <h3>GO BOX (RASK Å TA MED)</h3>
-          <ul>
-            <li><input type="checkbox" /> Alle i husholdningen vet hvor den står</li>
-            <li><input type="checkbox" /> En person er ansvarlig for å ta den med ved evakuering</li>
-            <li><input type="checkbox" /> Oppdatert hver 6. måned</li>
-          </ul>
+        <section class="block icon-family go-box-block">
+          <h3>HUSHOLDNINGSSPESIFIKT<br />GO BOX (FAST TO GRAB)</h3>
+          <div class="go-grid">
+            <ul class="checklist compact two-col">
+              <li><input type="checkbox" /> IDs og dokumentkopier</li>
+              <li><input type="checkbox" /> Små kontanter</li>
+              <li><input type="checkbox" /> Forsikringsinfo og nøkkelister</li>
+              <li><input type="checkbox" /> USB med nøddokumenter</li>
+              <li><input type="checkbox" /> Medisinliste + 3-7 dagers nødvendige medisiner</li>
+              <li><input type="checkbox" /> Reservepakker</li>
+            </ul>
+            <ol class="go-steps">
+              <li>Bruk en brann- og vannbestandig bærbar koffert.</li>
+              <li>Oppbevar nær utgangen, ikke gjemt.</li>
+              <li>Merk den tydelig: GO BOX.</li>
+              <li>Tildel eierskap: hvem som tar den.</li>
+              <li>Øv på en 60-sekunders evakuering inkl. boksen.</li>
+              <li>Gjennomgå innhold hver 6. måned.</li>
+            </ol>
+          </div>
         </section>
 
         <p class="emergency">NØDNUMMER: 110 BRANN | 112 POLITI | 113 AMBULANSE</p>
-        <p class="source">Kilde: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/</p>
+        <p class="source">Kilde: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/ <span class="updated">Sist oppdatert: 2026-07-19</span></p>
       </article>
 
       <article id="sheet-en" class="sheet hidden" lang="en">
@@ -373,10 +367,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     display: flex;
     align-items: baseline;
     gap: 0.45rem;
+    line-height: 1.35;
   }
 
   .sheet input[type='checkbox'] {
     transform: translateY(1px);
+    width: 0.92rem;
+    height: 0.92rem;
+    flex: 0 0 0.92rem;
   }
 
   .note {
@@ -413,7 +411,277 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     display: none;
   }
 
+  .poster {
+    max-width: 850px;
+    margin-inline: auto;
+    border: 2px solid #151515;
+    border-radius: 8px;
+    background: #fff;
+    color: #111;
+    box-shadow: 0 12px 26px rgb(0 0 0 / 16%);
+    padding: 1.05rem 1rem 0.8rem;
+    gap: 0.55rem;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+
+  .poster h2 {
+    font-size: clamp(1.65rem, 4vw, 2.45rem);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 1.03;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .poster .subtitle {
+    margin-top: -0.25rem;
+    text-align: center;
+    font-size: clamp(1.15rem, 2.8vw, 1.95rem);
+    color: #111;
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .poster .top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 0.55rem;
+    align-items: start;
+  }
+
+  .poster .block {
+    position: relative;
+    border: 1px solid #e6e6e6;
+    border-radius: 6px;
+    background: #fff;
+    padding: 0.45rem 0.5rem 0.45rem 4.25rem;
+    min-height: 3.8rem;
+  }
+
+  .poster .block h3 {
+    color: #111;
+    font-size: clamp(1.1rem, 2.35vw, 2rem);
+    font-weight: 900;
+    letter-spacing: 0.005em;
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 0 0 0.2rem;
+  }
+
+  .poster .block-local {
+    padding-left: 0.5rem;
+    border: 2px solid #222;
+  }
+
+  .poster .block-local h3 {
+    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    margin-bottom: 0.3rem;
+  }
+
+  .poster .checklist {
+    gap: 0.1rem 0.55rem;
+  }
+
+  .poster .checklist li {
+    align-items: flex-start;
+    gap: 0.34rem;
+    line-height: 1.14;
+    font-size: clamp(0.96rem, 1.75vw, 1.82rem);
+    font-weight: 600;
+  }
+
+  .poster .checklist.two-col {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1rem;
+  }
+
+  .poster .checklist.compact li {
+    font-size: clamp(0.68rem, 1.2vw, 1.02rem);
+    line-height: 1.17;
+    font-weight: 600;
+  }
+
+  .poster input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.08rem;
+    height: 1.08rem;
+    border: 2px solid #2a2a2a;
+    border-radius: 3px;
+    margin-top: 0.06rem;
+    transform: none;
+    background: #fff;
+  }
+
+  .poster .lines {
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    gap: 0.12rem;
+    color: #111;
+    font-size: clamp(0.74rem, 1.25vw, 0.94rem);
+  }
+
+  .poster .lines > div {
+    border-bottom: 1px solid #666;
+    padding-bottom: 0.05rem;
+    line-height: 1.15;
+  }
+
+  .poster .note {
+    margin-top: 0.18rem;
+    color: #222;
+    font-size: clamp(0.82rem, 1.4vw, 1.05rem);
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .poster .block::before {
+    content: '';
+    position: absolute;
+    left: 0.62rem;
+    top: 0.5rem;
+    width: 2.85rem;
+    height: 2.85rem;
+    border-radius: 999px;
+    border: 2px solid #1d2637;
+    background: linear-gradient(135deg, #f8fbff 0%, #dce8f8 100%);
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    color: #1d2637;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .poster .block-local::before {
+    display: none;
+  }
+
+  .poster .icon-alert::before {
+    content: '!';
+  }
+
+  .poster .icon-housefire::before {
+    content: 'F';
+  }
+
+  .poster .icon-clock::before {
+    content: '72';
+    font-size: 0.95rem;
+  }
+
+  .poster .icon-radio::before {
+    content: 'R';
+  }
+
+  .poster .icon-folder::before {
+    content: '$';
+  }
+
+  .poster .icon-gear::before {
+    content: '*';
+    font-size: 1.25rem;
+  }
+
+  .poster .icon-family::before {
+    content: '+';
+    font-size: 1.2rem;
+  }
+
+  .poster .go-box-block h3 {
+    font-size: clamp(1.2rem, 2.4vw, 2rem);
+    line-height: 1;
+  }
+
+  .poster .go-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+    gap: 0.55rem;
+  }
+
+  .poster .go-steps {
+    margin: 0;
+    padding-left: 1rem;
+    display: grid;
+    gap: 0.12rem;
+    font-size: clamp(0.63rem, 1.06vw, 0.9rem);
+    line-height: 1.16;
+    font-weight: 600;
+  }
+
+  .poster .emergency {
+    margin-top: 0.2rem;
+    border-radius: 6px;
+    border: 2px solid #802e2e;
+    background: linear-gradient(180deg, #c54a43 0%, #9f2f2f 100%);
+    color: #fff;
+    font-size: clamp(1.15rem, 2.3vw, 1.72rem);
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    line-height: 1.08;
+    padding: 0.34rem 0.5rem;
+  }
+
+  .poster .source {
+    margin-top: 0.16rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.6rem;
+    align-items: baseline;
+    color: #111;
+    font-size: clamp(0.72rem, 1.05vw, 0.86rem);
+    line-height: 1.18;
+  }
+
+  .poster .updated {
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .poster {
+      padding: 0.75rem 0.7rem;
+    }
+
+    .poster .top-grid,
+    .poster .go-grid,
+    .poster .checklist.two-col {
+      grid-template-columns: 1fr;
+    }
+
+    .poster .block {
+      padding-left: 3.65rem;
+    }
+
+    .poster .block::before {
+      width: 2.45rem;
+      height: 2.45rem;
+      left: 0.5rem;
+      top: 0.46rem;
+    }
+
+    .poster .source {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
   @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+
+    html,
+    body {
+      background: #fff !important;
+      color: #000 !important;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
     .site-header,
     .site-footer,
     .controls,
@@ -435,16 +703,77 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       border: none;
       box-shadow: none;
       border-radius: 0;
-      padding: 0.2in;
-      gap: 0.08in;
+      padding: 0;
+      gap: 3mm 5mm;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.3;
     }
 
     .sheet h2 {
-      font-size: 20pt;
+      font-size: 16pt;
+      letter-spacing: 0.02em;
+      margin-bottom: 1mm;
     }
 
     .sheet h3 {
-      font-size: 12pt;
+      font-size: 10.5pt;
+      margin-bottom: 1.5mm;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid #bbb;
+      padding-bottom: 1mm;
+    }
+
+    .sheet > h2,
+    .sheet > .subtitle,
+    .sheet > .emergency,
+    .sheet > .source,
+    .sheet > section:nth-of-type(-n + 2) {
+      grid-column: 1 / -1;
+    }
+
+    .sheet section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-bottom: 1mm;
+    }
+
+    .sheet ul {
+      gap: 1.2mm;
+    }
+
+    .sheet li {
+      align-items: flex-start;
+      gap: 2.3mm;
+      line-height: 1.25;
+    }
+
+    .sheet input[type='checkbox'] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 3.8mm;
+      height: 3.8mm;
+      border: 1px solid #000;
+      border-radius: 0;
+      margin-top: 0.4mm;
+      transform: none;
+      background: #fff !important;
+    }
+
+    .subtitle,
+    .note,
+    .source,
+    .lines {
+      color: #111 !important;
+    }
+
+    .subtitle {
+      margin-bottom: 1.5mm;
+      font-size: 10pt;
     }
 
     .sheet,
@@ -456,6 +785,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       border: 1px solid #000;
       background: #fff !important;
       color: #000 !important;
+      margin-top: 2mm;
+      font-size: 10pt;
+      padding: 2.4mm 3mm;
+    }
+
+    .source {
+      margin-top: 1mm;
+      font-size: 8.6pt;
+      word-break: break-word;
+    }
+
+    .lines {
+      border: 1px dashed #888;
+      border-radius: 0;
+      padding: 2.2mm 2.8mm;
+      gap: 1.2mm;
     }
   }
 </style>

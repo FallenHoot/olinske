@@ -155,6 +155,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
         </section>
 
+        <section class="helper-card" aria-label="Preparedness helper recommendations">
+          <div class="helper-card-header">ANBEFALTE HJELPEVALG</div>
+          <div class="helper-grid">
+            <div class="helper-block">
+              <h4>Beste 2 grab boxes</h4>
+              <p><strong>SentrySafe CFW30200</strong><br />1 time ved 1700°F / 927°C, vannbestandig i opptil 72 timer, .36 cu ft, passer A4 og letter flat.</p>
+              <p><strong>SentrySafe LCFW30100</strong><br />UL + ETL, opptil 72 timer vann, bærbar keyed chest, .36 cu ft, lett å lagre nær utgang.</p>
+            </div>
+            <div class="helper-block">
+              <h4>Beste sveiveradio</h4>
+              <p><strong>Midland ER310</strong><br />Sveiv + sol + oppladbart batteri + AA-backup, NOAA/varsler, lommelykt og USB-nodlading for telefon.</p>
+            </div>
+          </div>
+        </section>
+
         <p class="emergency">NØDNUMMER: 110 BRANN | 112 POLITI | 113 AMBULANSE</p>
         <p class="source">Kilde: DSB Egenberedskap - https://www.dsb.no/sikkerhverdag/egenberedskap/ <span class="updated">Sist oppdatert: 2026-07-19</span></p>
       </article>
@@ -286,6 +301,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div class="war-card-line">
               <span>Grab first:</span>
               <strong>ID, medicine, water, phone, GO BOX</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="helper-card" aria-label="Preparedness helper recommendations">
+          <div class="helper-card-header">RECOMMENDED PICKS</div>
+          <div class="helper-grid">
+            <div class="helper-block">
+              <h4>Best 2 grab boxes</h4>
+              <p><strong>SentrySafe CFW30200</strong><br />1 hour at 1700°F / 927°C, water resistant up to 72 hours, .36 cu ft, holds letter and A4 flat.</p>
+              <p><strong>SentrySafe LCFW30100</strong><br />UL + ETL, up to 72 hours water protection, portable keyed chest, .36 cu ft, easy to store near an exit.</p>
+            </div>
+            <div class="helper-block">
+              <h4>Best crank radio</h4>
+              <p><strong>Midland ER310</strong><br />Crank + solar + rechargeable battery + AA backup, weather alerts, flashlight, and USB emergency phone charging.</p>
             </div>
           </div>
         </section>
@@ -1010,6 +1040,56 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     letter-spacing: 0.01em;
   }
 
+  .poster .helper-card {
+    border: 2px solid #c8d0da;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #fbfcfe 0%, #eef3f8 100%);
+    padding: 0.55rem 0.65rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .poster .helper-card-header {
+    font-size: clamp(0.95rem, 1.85vw, 1.28rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #182230;
+  }
+
+  .poster .helper-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.55rem;
+  }
+
+  .poster .helper-block {
+    border: 1px solid #d7dde5;
+    border-radius: 6px;
+    background: #fff;
+    padding: 0.45rem 0.5rem;
+  }
+
+  .poster .helper-block h4 {
+    margin: 0 0 0.3rem;
+    font-size: clamp(0.88rem, 1.5vw, 1.1rem);
+    font-weight: 900;
+    color: #111;
+    text-transform: uppercase;
+  }
+
+  .poster .helper-block p {
+    margin: 0 0 0.35rem;
+    font-size: clamp(0.74rem, 1.06vw, 0.92rem);
+    line-height: 1.2;
+    color: #182230;
+    font-weight: 600;
+  }
+
+  .poster .helper-block p:last-child {
+    margin-bottom: 0;
+  }
+
   .poster .source {
     margin-top: 0.16rem;
     display: flex;
@@ -1034,7 +1114,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     .poster .top-grid,
     .poster .go-grid,
     .poster .checklist.two-col,
-    .poster .war-card-grid {
+    .poster .war-card-grid,
+    .poster .helper-grid {
       grid-template-columns: 1fr;
     }
 
@@ -1160,6 +1241,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     .sheet > h2,
     .sheet > .subtitle,
     .sheet > .war-card,
+    .sheet > .helper-card,
     .sheet > .emergency,
     .sheet > .source,
     .sheet > section:nth-of-type(-n + 2) {
@@ -1264,6 +1346,45 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       gap: 0.4mm;
     }
 
+    .helper-card {
+      border: 1px solid #777;
+      border-radius: 0;
+      background: #fff !important;
+      padding: 1.8mm 2.2mm;
+      gap: 1mm;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .helper-card-header {
+      font-size: 9pt;
+      letter-spacing: 0.06em;
+    }
+
+    .helper-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1mm 2mm;
+    }
+
+    .helper-block {
+      border: 1px solid #999;
+      border-radius: 0;
+      padding: 1.3mm 1.6mm;
+      background: #fff !important;
+    }
+
+    .helper-block h4 {
+      margin: 0 0 0.8mm;
+      font-size: 8.1pt;
+    }
+
+    .helper-block p {
+      margin: 0 0 0.8mm;
+      font-size: 7.2pt;
+      line-height: 1.18;
+    }
+
     .poster .block {
       padding-left: 14mm;
       min-height: 0;
@@ -1301,7 +1422,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     .poster .go-grid,
     .poster .war-card-grid,
     .poster .top-grid,
-    .poster .checklist.two-col {
+    .poster .checklist.two-col,
+    .poster .helper-grid {
       grid-template-columns: 1fr 1fr;
     }
   }

@@ -70,6 +70,10 @@ At a physical level, the chain is straightforward:
 
 Water usually appears most materially at the facility heat-rejection boundary, not as a direct feed to each server component.
 
+![Original schematic of a data center cooling loop showing the heat exchanger, cooling tower, evaporation, blowdown, and makeup water](/images/data-center-cooling-water-loop.svg)
+
+*Original schematic. The facility loop can recirculate water or coolant while evaporation, blowdown, and makeup water remain separate accounting pathways.*
+
 To follow the water, separate five ledgers:
 
 1. Direct onsite consumption.

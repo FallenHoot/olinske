@@ -13,7 +13,7 @@ tags:
 status: published
 ---
 
-The most quoted number in the AI water debate is often meaningless.
+The most quoted number in the AI water debate is often misleading without its boundary.
 
 The arithmetic may be correct. The problem is that the number may describe withdrawal, direct consumption, discharge, or water used to generate electricity, while the audience assumes it means something else.
 
@@ -94,21 +94,6 @@ Semiconductor, server, and construction lifecycle water.
 **State the boundary before you state the number.**
 
 The rest of this article follows that water through the system, from source to treatment to cooling and finally to evaporation, discharge, or return flow.
-
-```mermaid
-flowchart TD
-  A[Water source] --> B[Withdrawal]
-  B --> C[Treatment and distribution]
-  C --> D[Data-center cooling]
-  D --> E[Evaporation]
-  D --> F[Discharge and treatment reject]
-  D --> G[Return flow]
-  D --> H[Recirculating loop]
-  E --> I[Direct onsite consumption]
-  F --> J[Wastewater pathway]
-  G --> K[Basin context]
-  H --> D
-```
 
 The diagram is the article's core model. Every water claim should be clear about which stage or pathway it describes.
 
@@ -204,7 +189,7 @@ The practical question is not whether dry, evaporative, or liquid cooling is uni
 
 ## Illustrative scenario results
 
-We have now followed the water from source to cooling and seen how location and architecture change its meaning. The next question is what happens when capacity grows. A three-metro model illustrates how growth and efficiency interact. These are derived outputs under stated assumptions, not measured facility, metro, or operator inventory.
+We have now followed the water from source to cooling and seen how location and architecture change its meaning. The next question is what happens when capacity grows. A scenario model illustrates how growth and efficiency interact. These are derived outputs under stated assumptions, not measured facility, region, or operator inventory.
 
 | Scenario | Annual direct consumption | Average daily direct consumption |
 |---|---:|---:|
@@ -258,10 +243,12 @@ The future of AI infrastructure may be constrained by power, water, or permittin
 
 ## Final take
 
-The most quoted number in the AI water debate is often meaningless until its boundary is clear. Water use becomes a real infrastructure question only when the number is connected to a source, a basin, a cooling design, a power system, and a decision.
+The most quoted number in the AI water debate is often misleading without its boundary. Water use becomes a real infrastructure question only when the number is connected to a source, a basin, a cooling design, a power system, and a decision.
 
 State the boundary before you state the number. That is how a headline debate becomes actionable infrastructure planning.
 
-## Sources and evidence posture
+## Sources
 
-This article uses an operator-neutral framework built from public operator disclosures, independent research, policy analysis, utility publications, and national modeling. The numerical examples in this article are illustrative calculations, not a global inventory or a claim about any single operator. Water figures should always be read with their metric, period, geography, and accounting boundary attached.
+This article uses an operator-neutral framework built from public operator disclosures, independent research, policy analysis, utility publications, and national modeling. See [zacholinske/water-research-data-center](https://github.com/zacholinske/water-research-data-center) for working documentation and source materials.
+
+The numerical examples in this article are illustrative calculations, not a global inventory or a claim about any single operator. Water figures should always be read with their metric, period, geography, and accounting boundary attached.

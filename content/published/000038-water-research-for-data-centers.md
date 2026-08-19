@@ -1,5 +1,5 @@
 ---
-title: How Much Water Do Data Centers Use? The Number Most People Quote Is Wrong
+title: How Much Water Do Data Centers Use? Start With the Boundary
 description: >-
   A practical framework for data center water use: withdrawal vs consumption,
   basin risk, cooling architecture, and power-water tradeoffs.
@@ -13,21 +13,11 @@ tags:
 status: published
 ---
 
-The most quoted number in the AI water debate is often misleading without its boundary.
+There is no universal data-center water-use number. The result changes with the accounting boundary, cooling architecture, utilization, climate, source water, and operating mode.
 
-The arithmetic may be correct. The problem is that the number may describe withdrawal, direct consumption, discharge, or water used to generate electricity, while the audience assumes it means something else.
+The first useful answer is a transparent example. For a **100 MW (megawatt) site at 70% average utilization**, this illustrative model estimates direct onsite consumption as follows:
 
-Two data centers can use the same amount of water and have completely different environmental impacts. One may draw from a stressed basin during a drought. The other may use reclaimed water in a basin with more reliable supply and return flows.
-
-So the useful question is not only “How much water do data centers use?”. It is “Which water are we measuring, where does it come from, and what happens after the cooling system uses it?”.
-
-## The direct answer first
-
-How much water does a data center use?
-
-The answer might surprise you, but there is no universal number. The fact is, it changes with boundary, cooling architecture, utilization, climate, source water, and operating mode.
-
-Before the numbers, three terms matter. WUE, or Water Usage Effectiveness, measures liters of direct site water per kilowatt-hour of IT energy. IT means the computing load from servers and related hardware. A MW is a megawatt, or one million watts of power.
+WUE, or Water Usage Effectiveness, measures liters of direct site water per kilowatt-hour of IT energy. IT means the computing load from servers and related hardware. This table measures only water consumed at the site; it is not withdrawal, discharge, electricity-system water, or embodied water.
 
 For a **100 MW (megawatt) site at 70% average utilization**, this illustrative direct-onsite-consumption model gives:
 
@@ -53,13 +43,28 @@ Using the same illustrative 0.50 L/kWh model above:
 - A 40 kW rack uses about 336 liters, or 89 gallons, of direct onsite water per day.
 - One pool is roughly 7,400 rack-days at that rack density and model assumption.
 - The 100 MW site uses about one pool of direct onsite water every three days.
-- Georgia Aquarium reports more than 11 million gallons of water held in its tanks. At the model's 0.50 L/kWh rate, the 100 MW site would equal that one-time stored volume in about 50 days.
 
 The aquarium comparison is about stored volume, not its water use or annual consumption. More broadly, these are volume equivalents, not impact equivalents. A pool, a zoo, a water park, and a data center can have very different water sources, return flows, seasonal patterns, and local constraints. The comparison makes scale visible; the basin still determines the risk.
 
-The number is a useful starting point. It cannot tell us much until we know what water it counts and where that water goes.
+The table is a useful starting point, not a universal benchmark. The boundary and assumptions have to travel with the number.
 
-## How water moves through a data center
+## What the number means
+
+Direct consumption is water lost to evaporation or otherwise not returned to the source watershed. Withdrawal is water taken from a source; some of it may be returned. Discharge includes blowdown and treatment reject. Indirect electricity-system water is associated with generating the site's electricity. Embodied water covers manufacturing and construction.
+
+Those ledgers are related, but they are not interchangeable:
+
+| Ledger | What it measures |
+|---|---|
+| Direct onsite consumption | Water consumed by cooling and other site processes |
+| Withdrawal | Water taken from a utility, river, reservoir, aquifer, or other source |
+| Discharge and treatment reject | Blowdown, RO reject, and related wastewater streams |
+| Indirect electricity-system water | Water associated with generating site electricity |
+| Embodied water | Lifecycle water used for semiconductors, servers, buildings, and equipment |
+
+This distinction matters because a withdrawal number can be much larger than consumption, while a direct site number can omit substantial upstream water. It also explains why two facilities with the same headline figure can face different environmental and infrastructure risks.
+
+## How cooling uses water
 
 At a physical level, the chain is straightforward:
 
@@ -74,79 +79,19 @@ Water usually appears most materially at the facility heat-rejection boundary, n
 
 *Original schematic. The facility loop can recirculate water or coolant while evaporation, blowdown, and makeup water remain separate accounting pathways.*
 
-To follow the water, separate five ledgers:
+IT equipment turns electricity into heat. Fans, cold plates, and coolant loops move that heat from chip to rack to facility systems. Heat rejection then determines whether the site uses evaporation, dry air, liquid cooling, or a hybrid approach. The facility loop can recirculate fluid many times; makeup water, evaporation, blowdown, and treatment reject are the distinct accounting pathways.
 
-1. Direct onsite consumption.
-Commonly evaporation and other non-returned water.
+The diagram is the physical model behind the table. To understand risk, trace the water from source to treatment, cooling, discharge, evaporation, or return flow.
 
-2. Withdrawal.
-Water pulled from a source or utility.
+## Why location changes the risk
 
-3. Discharge and treatment reject.
-Blowdown, RO (reverse osmosis) reject, and related wastewater.
+The same volume can mean very different things in different basins. **100 ML in one location is not the same risk as 100 ML in another location.**
 
-4. Indirect electricity-system water.
-Water linked to generation for site electricity.
-
-5. Embodied water.
-Semiconductor, server, and construction lifecycle water.
-
-**State the boundary before you state the number.**
-
-The rest of this article follows that water through the system, from source to treatment to cooling and finally to evaporation, discharge, or return flow.
-
-The diagram is the article's core model. Every water claim should be clear about which stage or pathway it describes.
-
-## The full cycle: from hydrologic source to return
-
-That boundary becomes clearer when you trace one unit of water from source to return.
-
-### 1) Basin formation and storage
-
-Precipitation, snowpack, and inflow feed rivers, reservoirs, and aquifers. Basin seasonality starts here.
-
-### 2) Allocation and intake rights
-
-Utilities and rights-holders convert hydrology into legal and operational access through permits, contracts, and curtailment rules.
-
-### 3) Treatment and distribution
-
-Raw water is conditioned to required quality and delivered. Quality constraints can introduce reject and loss streams before cooling.
-
-### 4) Facility cooling operation
-
-Water and coolant loops transfer heat from IT to facility systems. Closed loops recirculate fluid; losses concentrate in specific subsystems.
-
-### 5) Heat rejection and discharge
-
-Evaporation, blowdown, and treatment reject define direct consumption and wastewater behavior.
-
-### 6) Return pathway and hydrologic meaning
-
-Return flow is not automatically equivalent to replenishment. Timing, location, and quality determine whether return volume has basin value.
-
-## Why identical water numbers can imply very different risk
-
-Once water has a source, a route, and a return path, the next question is where the facility sits.
-
-**100 ML in one location is not the same risk as 100 ML in another location.**
-
-Risk depends on basin context:
-
-- watershed and source reliability,
-- seasonal recharge and snowpack dependence,
-- drought recurrence and curtailment rules,
-- groundwater depletion trend and recovery lag,
-- competing municipal, agricultural, and industrial demand,
-- return-flow timing, location, and quality.
-
-Two facilities with the same annual direct consumption can have completely different local impact profiles.
-
-That is why hydrologic context has to sit beside WUE, not behind it.
+Risk depends on watershed and source reliability, seasonal recharge, drought recurrence, groundwater trends, competing demand, and the timing, location, and quality of return flows. Return flow is not automatically equivalent to replenishment.
 
 Consider two 100 MW facilities with identical annual direct water consumption. One sits in a basin with recurring drought restrictions and declining groundwater levels. The other operates in a water-abundant basin with stronger seasonal recharge and reclaimed-water availability. The ledger can be identical while the infrastructure risk is completely different.
 
-Location changes the risk. Design determines how much flexibility the facility has within that risk.
+Location changes the risk; design determines how much flexibility the facility has within it.
 
 ## Does build year, retrofit depth, AI density, and location matter?
 
@@ -177,13 +122,9 @@ The design table points to an uncomfortable tradeoff. Dry or mostly dry cooling 
 
 That means a reduction in direct onsite water is not automatically a reduction in total water impact. It may be a real improvement at the facility while shifting part of the burden to the electricity system.
 
-A complete review therefore keeps three terms visible:
+> **Total water impact includes direct site water, water associated with electricity generation, and embodied water used to manufacture the equipment and buildings.**
 
-$$
-W_{total} = W_{direct,site} + W_{indirect,electricity} + W_{embodied}
-$$
-
-In plain language, total water impact includes water consumed at the site, water associated with generating its electricity, and water used to manufacture the equipment and buildings. This article's WUE calculation covers only the first term.
+This article's WUE calculation covers only direct site water. Dry cooling may reduce that term while increasing electricity demand, so the power system has to stay visible in the review.
 
 The practical question is not whether dry, evaporative, or liquid cooling is universally best. It is which design produces the most defensible balance for this workload, this power system, and this basin.
 
@@ -249,6 +190,6 @@ State the boundary before you state the number. That is how a headline debate be
 
 ## Sources
 
-This article uses an operator-neutral framework built from public operator disclosures, independent research, policy analysis, utility publications, and national modeling. See [zacholinske/water-research-data-center](https://github.com/zacholinske/water-research-data-center) for working documentation and source materials.
+This article uses an operator-neutral framework built from public operator disclosures, independent research, policy analysis, utility publications, and national modeling. Relevant public sources include the [LBNL 2024 United States Data Center Energy Usage Report](https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf), [Ceres' *Drained by Data*](https://www.ceres.org/resources/reports/drained-by-data-the-cumulative-impact-of-data-centers-on-regional-water-stress), the [AWWA *Cooling the Cloud* white paper](https://www.awwa.org/cooling-the-cloud-water-utilities-in-a-data-driven-world/), the [2021 *npj Clean Water* study](https://www.nature.com/articles/s41545-021-00101-w), and [Google's water stewardship disclosure](https://datacenters.google/water/).
 
 The numerical examples in this article are illustrative calculations, not a global inventory or a claim about any single operator. Water figures should always be read with their metric, period, geography, and accounting boundary attached.

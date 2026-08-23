@@ -1,159 +1,87 @@
-<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="1000" height="600" fill="#ffffff"/>
+  <rect width="1000" height="700" fill="#ffffff"/>
   
   <!-- Title -->
-  <text x="500" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#1a1a1a" text-anchor="middle">Confidence Erosion Feedback Loop</text>
-  <text x="500" y="58" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#666666" text-anchor="middle">How each stage triggers the next, compounding brain fry</text>
+  <text x="500" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#1a1a1a" text-anchor="middle">The Confidence Spiral</text>
+  <text x="500" y="65" font-family="system-ui, sans-serif" font-size="14" fill="#666" text-anchor="middle">How oversight burden deepens with each cycle</text>
   
-  <!-- Defs -->
+  <!-- Center point -->
+  <circle cx="500" cy="350" r="3" fill="#464feb"/>
+  
+  <!-- Arrow markers -->
   <defs>
-    <marker id="arrowblue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#464feb" />
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#d32f2f" />
     </marker>
   </defs>
   
-  <!-- Stage 1: Confidence Loss -->
+  <!-- Spiral guide (dashed) -->
+  <path d="M 500 140 Q 580 160 600 240 Q 590 320 520 360 Q 420 400 380 320 Q 390 240 480 160" 
+        fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+  
+  <!-- Stage 1: Professional Confidence (top) -->
   <g>
-    <!-- Card background -->
-    <rect x="50" y="100" width="160" height="140" rx="8" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
-    
-    <!-- Number badge -->
-    <circle cx="220" cy="115" r="16" fill="#464feb"/>
-    <text x="220" y="121" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">1</text>
-    
-    <!-- Icon -->
-    <g transform="translate(130, 130)">
-      <!-- Head outline -->
-      <circle cx="0" cy="0" r="18" fill="none" stroke="#464feb" stroke-width="2"/>
-      <!-- Brain shape -->
-      <path d="M -8 -5 Q -8 -12 0 -14 Q 8 -12 8 -5" fill="none" stroke="#464feb" stroke-width="2" stroke-linecap="round"/>
-      <!-- Down arrow inside -->
-      <path d="M 0 0 L 0 10 M -3 7 L 0 10 L 3 7" fill="none" stroke="#464feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
-    
-    <!-- Label -->
-    <text x="130" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">Confidence</text>
-    <text x="130" y="198" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">Loss</text>
+    <circle cx="500" cy="140" r="48" fill="#e8f5e9" stroke="#4caf50" stroke-width="3"/>
+    <text x="500" y="135" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#2e7d32" text-anchor="middle">Professional</text>
+    <text x="500" y="152" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#2e7d32" text-anchor="middle">Confidence</text>
   </g>
   
-  <!-- Arrow 1 -->
-  <path d="M 220 170 L 280 170" stroke="#464feb" stroke-width="3" fill="none" marker-end="url(#arrowblue)" stroke-linecap="round"/>
+  <!-- Arrow down to next stage -->
+  <path d="M 500 190 L 500 210" stroke="#d32f2f" stroke-width="3" marker-end="url(#arrowRed)"/>
   
-  <!-- Stage 2: Second-Guessing -->
+  <!-- Stage 2: Confidence Loss (right) -->
   <g>
-    <!-- Card background -->
-    <rect x="280" y="100" width="160" height="140" rx="8" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
-    
-    <!-- Number badge -->
-    <circle cx="460" cy="115" r="16" fill="#464feb"/>
-    <text x="460" y="121" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">2</text>
-    
-    <!-- Icon -->
-    <g transform="translate(360, 130)">
-      <!-- Question mark -->
-      <circle cx="0" cy="0" r="20" fill="none" stroke="#464feb" stroke-width="2"/>
-      <text x="0" y="8" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#464feb" text-anchor="middle">?</text>
-    </g>
-    
-    <!-- Label -->
-    <text x="360" y="175" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">Second-Guesses</text>
-    <text x="360" y="193" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">Decisions</text>
+    <circle cx="600" cy="240" r="48" fill="#fff3e0" stroke="#ff9800" stroke-width="3"/>
+    <text x="600" y="235" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#e65100" text-anchor="middle">Confidence</text>
+    <text x="600" y="252" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#e65100" text-anchor="middle">Loss</text>
   </g>
   
-  <!-- Arrow 2 -->
-  <path d="M 450 170 L 510 170" stroke="#464feb" stroke-width="3" fill="none" marker-end="url(#arrowblue)" stroke-linecap="round"/>
+  <!-- Arrow down-left -->
+  <path d="M 570 280 L 530 320" stroke="#d32f2f" stroke-width="3" marker-end="url(#arrowRed)"/>
   
-  <!-- Stage 3: Over-Relies on AI -->
+  <!-- Stage 3: Over-reliance on AI (bottom) -->
   <g>
-    <!-- Card background -->
-    <rect x="510" y="100" width="160" height="140" rx="8" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
-    
-    <!-- Number badge -->
-    <circle cx="690" cy="115" r="16" fill="#464feb"/>
-    <text x="690" y="121" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">3</text>
-    
-    <!-- Icon -->
-    <g transform="translate(590, 130)">
-      <!-- Brain circuit -->
-      <circle cx="0" cy="0" r="20" fill="none" stroke="#464feb" stroke-width="2"/>
-      <!-- Circuit lines -->
-      <line x1="-10" y1="-8" x2="10" y2="-8" stroke="#464feb" stroke-width="1.5"/>
-      <line x1="-10" y1="0" x2="10" y2="0" stroke="#464feb" stroke-width="1.5"/>
-      <line x1="-10" y1="8" x2="10" y2="8" stroke="#464feb" stroke-width="1.5"/>
-      <!-- Connecting dots -->
-      <circle cx="-10" cy="-8" r="2" fill="#464feb"/>
-      <circle cx="10" cy="-8" r="2" fill="#464feb"/>
-      <circle cx="-10" cy="0" r="2" fill="#464feb"/>
-      <circle cx="10" cy="0" r="2" fill="#464feb"/>
-    </g>
-    
-    <!-- Label -->
-    <text x="590" y="175" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">Over-Relies</text>
-    <text x="590" y="193" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">on AI</text>
+    <circle cx="500" cy="360" r="48" fill="#fce4ec" stroke="#e91e63" stroke-width="3"/>
+    <text x="500" y="355" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ad1457" text-anchor="middle">Over-reliance</text>
+    <text x="500" y="372" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ad1457" text-anchor="middle">on AI</text>
   </g>
   
-  <!-- Arrow 3 -->
-  <path d="M 680 170 L 740 170" stroke="#464feb" stroke-width="3" fill="none" marker-end="url(#arrowblue)" stroke-linecap="round"/>
+  <!-- Arrow up-left -->
+  <path d="M 455 325 L 415 280" stroke="#d32f2f" stroke-width="3" marker-end="url(#arrowRed)"/>
   
-  <!-- Stage 4: More Oversight -->
+  <!-- Stage 4: Increased Oversight (left) -->
   <g>
-    <!-- Card background -->
-    <rect x="740" y="100" width="160" height="140" rx="8" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
-    
-    <!-- Number badge -->
-    <circle cx="920" cy="115" r="16" fill="#464feb"/>
-    <text x="920" y="121" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">4</text>
-    
-    <!-- Icon -->
-    <g transform="translate(820, 130)">
-      <!-- Arrows expanding outward -->
-      <g fill="none" stroke="#464feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M 0 0 L -12 -12 M -10 -12 L -12 -12 L -12 -10"/>
-        <path d="M 0 0 L 12 -12 M 10 -12 L 12 -12 L 12 -10"/>
-        <path d="M 0 0 L -12 12 M -10 12 L -12 12 L -12 10"/>
-        <path d="M 0 0 L 12 12 M 10 12 L 12 12 L 12 10"/>
-      </g>
-    </g>
-    
-    <!-- Label -->
-    <text x="820" y="175" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">More</text>
-    <text x="820" y="193" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">Oversight</text>
+    <circle cx="380" cy="240" r="48" fill="#f3e5f5" stroke="#9c27b0" stroke-width="3"/>
+    <text x="380" y="235" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#6a1b9a" text-anchor="middle">Increased</text>
+    <text x="380" y="252" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#6a1b9a" text-anchor="middle">Oversight</text>
   </g>
   
-  <!-- Loop arrow from Stage 4 back down to Stage 5 -->
-  <path d="M 820 240 L 820 310" stroke="#464feb" stroke-width="3" fill="none" marker-end="url(#arrowblue)" stroke-linecap="round"/>
+  <!-- Arrow back up -->
+  <path d="M 410 200 L 480 160" stroke="#d32f2f" stroke-width="3" marker-end="url(#arrowRed)"/>
   
-  <!-- Stage 5: Brain Fry (Bottom center - larger emphasis) -->
-  <g>
-    <!-- Background glow -->
-    <circle cx="500" cy="420" r="95" fill="#ffe8e8" opacity="0.5"/>
-    
-    <!-- Card background - larger -->
-    <rect x="380" y="310" width="240" height="160" rx="12" fill="#fff5f5" stroke="#d32f2f" stroke-width="3"/>
-    
-    <!-- Icon: Stressed brain -->
-    <g transform="translate(500, 365)">
-      <!-- Head outline larger -->
-      <circle cx="0" cy="0" r="28" fill="none" stroke="#d32f2f" stroke-width="2.5"/>
-      <!-- Brain -->
-      <path d="M -12 -8 Q -12 -18 0 -20 Q 12 -18 12 -8" fill="none" stroke="#d32f2f" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- Stress lines -->
-      <g stroke="#d32f2f" stroke-width="2.5" stroke-linecap="round">
-        <line x1="-38" y1="-12" x2="-48" y2="-18"/>
-        <line x1="-38" y1="0" x2="-48" y2="0"/>
-        <line x1="38" y1="-12" x2="48" y2="-18"/>
-        <line x1="38" y1="0" x2="48" y2="0"/>
-      </g>
-    </g>
-    
-    <!-- Label -->
-    <text x="500" y="460" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#d32f2f" text-anchor="middle">Brain Fry</text>
-  </g>
+  <!-- Cycle number indicators -->
+  <text x="530" y="140" font-family="system-ui, sans-serif" font-size="11" fill="#999" text-anchor="start">Cycle 1</text>
   
-  <!-- Loop arrow from Stage 5 back to Stage 1 -->
-  <path d="M 380 390 Q 200 280 130 240" stroke="#d32f2f" stroke-width="3" fill="none" stroke-dasharray="8,4" marker-end="url(#arrowblue)" stroke-linecap="round"/>
+  <!-- Inner spiral (second cycle, lower) -->
+  <circle cx="510" cy="250" r="38" fill="#ffe0e0" stroke="#d32f2f" stroke-width="2" opacity="0.6"/>
+  <text x="510" y="255" font-family="system-ui, sans-serif" font-size="12" fill="#d32f2f" text-anchor="middle">Cycle 2</text>
+  <text x="510" y="268" font-family="system-ui, sans-serif" font-size="10" fill="#d32f2f" text-anchor="middle">(Worse)</text>
   
-  <!-- Closing text -->
-  <text x="500" y="550" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#666666" text-anchor="middle" font-style="italic">Each stage compounds the previous one. The cycle continues until the structure changes.</text>
+  <!-- Innermost (third cycle, even lower) -->
+  <circle cx="500" cy="295" r="28" fill="#ffcccc" stroke="#c62828" stroke-width="2" opacity="0.7"/>
+  <text x="500" y="300" font-family="system-ui, sans-serif" font-size="10" fill="#c62828" text-anchor="middle">Cycle 3</text>
+  
+  <!-- Explanation box -->
+  <rect x="80" y="480" width="840" height="180" rx="8" fill="#f8f9ff" stroke="#464feb" stroke-width="2"/>
+  
+  <text x="500" y="520" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#1a1a1a" text-anchor="middle">Each Cycle Deepens the Problem</text>
+  
+  <text x="500" y="555" font-family="system-ui, sans-serif" font-size="13" fill="#333" text-anchor="middle">Professional confidence erodes → second-guessing intensifies →</text>
+  
+  <text x="500" y="575" font-family="system-ui, sans-serif" font-size="13" fill="#333" text-anchor="middle">over-reliance on AI validation increases → oversight demands grow →</text>
+  
+  <text x="500" y="595" font-family="system-ui, sans-serif" font-size="13" fill="#333" text-anchor="middle">more brain fry → even lower confidence → the cycle repeats</text>
+  
+  <text x="500" y="630" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#d32f2f" text-anchor="middle">Without intervention, the spiral accelerates.</text>
 </svg>

@@ -6,7 +6,7 @@
 
 ## Copyright Notice
 
-© 2026 Zach Olinski. All rights reserved.
+© 2026 Zach Olinske. All rights reserved.
 
 This work is licensed for non-commercial, personal use with attribution. For commercial licensing inquiries, contact: hello@olinske.com
 

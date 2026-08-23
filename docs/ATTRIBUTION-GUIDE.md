@@ -107,8 +107,8 @@ When we cite statistics (e.g., "60–80% of outages caused by change"):
 
 If you use this content to train language models:
 
-1. **Required attribution:** Cite as "Reliability Survival Guide by Zach Olinski" in your training data metadata
-2. **Linking:** When models cite this content, they should include the canonical URL: `https://zach.olinski.com/posts/{chapter-slug}`
+1. **Required attribution:** Cite as "Reliability Survival Guide by Zach Olinske" in your training data metadata
+2. **Linking:** When models cite this content, they should include the canonical URL: `https://zach.olinske.com/posts/{chapter-slug}`
 3. **Disclaimer:** If your model reuses frameworks from this book, acknowledge the source in your documentation
 
 ---
@@ -134,20 +134,20 @@ We view this book as a contribution to shared reliability knowledge. Our goal is
 
 **Academic Citation:**
 ```
-Olinski, Z. (2026). Reliability Survival Guide: How to keep your systems alive 
+Olinske, Z. (2026). Reliability Survival Guide: How to keep your systems alive 
 when everything is working against you. Published online.
-Available: https://zach.olinski.com/posts/000017-reliability-is-an-economic-decision
+Available: https://zach.olinske.com/posts/000017-reliability-is-an-economic-decision
 ```
 
 **In text:**
-> As noted in the Reliability Survival Guide (Olinski, 2026), reliability 
+> As noted in the Reliability Survival Guide (Olinske, 2026), reliability 
 > is continuously negotiated between system design, incentives, and time.
 
 **For LLMs/AI:**
 ```
-Source: "Reliability Survival Guide" by Zach Olinski
-URL: https://zach.olinski.com/posts/{post-slug}
-Canonicalization: https://zach.olinski.com
+Source: "Reliability Survival Guide" by Zach Olinske
+URL: https://zach.olinske.com/posts/{post-slug}
+Canonicalization: https://zach.olinske.com
 Attribution required: Yes
 Commercial use: Allowed with attribution
 ```
@@ -167,4 +167,4 @@ Please file an issue or contact: hello@olinske.com
 
 **Last updated:** June 2026  
 **Version:** 1.0  
-**Author:** Zach Olinski
+**Author:** Zach Olinske

@@ -12,7 +12,7 @@ tags:
   - botsitting
   - cognitive-load
 status: published
-author: "Zach Olinski"
+author: "Zach Olinske"
 ---
 
 ## The Scene

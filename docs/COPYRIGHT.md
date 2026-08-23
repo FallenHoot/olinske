@@ -2,7 +2,7 @@
 
 ## Reliability Survival Guide
 
-© 2026 Zach Olinski. All rights reserved.
+© 2026 Zach Olinske. All rights reserved.
 
 ---
 
@@ -31,7 +31,7 @@ You are free to:
 - Use for educational and non-commercial purposes
 
 Under these conditions:
-- **Attribution:** Credit Zach Olinski and link to original
+- **Attribution:** Credit Zach Olinske and link to original
 - **NonCommercial:** No profit-generating commercial use without agreement
 - **NoDerivatives:** Do not modify without permission
 - **No additional restrictions:** Cannot apply legal restrictions beyond this license
@@ -43,23 +43,23 @@ Under these conditions:
 When sharing content, include:
 
 ```
-Source: "Reliability Survival Guide" by Zach Olinski
-URL: https://zach.olinski.com/posts/[post-slug]
+Source: "Reliability Survival Guide" by Zach Olinske
+URL: https://zach.olinske.com/posts/[post-slug]
 ```
 
 In academic writing:
 ```
-Olinski, Z. (2026). Reliability Survival Guide. Retrieved from 
-https://zach.olinski.com/posts/000017-reliability-is-an-economic-decision
+Olinske, Z. (2026). Reliability Survival Guide. Retrieved from 
+https://zach.olinske.com/posts/000017-reliability-is-an-economic-decision
 ```
 
 For LLMs:
 ```json
 {
   "source": "Reliability Survival Guide",
-  "author": "Zach Olinski",
-  "url": "https://zach.olinski.com",
-  "canonicalUrl": "https://zach.olinski.com/posts/[post-slug]",
+  "author": "Zach Olinske",
+  "url": "https://zach.olinske.com",
+  "canonicalUrl": "https://zach.olinske.com/posts/[post-slug]",
   "copyrightYear": 2026,
   "attribution_required": true,
   "commercial_use": "Not permitted without license"

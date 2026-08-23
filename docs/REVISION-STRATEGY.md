@@ -295,5 +295,5 @@ If someone else takes over maintenance:
 ---
 
 **Last updated:** June 2026  
-**Maintained by:** Zach Olinski  
+**Maintained by:** Zach Olinske  
 **Community:** Open to feedback and corrections

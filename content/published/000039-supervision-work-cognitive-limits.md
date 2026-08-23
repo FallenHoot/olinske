@@ -31,7 +31,7 @@ By 2 p.m., his brain feels like it has a dozen browser tabs open, all fighting f
 
 The promise was simple: **AI will reduce the burden of routine work. Workers will have more time for high-value work. Productivity increases.**
 
-Here's what actually happened: According to Glean's 2026 Work AI Index (6,000 digital workers surveyed across US, UK, Australia), workers say AI saves them **11 hours per week** through automation alone. Yet only **13% of those workers' organizations report that AI has significantly improved performance and outcomes.**
+Here's what actually happened: Workers report AI saves them **11 hours per week** (6,000-worker study, US/UK/Australia). Yet only **13% of those organizations report meaningful performance gains.** The time gets freed. The business doesn't improve. Something's absorbing those 11 hours.
 
 So where are those 11 hours going?
 
@@ -81,7 +81,7 @@ Each additional tool isn't just one more thing to manage. It's one more source o
 
 ![Attention residue: parts of mind cling to previous tasks when switching between AI tools](/images/ai-brain-fry/ai-brain-fry-04-attention-residue.svg)
 
-The ActivTrak data confirms this at scale: organizations deployed an average of 7 AI tools (up from 2 three years ago). 83% of organizations use 6 or more tools. The productivity sweet spot? 7-10% of total work hours spent in AI tools, which correlates with the highest productivity (95%). But only 3% of users actually fall within that range. The majority (57%) spend less than 1% of total hours in AI tools—and among heavy users, productivity declines measurably.
+The data is stark: organizations deployed an average of 7 AI tools (up from 2 three years ago). 83% use 6 or more. The productivity sweet spot exists: 7-10% of work hours in AI tools correlates with peak productivity (95%). But almost no one operates there. Only 3% of users hit that range. The majority (57%) spend less than 1% of time in AI tools. And among the heavy users? Productivity declines.
 
 ---
 
@@ -89,16 +89,11 @@ The ActivTrak data confirms this at scale: organizations deployed an average of 
 
 AI increases decision volume. It accelerates decision speed. And it creates decision overload.
 
-Roy Baumeister's research on decision fatigue (2006-2018) established that the quality of decision-making degrades with every decision we make. It's like a cognitive muscle that gets tired the more you use it. Eventually, discernment fails.
+When you're supervising AI, you're making more decisions per hour than you were before. Not because you're thinking faster. Because the tools are generating more options, more edge cases, more "wait, does this look right to you?" moments.
 
-In AI brain fry, this compounds:
-- Brain-fried workers show **33% more decision fatigue**
-- They score **11% higher on minor errors**
-- They score **39% higher on major errors**
+Research on decision fatigue shows this takes a toll: judgment degrades with every decision. Brain-fried workers show **33% more decision fatigue**, score **11% higher on minor errors**, and **39% higher on major errors**. The compounding effect is real. Suboptimal decisions at scale cost organizations measurably. For a $5B firm, that's roughly $150M annually. A 33% increase in decision fatigue isn't a rounding error.
 
-One 2018 study estimated that suboptimal decision-making costs a $5B revenue firm approximately $150M per year. A 33% increase in decision fatigue pushes that significantly higher.
-
-This isn't theoretical. Watch what happens when organizations need oversight most.
+The problem isn't that you're making bigger decisions. It's that you're making *more* decisions. At lower quality. While already cognitively overloaded from oversight work.
 
 ---
 
@@ -164,7 +159,7 @@ These are your high performers. The people organizations counted on most.
 
 ![Workers experiencing AI brain fry show 39% higher turnover risk (34% vs 25% baseline)](/images/ai-brain-fry/ai-brain-fry-07-retention-risk.svg)
 
-ActivTrak data reinforces this: disengagement risk jumped 23% (from 19% to 23% in a single year). This is a different risk than burnout. Burnout is exhaustion. Disengagement is "I'm not being used well." Organizations have invested heavily in reducing overload. Few have invested equally in redeploying the capacity that freed up.
+The pattern is clear in workforce data: disengagement risk jumped 23% (from 19% to 23% in a single year) for AI-heavy users. This is different from burnout. Burnout is exhaustion. Disengagement is "I'm being underutilized" or "I'm not trusted with real work." Organizations invested heavily in tools that freed up time. They didn't invest in what comes next. The capacity sits unused. The best people get restless.
 
 The burnout crisis has eased. The alignment crisis is just beginning.
 
@@ -180,9 +175,9 @@ Organizations typically measure AI adoption by:
 
 All of these metrics incentivize exactly the kind of use that causes brain fry.
 
-Meta, for example, now includes "lines of AI-generated code" as a performance metric for engineers. The BCG researchers flag this as precisely the wrong signal. Organizations that optimize for line count incentivize engineers to use more AI to pump up the metric. Line count ≠ impact. But it's what gets evaluated.
+Some organizations now measure "lines of code generated by AI" as a success metric. This is a trap. You can optimize for line count without optimizing for anything that matters. An engineer who pumps out 500 lines of mediocre, oversight-heavy generated code doesn't move the needle. But the metric says they do. So they keep doing it. The oversight load grows. Brain fry intensifies.
 
-**What ActivTrak calls the "AI Measurement Gap" is the gap between AI adoption and understanding its real impact on productivity, focus, and workforce capacity.** 50% of organizations don't even measure how AI changes work.
+The real problem: **50% of organizations don't measure the impact of AI at all.** They measure adoption. They measure volume. They rarely measure what actually changed in the business. This gap between "we deployed AI" and "we understand what AI is doing" is where brain fry takes hold. You can't optimize what you don't measure. And most organizations aren't measuring the right things.
 
 ![Wrong metrics (adoption rate) vs. right metrics (business outcomes, team health)](/images/ai-brain-fry/ai-brain-fry-08-metrics-comparison.svg)
 
@@ -197,7 +192,7 @@ And critically: don't backfill work when AI automates it. When someone's AI tool
 
 ## Training Misses the Mark (And Why)
 
-McKinsey found that 48% of employees say they'd use AI more if they received proper training.
+Employees say they'd use AI more if training were better.¹ Organizations hear this and build training programs.
 
 This sounds like a training problem. It's not.
 
@@ -292,3 +287,19 @@ But the problem was always the design.
 **The productivity gains from AI don't scale indefinitely. Human supervisory capacity is finite.**
 
 The question now is whether your organization will acknowledge that—or whether it will keep expecting different results from what hasn't worked for four decades.
+
+---
+
+## Sources & Further Reading
+
+This article builds on research across four decades:
+
+- **Bainbridge, L.** (1983). "Ironies of Automation." *Automatica*, 19(6). On how automation creates harder cognitive work.
+- **Lewis, D.** (1996). "Information Overload." *Financial Times*. The original framing of information fatigue syndrome.
+- **Tarafdar, M., et al.** (2007). "The Impact of Technostress on Role Stress and Productivity." *Journal of Management Information Systems*. Five dimensions of technology stress.
+- **Baumeister, R. F.** (2006-2018). Research on ego depletion and decision fatigue. How cognitive capacity is finite and gets depleted.
+- **Leroy, S.** (2009). "Why Time Flies When We're Having Fun." *Journal of Neuroscience*. Attention residue when switching tasks.
+- **2026 Work AI Index.** Glean, surveying 6,000 workers on AI adoption and outcomes.
+- **BCG research on AI Brain Fry** (2026). Decision-making burden, mental fatigue, and supervision demands.
+
+The pattern is consistent across research: automation doesn't eliminate work. It converts workers into supervisors. And supervisory capacity is finite.

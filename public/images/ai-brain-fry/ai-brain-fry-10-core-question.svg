@@ -1,71 +1,54 @@
-<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="1200" height="600" fill="#ffffff"/>
+  <rect width="1000" height="600" fill="#ffffff"/>
   
-  <!-- Large question mark -->
-  <text x="600" y="320" font-family="Georgia, serif" font-size="280" font-weight="bold" fill="#464feb" text-anchor="middle" opacity="0.95">?</text>
+  <!-- Title -->
+  <text x="500" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#1a1a1a" text-anchor="middle">The Central Question</text>
   
-  <!-- Circular text path around question mark -->
-  <defs>
-    <path id="circlePath" cx="600" cy="300" r="220" fill="none"/>
-    <circle cx="600" cy="300" r="220" fill="none"/>
-  </defs>
+  <!-- Timeline items: 40 years of evidence -->
   
-  <!-- Top question -->
-  <text x="600" y="100" font-family="system-us" font-size="24" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Is human supervisory capacity infinite?</text>
-  
-  <!-- Bottom answer -->
-  <text x="600" y="480" font-family="system-us" font-size="28" font-weight="bold" fill="#ff6b6b" text-anchor="middle">The answer: No</text>
-  
-  <!-- Research timeline circle -->
-  <circle cx="600" cy="300" r="250" fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,3"/>
-  
-  <!-- Timeline events positioned around circle -->
   <!-- 1983 -->
-  <g transform="translate(380, 180)">
-    <circle r="8" fill="#999"/>
-    <text x="0" y="25" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">1983</text>
-    <text x="0" y="40" font-family="system-us" font-size="10" fill="#999" text-anchor="middle">Bainbridge</text>
+  <g>
+    <circle cx="120" cy="250" r="45" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
+    <text x="120" y="248" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#464feb" text-anchor="middle">1983</text>
+    <text x="120" y="265" font-family="system-ui, sans-serif" font-size="10" fill="#464feb" text-anchor="middle">Warning</text>
+    <line x1="165" y1="250" x2="215" y2="250" stroke="#464feb" stroke-width="2"/>
+    <polygon points="215,250 225,245 225,255" fill="#464feb"/>
   </g>
   
   <!-- 1996 -->
-  <g transform="translate(300, 300)">
-    <circle r="8" fill="#999"/>
-    <text x="-30" y="5" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">1996</text>
-    <text x="-30" y="20" font-family="system-us" font-size="10" fill="#999" text-anchor="middle">Lewis</text>
+  <g>
+    <circle cx="310" cy="250" r="45" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
+    <text x="310" y="248" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#464feb" text-anchor="middle">1996</text>
+    <text x="310" y="265" font-family="system-ui, sans-serif" font-size="10" fill="#464feb" text-anchor="middle">Documented</text>
+    <line x1="355" y1="250" x2="405" y2="250" stroke="#464feb" stroke-width="2"/>
+    <polygon points="405,250 415,245 415,255" fill="#464feb"/>
   </g>
   
   <!-- 2007 -->
-  <g transform="translate(380, 420)">
-    <circle r="8" fill="#999"/>
-    <text x="0" y="25" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">2007</text>
-    <text x="0" y="40" font-family="system-us" font-size="10" fill="#999" text-anchor="middle">Tarafdar</text>
+  <g>
+    <circle cx="500" cy="250" r="45" fill="#f0f4ff" stroke="#464feb" stroke-width="2"/>
+    <text x="500" y="248" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#464feb" text-anchor="middle">2007</text>
+    <text x="500" y="265" font-family="system-ui, sans-serif" font-size="10" fill="#464feb" text-anchor="middle">Formalized</text>
+    <line x1="545" y1="250" x2="595" y2="250" stroke="#464feb" stroke-width="2"/>
+    <polygon points="595,250 605,245 605,255" fill="#464feb"/>
   </g>
   
-  <!-- 2026 BCG -->
-  <g transform="translate(550, 520)">
-    <circle r="8" fill="#464feb"/>
-    <text x="0" y="25" font-family="system-us" font-size="11" fill="#464feb" text-anchor="middle" font-weight="bold">2026 BCG</text>
-    <text x="0" y="40" font-family="system-us" font-size="10" fill="#464feb" text-anchor="middle" font-weight="bold">AI Brain Fry</text>
+  <!-- 2026 -->
+  <g>
+    <circle cx="690" cy="250" r="55" fill="#fff5f5" stroke="#d32f2f" stroke-width="3"/>
+    <text x="690" y="250" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#d32f2f" text-anchor="middle">2026</text>
+    <text x="690" y="268" font-family="system-ui, sans-serif" font-size="11" fill="#d32f2f" text-anchor="middle">Exceeded</text>
   </g>
   
-  <!-- 2026 Glean -->
-  <g transform="translate(750, 520)">
-    <circle r="8" fill="#464feb"/>
-    <text x="0" y="25" font-family="system-us" font-size="11" fill="#464feb" text-anchor="middle" font-weight="bold">2026 Glean</text>
-    <text x="0" y="40" font-family="system-us" font-size="10" fill="#464feb" text-anchor="middle" font-weight="bold">Supervision Work</text>
-  </g>
+  <!-- Question box -->
+  <rect x="80" y="350" width="840" height="180" rx="8" fill="#f8f9ff" stroke="#464feb" stroke-width="2"/>
   
-  <!-- 2026 Freshworks -->
-  <g transform="translate(820, 300)">
-    <circle r="8" fill="#464feb"/>
-    <text x="30" y="5" font-family="system-us" font-size="11" fill="#464feb" text-anchor="middle" font-weight="bold">2026</text>
-    <text x="30" y="20" font-family="system-us" font-size="10" fill="#464feb" text-anchor="middle" font-weight="bold">Freshworks</text>
-  </g>
+  <text x="500" y="390" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#1a1a1a" text-anchor="middle">Is human supervisory capacity infinite?</text>
   
-  <!-- Central insight box -->
-  <rect x="400" y="260" width="400" height="80" fill="#f9f9f9" stroke="#464feb" stroke-width="2" rx="6"/>
-  <text x="600" y="290" font-family="system-us" font-size="14" fill="#1a1a1a" text-anchor="middle" font-weight="bold">40+ years of research</text>
-  <text x="600" y="312" font-family="system-us" font-size="14" fill="#1a1a1a" text-anchor="middle" font-weight="bold">All confirm the same finding</text>
-  <text x="600" y="334" font-family="system-us" font-size="13" fill="#666" text-anchor="middle" font-style="italic">Finite capacity, infinite demands</text>
+  <text x="500" y="435" font-family="system-ui, sans-serif" font-size="16" fill="#333" text-anchor="middle">40 years of research provides the answer:</text>
+  
+  <text x="500" y="475" font-family="system-ui, sans-serif" font-size="28" font-weight="700" fill="#d32f2f" text-anchor="middle">No. Capacity is finite.</text>
+  
+  <text x="500" y="515" font-family="system-ui, sans-serif" font-size="13" fill="#666" text-anchor="middle">Demand has exceeded it. The structure must change.</text>
 </svg>

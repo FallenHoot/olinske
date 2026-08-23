@@ -15,7 +15,7 @@ This repository is promoted from a private editorial repository after human appr
 Publishing schedule is controlled by GitHub Actions.
 
 - Workflow: .github/workflows/promote-and-linkedin.yml
-- Trigger: every Thursday at 10:00 Europe/Oslo (CET/CEST, DST-aware)
+- Trigger: every Tuesday at 10:00 Europe/Oslo (CET/CEST, DST-aware)
 - Manual trigger: workflow_dispatch with optional slug input
 
 Local scripts are for local validation and debugging only. They do not replace GitHub Actions scheduling.

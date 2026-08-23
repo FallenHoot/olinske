@@ -1,0 +1,99 @@
+<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="800" fill="#ffffff"/>
+  
+  <!-- Defs for gradient -->
+  <defs>
+    <linearGradient id="loopGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#ffc107;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff9800;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+  </defs>
+  
+  <!-- Central circle background -->
+  <circle cx="400" cy="400" r="280" fill="#f5f5f5" opacity="0.5"/>
+  
+  <!-- Stage 1: Confidence Loss (Top) -->
+  <g transform="translate(400, 140)">
+    <circle r="50" fill="#4caf50" opacity="0.9"/>
+    <text x="0" y="-15" font-family="system-us" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Confidence</text>
+    <text x="0" y="10" font-family="system-us" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Loss</text>
+    
+    <!-- Icon: down arrow -->
+    <polyline points="-15,25 0,40 15,25" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Arrow 1 to Stage 2 -->
+  <path d="M 550 200 Q 620 280 650 350" stroke="#333" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+  
+  <!-- Stage 2: Second-guesses Decisions (Right) -->
+  <g transform="translate(660, 400)">
+    <circle r="50" fill="#ffc107" opacity="0.9"/>
+    <text x="0" y="-10" font-family="system-us" font-size="11" font-weight="bold" fill="#333" text-anchor="middle">Second-guesses</text>
+    <text x="0" y="10" font-family="system-us" font-size="11" font-weight="bold" fill="#333" text-anchor="middle">Decisions</text>
+    
+    <!-- Icon: thinking face -->
+    <circle cx="0" cy="-5" r="3" fill="#333"/>
+    <circle cx="0" cy="10" r="2" fill="#333"/>
+  </g>
+  
+  <!-- Arrow 2 to Stage 3 -->
+  <path d="M 620 480 Q 550 560 470 600" stroke="#333" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+  
+  <!-- Stage 3: Over-relies on AI (Bottom) -->
+  <g transform="translate(400, 660)">
+    <circle r="50" fill="#ff9800" opacity="0.9"/>
+    <text x="0" y="-10" font-family="system-us" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Over-relies</text>
+    <text x="0" y="10" font-family="system-us" font-size="11" font-weight="bold" fill="white" text-anchor="middle">on AI</text>
+    
+    <!-- Icon: brain + circuit -->
+    <circle cx="-8" cy="0" r="6" fill="white" opacity="0.3"/>
+    <circle cx="8" cy="0" r="6" fill="white" opacity="0.3"/>
+  </g>
+  
+  <!-- Arrow 3 to Stage 4 -->
+  <path d="M 350 650 Q 220 560 150 480" stroke="#333" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+  
+  <!-- Stage 4: More Oversight Demands (Left) -->
+  <g transform="translate(140, 400)">
+    <circle r="50" fill="#ff6b6b" opacity="0.9"/>
+    <text x="0" y="-15" font-family="system-us" font-size="11" font-weight="bold" fill="white" text-anchor="middle">More</text>
+    <text x="0" y="5" font-family="system-us" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Oversight</text>
+    <text x="0" y="20" font-family="system-us" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Demands</text>
+    
+    <!-- Icon: expanding arrows -->
+    <polyline points="-15,-10 -25,-20 -15,-20" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="15,10 25,20 15,20" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Arrow 4 to Stage 5 -->
+  <path d="M 180 350 Q 250 260 330 200" stroke="#333" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+  
+  <!-- Stage 5: Brain Fry (Top-left) -->
+  <g transform="translate(280, 180)">
+    <circle r="50" fill="#d32f2f" opacity="0.9"/>
+    <text x="0" y="0" font-family="system-us" font-size="16" font-weight="bold" fill="white" text-anchor="middle">Brain Fry</text>
+    
+    <!-- Icon: stress lines around brain -->
+    <circle cx="0" cy="0" r="15" fill="none" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="-25" x2="0" y2="-35" stroke="white" stroke-width="2"/>
+    <line x1="20" y1="-18" x2="28" y2="-26" stroke="white" stroke-width="2"/>
+  </g>
+  
+  <!-- Arrow 5 back to Stage 1 (closing the loop) -->
+  <path d="M 330 160 Q 350 120 380 140" stroke="#333" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+  
+  <!-- Center text -->
+  <text x="400" y="405" font-family="system-us" font-size="16" font-weight="bold" fill="#666" text-anchor="middle">The Loop</text>
+  <text x="400" y="425" font-family="system-us" font-size="16" font-weight="bold" fill="#666" text-anchor="middle">Continues</text>
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="system-us" font-size="22" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Confidence Erosion Feedback Loop</text>
+  <text x="400" y="80" font-family="system-us" font-size="14" fill="#666" text-anchor="middle">How brain fry compounds itself over time</text>
+</svg>

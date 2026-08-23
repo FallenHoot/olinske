@@ -1,0 +1,71 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="600" fill="#ffffff"/>
+  
+  <!-- Large question mark -->
+  <text x="600" y="320" font-family="Georgia, serif" font-size="280" font-weight="bold" fill="#464feb" text-anchor="middle" opacity="0.95">?</text>
+  
+  <!-- Circular text path around question mark -->
+  <defs>
+    <path id="circlePath" cx="600" cy="300" r="220" fill="none"/>
+    <circle cx="600" cy="300" r="220" fill="none"/>
+  </defs>
+  
+  <!-- Top question -->
+  <text x="600" y="100" font-family="system-us" font-size="24" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Is human supervisory capacity infinite?</text>
+  
+  <!-- Bottom answer -->
+  <text x="600" y="480" font-family="system-us" font-size="28" font-weight="bold" fill="#ff6b6b" text-anchor="middle">The answer: No</text>
+  
+  <!-- Research timeline circle -->
+  <circle cx="600" cy="300" r="250" fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <!-- Timeline events positioned around circle -->
+  <!-- 1983 -->
+  <g transform="translate(380, 180)">
+    <circle r="8" fill="#999"/>
+    <text x="0" y="25" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">1983</text>
+    <text x="0" y="40" font-family="system-us" font-size="10" fill="#999" text-anchor="middle">Bainbridge</text>
+  </g>
+  
+  <!-- 1996 -->
+  <g transform="translate(300, 300)">
+    <circle r="8" fill="#999"/>
+    <text x="-30" y="5" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">1996</text>
+    <text x="-30" y="20" font-family="system-us" font-size="10" fill="#999" text-anchor="middle">Lewis</text>
+  </g>
+  
+  <!-- 2007 -->
+  <g transform="translate(380, 420)">
+    <circle r="8" fill="#999"/>
+    <text x="0" y="25" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">2007</text>
+    <text x="0" y="40" font-family="system-us" font-size="10" fill="#999" text-anchor="middle">Tarafdar</text>
+  </g>
+  
+  <!-- 2026 BCG -->
+  <g transform="translate(550, 520)">
+    <circle r="8" fill="#464feb"/>
+    <text x="0" y="25" font-family="system-us" font-size="11" fill="#464feb" text-anchor="middle" font-weight="bold">2026 BCG</text>
+    <text x="0" y="40" font-family="system-us" font-size="10" fill="#464feb" text-anchor="middle" font-weight="bold">AI Brain Fry</text>
+  </g>
+  
+  <!-- 2026 Glean -->
+  <g transform="translate(750, 520)">
+    <circle r="8" fill="#464feb"/>
+    <text x="0" y="25" font-family="system-us" font-size="11" fill="#464feb" text-anchor="middle" font-weight="bold">2026 Glean</text>
+    <text x="0" y="40" font-family="system-us" font-size="10" fill="#464feb" text-anchor="middle" font-weight="bold">Supervision Work</text>
+  </g>
+  
+  <!-- 2026 Freshworks -->
+  <g transform="translate(820, 300)">
+    <circle r="8" fill="#464feb"/>
+    <text x="30" y="5" font-family="system-us" font-size="11" fill="#464feb" text-anchor="middle" font-weight="bold">2026</text>
+    <text x="30" y="20" font-family="system-us" font-size="10" fill="#464feb" text-anchor="middle" font-weight="bold">Freshworks</text>
+  </g>
+  
+  <!-- Central insight box -->
+  <rect x="400" y="260" width="400" height="80" fill="#f9f9f9" stroke="#464feb" stroke-width="2" rx="6"/>
+  <text x="600" y="290" font-family="system-us" font-size="14" fill="#1a1a1a" text-anchor="middle" font-weight="bold">40+ years of research</text>
+  <text x="600" y="312" font-family="system-us" font-size="14" fill="#1a1a1a" text-anchor="middle" font-weight="bold">All confirm the same finding</text>
+  <text x="600" y="334" font-family="system-us" font-size="13" fill="#666" text-anchor="middle" font-style="italic">Finite capacity, infinite demands</text>
+</svg>

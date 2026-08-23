@@ -1,0 +1,61 @@
+<svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="400" fill="#ffffff"/>
+  
+  <!-- Left column: Hours saved -->
+  <rect x="50" y="40" width="520" height="300" fill="#f9f9f9" rx="8" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <text x="310" y="80" font-family="system-ui" font-size="20" font-weight="bold" fill="#1a1a1a" text-anchor="middle">11 HOURS SAVED</text>
+  <text x="310" y="105" font-family="system-ui" font-size="14" fill="#666" text-anchor="middle">Per Week</text>
+  
+  <!-- Calendar blocks (time saved) -->
+  <g transform="translate(120, 130)">
+    <rect x="0" y="0" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="50" y="0" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="100" y="0" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="150" y="0" width="35" height="35" fill="#4caf50" rx="3"/>
+    
+    <rect x="0" y="50" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="50" y="50" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="100" y="50" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="150" y="50" width="35" height="35" fill="#4caf50" rx="3"/>
+    
+    <rect x="0" y="100" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="50" y="100" width="35" height="35" fill="#4caf50" rx="3"/>
+    <rect x="100" y="100" width="35" height="35" fill="#4caf50" rx="3"/>
+    
+    <text x="195" y="125" font-family="system-ui" font-size="14" fill="#666">= 11 hours</text>
+  </g>
+  
+  <!-- Right column: Performance gains -->
+  <rect x="630" y="40" width="520" height="300" fill="#f9f9f9" rx="8" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <text x="890" y="80" font-family="system-ui" font-size="20" font-weight="bold" fill="#1a1a1a" text-anchor="middle">13% SEE GAINS</text>
+  <text x="890" y="105" font-family="system-ui" font-size="14" fill="#666" text-anchor="middle">Only 13% Report Performance Improvement</text>
+  
+  <!-- Bar chart -->
+  <g transform="translate(680, 140)">
+    <!-- 13% bar (blue - gains) -->
+    <rect x="0" y="0" width="52" height="80" fill="#464feb" rx="3"/>
+    <text x="26" y="100" font-family="system-ui" font-size="14" font-weight="bold" fill="#464feb" text-anchor="middle">13%</text>
+    <text x="26" y="125" font-family="system-ui" font-size="11" fill="#666" text-anchor="middle">Gains</text>
+    
+    <!-- 87% bar (gray - no gains) -->
+    <rect x="90" y="0" width="348" height="80" fill="#d0d0d0" rx="3"/>
+    <text x="264" y="100" font-family="system-ui" font-size="14" font-weight="bold" fill="#999" text-anchor="middle">87%</text>
+    <text x="264" y="125" font-family="system-ui" font-size="11" fill="#999" text-anchor="middle">No Gains</text>
+  </g>
+  
+  <!-- Arrow showing disconnect -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ff6b6b" />
+    </marker>
+  </defs>
+  
+  <path d="M 570 200 L 630 200" stroke="#ff6b6b" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="600" y="190" font-family="system-ui" font-size="12" fill="#ff6b6b" text-anchor="middle" font-weight="bold">DISCONNECT</text>
+  
+  <!-- Footer insight -->
+  <text x="600" y="380" font-family="system-ui" font-size="16" fill="#1a1a1a" text-anchor="middle" font-weight="bold">11 hours saved ≠ 13% performance improvement</text>
+</svg>

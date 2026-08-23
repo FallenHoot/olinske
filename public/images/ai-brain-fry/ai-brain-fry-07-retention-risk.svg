@@ -1,0 +1,71 @@
+<svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="400" fill="#ffffff"/>
+  
+  <!-- Left: Baseline -->
+  <rect x="50" y="40" width="500" height="300" fill="#f9f9f9" rx="8" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <text x="300" y="75" font-family="system-us" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Baseline</text>
+  <text x="300" y="100" font-family="system-us" font-size="14" fill="#666" text-anchor="middle">25% Turnover Intent</text>
+  
+  <!-- Baseline people -->
+  <g transform="translate(120, 140)">
+    <!-- Person 1 - normal -->
+    <circle cx="0" cy="0" r="20" fill="#9e9e9e"/>
+    <circle cx="50" cy="0" r="20" fill="#9e9e9e"/>
+    <circle cx="100" cy="0" r="20" fill="#9e9e9e"/>
+    <!-- Person 4 - risk (red) -->
+    <circle cx="150" cy="0" r="20" fill="#ff6b6b"/>
+    
+    <!-- Text labels -->
+    <text x="0" y="50" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">Neutral</text>
+    <text x="50" y="50" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">Neutral</text>
+    <text x="100" y="50" font-family="system-us" font-size="11" fill="#666" text-anchor="middle">Neutral</text>
+    <text x="150" y="50" font-family="system-us" font-size="11" fill="#ff6b6b" text-anchor="middle" font-weight="bold">Risk</text>
+  </g>
+  
+  <!-- Baseline stat box -->
+  <rect x="110" y="250" width="380" height="60" fill="#fff" stroke="#d0d0d0" stroke-width="1" rx="4"/>
+  <text x="300" y="275" font-family="system-us" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">1 out of 4 workers</text>
+  <text x="300" y="300" font-family="system-us" font-size="14" fill="#666" text-anchor="middle">show active intent to leave</text>
+  
+  <!-- Arrow showing increase -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ff6b6b" />
+    </marker>
+  </defs>
+  
+  <path d="M 550 190 L 650 190" stroke="#ff6b6b" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="600" y="175" font-family="system-us" font-size="16" fill="#ff6b6b" text-anchor="middle" font-weight="bold">+39%</text>
+  <text x="600" y="215" font-family="system-us" font-size="13" fill="#ff6b6b" text-anchor="middle" font-weight="bold">INCREASE</text>
+  
+  <!-- Right: Brain-Fried Workers -->
+  <rect x="650" y="40" width="500" height="300" fill="#fff5f5" rx="8" stroke="#ff6b6b" stroke-width="2"/>
+  
+  <text x="900" y="75" font-family="system-us" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Brain-Fried Workers</text>
+  <text x="900" y="100" font-family="system-us" font-size="14" fill="#ff6b6b" text-anchor="middle" font-weight="bold">34% Turnover Intent</text>
+  
+  <!-- Brain-Fried people -->
+  <g transform="translate(720, 140)">
+    <!-- Person 1 - mostly risk -->
+    <circle cx="0" cy="0" r="20" fill="#ff6b6b" opacity="0.8"/>
+    <!-- Person 2 - neutral/risk -->
+    <circle cx="50" cy="0" r="20" fill="#ffb3b3" opacity="0.9"/>
+    <!-- Person 3 - neutral/risk -->
+    <circle cx="100" cy="0" r="20" fill="#ffb3b3" opacity="0.9"/>
+    <!-- Person 4 - risk -->
+    <circle cx="150" cy="0" r="20" fill="#ff6b6b"/>
+    
+    <!-- Text labels -->
+    <text x="0" y="50" font-family="system-us" font-size="11" fill="#ff6b6b" text-anchor="middle" font-weight="bold">Risk</text>
+    <text x="50" y="50" font-family="system-us" font-size="11" fill="#ff9800" text-anchor="middle" font-weight="bold">Partial</text>
+    <text x="100" y="50" font-family="system-us" font-size="11" fill="#ff9800" text-anchor="middle" font-weight="bold">Partial</text>
+    <text x="150" y="50" font-family="system-us" font-size="11" fill="#ff6b6b" text-anchor="middle" font-weight="bold">Risk</text>
+  </g>
+  
+  <!-- Brain-Fried stat box -->
+  <rect x="710" y="250" width="380" height="60" fill="#fff" stroke="#ff6b6b" stroke-width="1" rx="4"/>
+  <text x="900" y="275" font-family="system-us" font-size="16" font-weight="bold" fill="#ff6b6b" text-anchor="middle">1.3+ out of 4 workers</text>
+  <text x="900" y="300" font-family="system-us" font-size="14" fill="#ff6b6b" text-anchor="middle">show active intent to leave</text>
+</svg>

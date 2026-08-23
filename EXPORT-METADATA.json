@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-18T19:21:11.311Z",
+  "generatedAt": "2026-08-23T14:37:20.185Z",
   "output": "public-repo",
-  "publishedCount": 19,
+  "publishedCount": 20,
   "publishedFiles": [
     "content/published/000001-welcome.md",
     "content/published/000002-blogging-again-with-ai-in-the-loop.md",
@@ -21,6 +21,7 @@
     "content/published/000016-sovereign-cloud-buzzword-controls.md",
     "content/published/000036-sovereignty-myth-scale-reality-digital-readiness.md",
     "content/published/000037-ani-agi-asi-access-model-risk.md",
-    "content/published/000038-water-research-for-data-centers.md"
+    "content/published/000038-water-research-for-data-centers.md",
+    "content/published/000039-supervision-work-cognitive-limits.md"
   ]
 }

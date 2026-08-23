@@ -1,0 +1,63 @@
+<svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="500" fill="#ffffff"/>
+  
+  <!-- Grid -->
+  <defs>
+    <pattern id="grid" width="60" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 40" fill="none" stroke="#f0f0f0" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="500" fill="url(#grid)" />
+  
+  <!-- Axes -->
+  <line x1="100" y1="400" x2="1100" y2="400" stroke="#333" stroke-width="2"/>
+  <line x1="100" y1="50" x2="100" y2="400" stroke="#333" stroke-width="2"/>
+  
+  <!-- X-axis labels -->
+  <text x="150" y="430" font-family="system-ui" font-size="12" fill="#666" text-anchor="middle">1 Tool</text>
+  <text x="300" y="430" font-family="system-ui" font-size="12" fill="#666" text-anchor="middle">2 Tools</text>
+  <text x="450" y="430" font-family="system-ui" font-size="12" fill="#666" text-anchor="middle">3 Tools</text>
+  <text x="600" y="430" font-family="system-ui" font-size="12" fill="#666" text-anchor="middle">4 Tools</text>
+  <text x="750" y="430" font-family="system-ui" font-size="12" fill="#666" text-anchor="middle">5+ Tools</text>
+  
+  <!-- Y-axis labels -->
+  <text x="80" y="405" font-family="system-us" font-size="11" fill="#666" text-anchor="end">0%</text>
+  <text x="80" y="305" font-family="system-us" font-size="11" fill="#666" text-anchor="end">50%</text>
+  <text x="80" y="205" font-family="system-us" font-size="11" fill="#666" text-anchor="end">100%</text>
+  
+  <!-- Y-axis title -->
+  <text x="30" y="200" font-family="system-us" font-size="12" fill="#666" text-anchor="middle" transform="rotate(-90 30 200)">Productivity</text>
+  
+  <!-- Productivity line (blue rising then cliff) -->
+  <polyline points="150,320 300,220 450,200 600,280 750,340" 
+            stroke="#464feb" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Data points -->
+  <circle cx="150" cy="320" r="5" fill="#464feb"/>
+  <circle cx="300" cy="220" r="5" fill="#464feb"/>
+  <circle cx="450" cy="200" r="5" fill="#464feb"/>
+  <circle cx="600" cy="280" r="5" fill="#ff6b6b"/>
+  <circle cx="750" cy="340" r="5" fill="#ff6b6b"/>
+  
+  <!-- Percentage labels -->
+  <text x="150" y="300" font-family="system-us" font-size="11" fill="#464feb" font-weight="bold" text-anchor="middle">+40%</text>
+  <text x="300" y="190" font-family="system-us" font-size="11" fill="#464feb" font-weight="bold" text-anchor="middle">+60%</text>
+  <text x="450" y="170" font-family="system-us" font-size="11" fill="#464feb" font-weight="bold" text-anchor="middle">+70%</text>
+  <text x="600" y="310" font-family="system-us" font-size="11" fill="#ff6b6b" font-weight="bold" text-anchor="middle">-20%</text>
+  <text x="750" y="370" font-family="system-us" font-size="11" fill="#ff6b6b" font-weight="bold" text-anchor="middle">-45%</text>
+  
+  <!-- Cliff annotation -->
+  <path d="M 520 220 L 580 280" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5,5" fill="none"/>
+  <text x="680" y="240" font-family="system-us" font-size="13" fill="#ff6b6b" font-weight="bold">PRODUCTIVITY CLIFF</text>
+  <path d="M 680 250 Q 650 265 600 280" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead2)"/>
+  
+  <defs>
+    <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ff6b6b" />
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" font-family="system-us" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">The 3-Tool Productivity Ceiling</text>
+</svg>

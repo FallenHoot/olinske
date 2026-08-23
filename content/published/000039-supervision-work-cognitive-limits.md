@@ -23,7 +23,7 @@ One is weighing technical decisions. Another is spitting out code drafts and sum
 
 By 2 p.m., his brain feels like it has a dozen browser tabs open, all fighting for attention. He's not physically tired. He's cognitively fried.
 
-![Engineering manager juggling three AI tools simultaneously, overwhelmed by cognitive overload](../images/ai-brain-fry/ai-brain-fry-01-scene.svg)
+![Engineering manager juggling three AI tools simultaneously, overwhelmed by cognitive overload](/images/ai-brain-fry/ai-brain-fry-01-scene.svg)
 
 ---
 
@@ -43,7 +43,7 @@ Botsitting is the largely unrecognized, unbudgeted labor of making AI usable: fe
 
 Supervision is cognitively harder than execution.
 
-![Workers save 11 hours per week with AI, yet only 13% of organizations see performance improvements](../images/ai-brain-fry/ai-brain-fry-02-paradox.svg)
+![Workers save 11 hours per week with AI, yet only 13% of organizations see performance improvements](/images/ai-brain-fry/ai-brain-fry-02-paradox.svg)
 
 ---
 
@@ -71,7 +71,7 @@ One AI tool? Productivity boost. Two tools? Productivity still increases, though
 
 This isn't philosophy. It's measurable.
 
-![Productivity rises with 1-3 AI tools, then declines sharply with 4 or more](../images/ai-brain-fry/ai-brain-fry-03-tool-cliff.svg)
+![Productivity rises with 1-3 AI tools, then declines sharply with 4 or more](/images/ai-brain-fry/ai-brain-fry-03-tool-cliff.svg)
 
 Why does this happen? The answer lives in cognitive load theory, a framework developed by psychologist John Sweller in 1988. **Working memory has a hard ceiling.** When the volume of information we're asked to process exceeds that ceiling, performance doesn't just dip. It collapses. Accuracy drops. Creativity stalls. Errors multiply. The brain wasn't built to monitor multiple AI agents, evaluate their outputs, and make strategic decisions simultaneously.
 
@@ -79,7 +79,7 @@ There's another layer. Sophie Leroy's research on "attention residue" (2009) sho
 
 Each additional tool isn't just one more thing to manage. It's one more source of attention residue. One more drain on the finite attention you need for work that actually matters.
 
-![Attention residue: parts of mind cling to previous tasks when switching between AI tools](../images/ai-brain-fry/ai-brain-fry-04-attention-residue.svg)
+![Attention residue: parts of mind cling to previous tasks when switching between AI tools](/images/ai-brain-fry/ai-brain-fry-04-attention-residue.svg)
 
 The ActivTrak data confirms this at scale: organizations deployed an average of 7 AI tools (up from 2 three years ago). 83% of organizations use 6 or more tools. The productivity sweet spot? 7-10% of total work hours spent in AI tools, which correlates with the highest productivity (95%). But only 3% of users actually fall within that range. The majority (57%) spend less than 1% of total hours in AI tools—and among heavy users, productivity declines measurably.
 
@@ -121,7 +121,7 @@ An employee who doubts their own judgment is an employee who:
 
 This emotional undertow compounds everything the BCG study measured. It's not often discussed because it's harder to quantify than decision fatigue. But it matters for business outcomes.
 
-![Feedback loop: confidence loss leads to over-reliance on AI, increasing oversight burden](../images/ai-brain-fry/ai-brain-fry-05-feedback-loop.svg)
+![Feedback loop: confidence loss leads to over-reliance on AI, increasing oversight burden](/images/ai-brain-fry/ai-brain-fry-05-feedback-loop.svg)
 
 ---
 
@@ -150,7 +150,7 @@ Lewis described this as a primitive "fight-flight" response: when people are ove
 
 Organizations are deploying 7+ AI tools per employee anyway.
 
-![Timeline: same automation pattern repeats from 1983 (Bainbridge) through 2026 (AI brain fry)](../images/ai-brain-fry/ai-brain-fry-06-timeline.svg)
+![Timeline: same automation pattern repeats from 1983 (Bainbridge) through 2026 (AI brain fry)](/images/ai-brain-fry/ai-brain-fry-06-timeline.svg)
 
 ---
 
@@ -162,7 +162,7 @@ Here's where this becomes a business problem that can't be ignored.
 
 These are your high performers. The people organizations counted on most.
 
-![Workers experiencing AI brain fry show 39% higher turnover risk (34% vs 25% baseline)](../images/ai-brain-fry/ai-brain-fry-07-retention-risk.svg)
+![Workers experiencing AI brain fry show 39% higher turnover risk (34% vs 25% baseline)](/images/ai-brain-fry/ai-brain-fry-07-retention-risk.svg)
 
 ActivTrak data reinforces this: disengagement risk jumped 23% (from 19% to 23% in a single year). This is a different risk than burnout. Burnout is exhaustion. Disengagement is "I'm not being used well." Organizations have invested heavily in reducing overload. Few have invested equally in redeploying the capacity that freed up.
 
@@ -184,7 +184,7 @@ Meta, for example, now includes "lines of AI-generated code" as a performance me
 
 **What ActivTrak calls the "AI Measurement Gap" is the gap between AI adoption and understanding its real impact on productivity, focus, and workforce capacity.** 50% of organizations don't even measure how AI changes work.
 
-![Wrong metrics (adoption rate) vs. right metrics (business outcomes, team health)](../images/ai-brain-fry/ai-brain-fry-08-metrics-comparison.svg)
+![Wrong metrics (adoption rate) vs. right metrics (business outcomes, team health)](/images/ai-brain-fry/ai-brain-fry-08-metrics-comparison.svg)
 
 The right metrics:
 - Business outcomes (revenue, user engagement, etc.)
@@ -221,7 +221,7 @@ The data says: **3 tools is the productivity ceiling.**
 - Set explicit boundaries
 - Embed AI into *shared workflows* rather than stacking it on individual contributors
 
-![Three organizational design levers: span of oversight limits, decision-making skills training, metrics redesign](../images/ai-brain-fry/ai-brain-fry-09-three-levers.svg)
+![Three organizational design levers: span of oversight limits, decision-making skills training, metrics redesign](/images/ai-brain-fry/ai-brain-fry-09-three-levers.svg)
 
 When AI is embedded in shared workflows (handled as a team responsibility), cognitive burden drops measurably.
 
@@ -275,7 +275,7 @@ It isn't.
 
 Bainbridge knew it in 1983. Lewis documented it in 1996. Tarafdar formalized it in 2007. BCG measured it in 2026. Glean and Freshworks confirmed it this year.
 
-![Core insight: Human supervisory capacity is finite. Research confirmed this from 1983-2026.](../images/ai-brain-fry/ai-brain-fry-10-core-question.svg)
+![Core insight: Human supervisory capacity is finite. Research confirmed this from 1983-2026.](/images/ai-brain-fry/ai-brain-fry-10-core-question.svg)
 
 **The question is no longer "Can AI help?" The real question is "At what point does the supervision work exceed what human brains can actually do?"**
 
